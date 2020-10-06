@@ -79,6 +79,7 @@ module Make
     (S:SimplifiedSem)
     (U: sig
       val partition_events : S.event_set -> S.event_set list
+      val inv_classes :  S.event_set -> S.event_set list
       val loc2events : string -> S.event_set -> S.event_set
       val check_through : bool -> bool
       val pp_failure : S.test -> S.concrete -> string -> S.rel_pp -> unit
@@ -896,9 +897,18 @@ module Make
  *)
     let arg_mismatch () = raise (PrimError "argument mismatch")
 
-    let partition arg = match arg with
+    let partition name f arg = match arg with
     | Set evts ->
-        let r = U.partition_events evts in
+        let show = O.debug && O.verbose > 0 in
+        if show then
+          eprintf "%s: arg=%a ->" name debug_set evts ;
+        let r = f evts in
+        if show then begin
+          List.iter
+            (fun es -> eprintf " %a" debug_set es)
+            r ;
+          eprintf "\n"
+        end ;
         let vs = List.map (fun es -> Set es) r in
         ValSet (TEvents,ValSet.of_list vs)
     | _ -> arg_mismatch ()
@@ -1132,8 +1142,9 @@ module Make
         [
          "different-values",different_values;
          "fromto",fromto ks;
-         "classes-loc",partition;
+         "classes-loc",partition "classes-loc" U.partition_events;
          "classes",classes;
+         "inv-classes",partition "inv-classes" U.inv_classes;
          "lift",lift;
          "delift",delift;
          "deliftinter",deliftinter;

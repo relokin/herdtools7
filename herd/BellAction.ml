@@ -109,6 +109,7 @@ end = struct
 
 (* None of those below *)
   let is_tag _ = false
+  let is_inv _ = false
   let is_mem_physical a = let open Constant in match a with
   | Access (_,A.Location_global (V.Val (Symbolic (Physical _))),_,_,_,_)   -> true
   | _ -> false
@@ -125,7 +126,6 @@ end = struct
   | _ -> false
 
   let is_fault _ = false
-
   let to_fault _ = None
 
   let get_mem_dir a = match a with

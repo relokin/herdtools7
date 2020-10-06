@@ -129,6 +129,14 @@ let as_virtual v = match v with
 | Symbolic (Virtual ((s,_),_)) -> Some s
 | _ -> None
 
+let get_tlb v =  match v with
+| Symbolic (Physical (s,_)) -> Some (Symbolic (System (TLB,s)))
+| _ -> None
+
+let is_physical = function
+  | Symbolic (Physical _) -> true
+  | _ -> false
+
 module type S =  sig
 
   module Scalar : Scalar.S

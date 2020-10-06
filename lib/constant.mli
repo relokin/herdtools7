@@ -57,6 +57,8 @@ val check_sym : 'a t -> 'b t
 
 val is_virtual : 'a t -> bool
 val as_virtual : 'a t -> string option
+val get_tlb : 'a t -> 'a t option
+val is_physical : 'a t -> bool
 
 module type S =  sig
 

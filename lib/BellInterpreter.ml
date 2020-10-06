@@ -89,6 +89,7 @@ module Make (C: Config) = struct
         (struct
           (* Should not be called *)
           let partition_events _ = assert false
+          let inv_classes _ = assert false
           let loc2events _ _ = assert false
           let check_through _ = assert false
           let pp_failure _ _ msg _ =

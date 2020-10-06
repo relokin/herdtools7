@@ -18,6 +18,8 @@ open Printf
 
 module Make(S : SemExtra.S) = struct
 
+  let dbg = false
+
   module S = S
   module E = S.E
   module A = S.A
@@ -340,12 +342,8 @@ let lift_proc_info i evts =
 (* Sets and Maps on locations *)
 (******************************)
 
-  module LocEnv =
-    MyMap.Make
-      (struct
-        type t = A.location
-        let compare = A.location_compare
-      end)
+  module LocEnv = A.LocMap
+  module LocSet = A.LocSet
 
 (* Collect various events by their location *)
 
@@ -353,7 +351,7 @@ let lift_proc_info i evts =
     try LocEnv.find loc m
     with Not_found -> []
 
-  let collect_by_loc es pred =
+  let collect_by_loc_set es pred =
     E.EventSet.fold
       (fun e k ->
         if pred e then
@@ -361,7 +359,9 @@ let lift_proc_info i evts =
           let evts = map_loc_find loc k in
           LocEnv.add loc (e::evts) k
         else k)
-      es.E.events LocEnv.empty
+      es LocEnv.empty
+
+  let collect_by_loc es p = collect_by_loc_set es.E.events p
 
   let not_speculated es e = not (E.EventSet.mem e es.E.speculated)
   let collect_reg_loads es = collect_by_loc es E.is_reg_load_any
@@ -385,6 +385,48 @@ let lift_proc_info i evts =
         | None -> k) es LocEnv.empty in
 
     LocEnv.fold (fun _ evts k -> E.EventSet.of_list evts::k) env []
+
+  let debug_locenv tag m =
+    eprintf "%s\n" tag ;
+    LocEnv.iter
+      (fun loc es ->
+        eprintf "%s ->" (A.pp_location loc) ;
+        List.iter
+          (fun e -> eprintf " %a" E.debug_event e)
+          es ;
+        eprintf "\n")
+      m
+
+  let inv_classes es =
+    let m = collect_by_loc_set es E.is_mem
+    and inv = E.EventSet.filter E.is_inv es in
+    if dbg then debug_locenv "WRITES:" m ;
+    let invsome,invnone =
+      E.EventSet.partition (fun e -> Misc.is_some (E.location_of e)) inv in
+    let inv_m = collect_by_loc_set invsome (fun _ -> true) in
+    let inv_m = LocEnv.map E.EventSet.of_list inv_m in
+    let r,seen =
+      LocEnv.fold
+        (fun loc es (r,seen) ->
+          let es = E.EventSet.of_list es in
+          match A.get_tlb loc with
+          | Some tlb ->
+              let invsome = LocEnv.safe_find E.EventSet.empty tlb inv_m in
+              E.EventSet.union3 es invsome invnone::r,
+              LocSet.add tlb seen
+          | None ->
+              let r =
+                if A.is_physical loc then  E.EventSet.union es invnone::r
+                else es::r in
+              r,seen)
+        m ([],LocSet.empty) in
+    let r = (* Add invalidate events with no corresponding memory events *)
+      LocEnv.fold
+        (fun tlb invsome k ->
+          if LocSet.mem tlb seen then k
+          else E.EventSet.union invsome invnone::k)
+        inv_m r in
+    r
 
 (********************************************)
 (* Write serialization candidate generator. *)

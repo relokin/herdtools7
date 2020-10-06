@@ -63,6 +63,7 @@ module type S = sig
   val get_mem_size : action -> MachSize.sz
   val is_PTE_access : action -> bool
   val is_PA_val : A.V.v -> bool
+  val is_inv : action -> bool
 
 (* relative to the registers of the given proc *)
   val is_reg_store : action -> A.proc -> bool

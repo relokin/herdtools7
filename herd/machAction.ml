@@ -40,8 +40,8 @@ end
 
 module Make (C:Config) (A : A) : sig
 
- (* All sorts of accesses, redundunt with symbol hidden in location,
-    when symbol is known, which may not be the case *)
+  (* All sorts of accesses, redundunt with symbol hidden in location,
+     when symbol is known, which may not be the case *)
 
   type access_t = A_REG | A_VIR | A_PHY | A_PTE | A_AF | A_DB | A_DBM | A_TLB | A_TAG
 
@@ -58,7 +58,7 @@ module Make (C:Config) (A : A) : sig
 (* TLB Invalidate event, operation (for print and level), address, if any.
    No adresss means complete invalidation at level *)
     | Inv of A.TLBI.op * A.location option
-(* Data cache operation event *)    
+(* Data cache operation event *)
     | DC of AArch64Base.DC.op * A.location option
 
   include Action.S with type action := action and module A = A
@@ -110,23 +110,23 @@ end = struct
           else Warn.fatal "PTE %s while -variant kvm is not active"
               (A.pp_location loc)
 (*    | A.Location_global (V.Val (Symbolic ((System (AF,_))))) as loc
-        ->
-          if kvm then A_AF
-          else Warn.fatal "AF %s while -variant kvm is not active"
-              (A.pp_location loc)
+      ->
+      if kvm then A_AF
+      else Warn.fatal "AF %s while -variant kvm is not active"
+      (A.pp_location loc)
       | A.Location_global (V.Val (Symbolic ((System (DB,_))))) as loc
-        ->
-          if kvm then A_DB
-          else Warn.fatal "DB %s while -variant kvm is not active"
-              (A.pp_location loc)
+      ->
+      if kvm then A_DB
+      else Warn.fatal "DB %s while -variant kvm is not active"
+      (A.pp_location loc)
       | A.Location_global (V.Val (Symbolic ((System (DBM,_))))) as loc
-        ->
-          if kvm then A_DBM
-          else Warn.fatal "DBM %s while -variant kvm is not active"
-              (A.pp_location loc)
-*)    | A.Location_global v
-      | A.Location_deref (v,_)
-        -> Warn.fatal "access_of_location_std on non-standard symbol '%s'\n" (V.pp_v v)
+      ->
+      if kvm then A_DBM
+      else Warn.fatal "DBM %s while -variant kvm is not active"
+      (A.pp_location loc)
+ *)    | A.Location_global v
+| A.Location_deref (v,_)
+  -> Warn.fatal "access_of_location_std on non-standard symbol '%s'\n" (V.pp_v v)
 
 
   type action =
@@ -175,7 +175,7 @@ end = struct
       Printf.sprintf "TLBI(%s,%s)" (A.TLBI.pp_op op) (A.pp_location loc)
   | DC (op,None) ->
       Printf.sprintf "DC(%s)" (AArch64Base.DC.pp_op op)
-   | DC(op,Some loc) -> 
+  | DC(op,Some loc) ->
       Printf.sprintf "DC(%s,%s)" (AArch64Base.DC.pp_op op) (A.pp_location loc)
 
 (* Utility functions to pick out components *)
@@ -256,15 +256,15 @@ end = struct
     | DC _ -> true
     | Access _|Amo _|Commit _|Barrier _ | Fault _ | TooFar | Inv _ -> false
 
-  let is_ci = function 
+  let is_ci = function
     | DC(op,_) as a -> is_dc a && AArch64Base.DC.ci op
     | _ -> false
 
-  let is_c = function 
+  let is_c = function
     | DC(op,_) as a -> is_dc a && AArch64Base.DC.c op
     | _ -> false
 
-  let is_i = function 
+  let is_i = function
     | DC(op,_) as a -> is_dc a && AArch64Base.DC.i op
     | _ -> false
 
@@ -296,17 +296,17 @@ end = struct
   | Access (_,A.Location_global _,_,_,_,sz,_) -> sz
   | _ -> assert false
 
-  let is_PTE_access = function 
-  | Access (_,_,_,_,_,_,A_PTE) -> true
-  | _ -> false
+  let is_PTE_access = function
+    | Access (_,_,_,_,_,_,A_PTE) -> true
+    | _ -> false
 
   let is_PA_val = let open Constant in function
-  | (A.V.Val (Symbolic (Physical _))) -> true
-  | _ -> false
+    | (A.V.Val (Symbolic (Physical _))) -> true
+    | _ -> false
 
   let is_invalid_val = let open Constant in function
-  | Some (A.V.Val (PteVal v)) -> V.is_zero (V.intToV v.PTEVal.valid) 
-  | _ -> false
+    | Some (A.V.Val (PteVal v)) -> V.is_zero (V.intToV v.PTEVal.valid)
+    | _ -> false
 
   let invalid_pte act = is_invalid_val (written_of act) || is_invalid_val (read_of act)
 
@@ -336,7 +336,7 @@ end = struct
   | (A.Location_global _,A.Location_global _)
   | (A.Location_reg _,A.Location_reg _)
   | (A.Location_deref _,A.Location_deref _)
-      -> true
+    -> true
   | (A.Location_global _,(A.Location_deref _|A.Location_reg _))
   | (A.Location_deref _,(A.Location_global _|A.Location_reg _))
   | (A.Location_reg _,(A.Location_global _|A.Location_deref _))
@@ -421,13 +421,13 @@ end = struct
           in tag,p) A.annot_sets
 (*    and esets =
       List.map
-        (fun (tag,p) ->
-          let p act = match act with
-          | Access(_,_,_,_,annot,_,_)|Amo (_,_,_,_,annot,_,_) -> 
-            let _ = Printf.sprintf "EXP_OR_NOT: %s\n" (A.pp_annot annot) in p annot
-          | _ -> false
-          in tag,p) A.annot_sets
-*)     and lsets =
+      (fun (tag,p) ->
+      let p act = match act with
+      | Access(_,_,_,_,annot,_,_)|Amo (_,_,_,_,annot,_,_) ->
+      let _ = Printf.sprintf "EXP_OR_NOT: %s\n" (A.pp_annot annot) in p annot
+      | _ -> false
+      in tag,p) A.annot_sets
+ *)     and lsets =
       List.map
         (fun lvl -> A.pp_level lvl,is_at_level lvl)
         A.levels
@@ -435,37 +435,40 @@ end = struct
     ("T",is_tag)::("FAULT",is_fault)::("TLBI",is_inv)::("DC",is_dc)::("CI",is_ci)::("C",is_c)::("I",is_i)::("Exp",is_explicit)::("NExp",is_not_explicit)::("PTEINV",invalid_pte)::
     bsets @ asets @ lsets
 
+
+  let ok_act =
+    let open Constant in
+    let ok_sym a1 a2 = match a1,a2 with
+    | ((Virtual ((s1,_),_)|Physical (s1,_)|System (PTE,s1)),System (TLB,s2))
+    | (System (TLB,s2),(Virtual ((s1,_),_)|Physical (s1,_)|System (PTE,s1)))
+      -> Misc.string_eq s1 s2
+    | _,_ -> false in
+
+    let ok_loc loc1 loc2 = match loc1,loc2 with
+    | A.Location_global (A.V.Val (Symbolic a1)),
+      A.Location_global (A.V.Val (Symbolic a2))
+      -> ok_sym a1 a2
+    | _,_ -> false in
+
+    fun act1 act2 -> match act1,act2 with
+    | (act,Inv (_,None))|(Inv (_, None),act)
+      ->
+        is_mem act &&
+        begin match location_of act with
+        | Some (A.Location_global _) ->  true
+        | Some _|None -> false
+        end
+    | (e,Inv (_,Some loc1))|(Inv (_, Some loc1),e)
+      ->
+        is_mem e &&
+        begin match location_of e with
+        | Some loc2 -> ok_loc loc1 loc2
+        | None -> false
+        end
+    | _ -> false
+
   let arch_rels =
     if kvm then
-      let open Constant in
-      let ok_sym a1 a2 = match a1,a2 with
-      | ((Virtual ((s1,_),_)|Physical (s1,_)|System (PTE,s1)),System (TLB,s2))
-      | (System (TLB,s2),(Virtual ((s1,_),_)|Physical (s1,_)|System (PTE,s1)))
-          -> Misc.string_eq s1 s2
-      | _,_ -> false in
-
-      let ok_loc loc1 loc2 = match loc1,loc2 with
-      | A.Location_global (A.V.Val (Symbolic a1)),
-        A.Location_global (A.V.Val (Symbolic a2))
-          -> ok_sym a1 a2
-      | _,_ -> false in
-
-      let ok_act act1 act2 = match act1,act2 with
-      | (act,Inv (_,None))|(Inv (_, None),act)
-        ->
-          is_mem act &&
-          begin match location_of act with
-          | Some (A.Location_global _) ->  true
-          | Some _|None -> false
-          end
-      | (e,Inv (_,Some loc1))|(Inv (_, Some loc1),e)
-        ->
-          is_mem e &&
-          begin match location_of e with
-          | Some loc2 -> ok_loc loc1 loc2
-          | None -> false
-          end
-      | _ -> false in
       ["inv-field",ok_act]
     else []
 
@@ -492,7 +495,7 @@ end = struct
         | None -> V.ValueSet.empty
         | Some v -> V.ValueSet.singleton v in
         add_v_undet v1 (add_v_undet v2 undet)
-   | Barrier _|Commit _|Fault _|TooFar|Inv _ | DC _ -> V.ValueSet.empty
+    | Barrier _|Commit _|Fault _|TooFar|Inv _ | DC _ -> V.ValueSet.empty
 
   let simplify_vars_in_action soln a =
     match a with

@@ -53,6 +53,7 @@ module Make
 
     module IUtils = struct
       let partition_events = U.partition_events
+      let inv_classes = U.inv_classes
       let loc2events x es =
         let open S in
         let x = A.V.nameToV x in

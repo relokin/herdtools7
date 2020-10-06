@@ -80,6 +80,8 @@ module type S = sig
   val map_loc : (v -> v) -> location -> location
 
   val same_base_virt : location -> location -> bool
+  val get_tlb : location -> location option
+  val is_physical : location -> bool
 
 (**********)
 (* Faults *)
@@ -320,6 +322,22 @@ module Make(C:Config) (I:I) : S with module I = I
           (Location_global v2|Location_deref (v2,_))
           -> FaultArg.same_base v1 v2
       |  _,_ -> false
+
+(***********************************)
+(* From virtual address to TLB key *)
+(***********************************)
+
+      let get_tlb = function
+        | Location_global (I.V.Val v) ->
+            begin match Constant.get_tlb v with
+            | Some tlb -> Some (Location_global (I.V.Val tlb))
+            | None -> None
+            end
+        | _ -> None
+
+      let is_physical = function
+        | Location_global (I.V.Val v) -> Constant.is_physical v
+        | _ -> false
 
 (************************)
 (* Mixed size utilities *)

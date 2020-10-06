@@ -87,6 +87,9 @@ module Make : functor (S: SemExtra.S) -> sig
 
 (* Partition by location *)
   val partition_events : S.event_set -> S.event_set list
+(* Similar, with TLB invalidate being associated to memory events
+   with virtual location within page *)
+  val inv_classes : S.event_set -> S.event_set list
 
 (* Utilities for relations *)
   val restrict_to_mem_stores : S.event_rel -> S.event_rel
@@ -126,8 +129,8 @@ NOTICE: The generator takes care of placing stores to final state
 
   val fold_write_serialization_candidates :
       S.concrete ->
-	S.event_rel ->
-	  (S.event_rel ->  'a -> 'a) -> 'a -> 'a
+        S.event_rel ->
+          (S.event_rel ->  'a -> 'a) -> 'a -> 'a
 
 (* Apply previous fold, catching cyclic graphs errors *)
   val apply_process_co :

@@ -170,6 +170,8 @@ end = struct
   | _ -> false
 
   let is_tag _ = false
+  let is_inv _ = false
+
   let is_mem_physical a = let open Constant in match a with
   | Access (_,A.Location_global (V.Val (Symbolic (Physical _))),_,_,_,_)
   | RMW (A.Location_global (V.Val (Symbolic (Physical _))),_,_,_,_) -> true

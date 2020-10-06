@@ -77,6 +77,7 @@ val same_instance : event -> event -> bool
   val is_mem : event -> bool
 (* Tag memory access *)
   val is_tag : event -> bool
+  val is_inv : event -> bool
   val is_mem_physical : event -> bool
   val is_af : event -> bool
   val is_db : event -> bool
@@ -520,9 +521,11 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
     let is_additional_mem_load e = Act.is_additional_mem_load e.action
     let is_mem e = Act.is_mem e.action
     let is_tag e = Act.is_tag e.action
+    let is_inv e = Act.is_inv e.action
     let is_mem_physical e =  Act.is_mem_physical e.action
     let is_additional_mem e = Act.is_additional_mem e.action
     let is_atomic e = Act.is_atomic e.action
+
     let to_fault e = Act.to_fault e.action
     let is_amo e = match e.iiid with
     | Some {A.inst=i; _} when A.is_amo i -> Act.is_mem_store e.action
