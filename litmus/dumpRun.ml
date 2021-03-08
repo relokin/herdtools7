@@ -102,19 +102,33 @@ end = struct
     let gcc_opts =
       if do_self then LexO.tr RU.get_gcc_opts
       else RU.get_gcc_opts in
-    fprintf chan "GCC=%s\n" Cfg.gcc ;
-    fprintf chan "GCCOPTS=%s\n" gcc_opts ;
-    let link_opts = RU.get_link_opts in
-    fprintf chan "LINKOPTS=%s\n" link_opts ;
+    begin match Cfg.mode with
+    | Mode.Kvm ->
+       fprintf chan "CFLAGS += %s\n\n" O.gccopts;
+    | _ ->
+       fprintf chan "GCC=%s\n" Cfg.gcc ;
+       fprintf chan "GCCOPTS=%s\n" gcc_opts ;
+       let link_opts = RU.get_link_opts in
+       fprintf chan "LINKOPTS=%s\n" link_opts ;
+    end;
     if infile then
       fprintf chan "SRC := $(shell cat src)\n"
     else begin
-      fprintf chan "SRC=\\\n" ;
-      List.iter
-        (fun src -> fprintf chan " %s\\\n" src)
-        (List.rev sources) ;
-      fprintf chan "\n"
-    end ;
+        match Cfg.mode with
+        | Mode.Kvm ->
+           List.iter
+             (fun src ->
+               let tgt = Str.global_replace (Str.regexp "\\.c$") ".$(exe)" src in
+               fprintf chan "tests += $(EXT_DIR)/%s\n" tgt)
+             (List.rev sources) ;
+           fprintf chan "\n"
+        | _ ->
+           fprintf chan "SRC=\\\n" ;
+           List.iter
+             (fun src -> fprintf chan " %s\\\n" src)
+             (List.rev sources) ;
+           fprintf chan "\n"
+        end ;
     ()
 
   let makefile_clean chan extra =
@@ -351,17 +365,17 @@ let dump_shell_cont arch sources utils =
     (fun chan ->
 (* Variables *)
       makefile_vars chan false arch sources ;
-      fprintf chan "EXE=$(SRC:.c=%s)\n"
-        (match Cfg.mode with
-        | Mode.Std|Mode.PreSi -> ".exe"
-        | Mode.Kvm -> ".flat") ;
-      fprintf chan "T=$(SRC:.c=.t)\n" ;
-      fprintf chan "\n" ;
-(* Entry points *)
-      fprintf chan "all: $(EXE) $(T)\n" ;
-      fprintf chan "\n" ;
       begin match Cfg.mode with
       | Mode.Std|Mode.PreSi ->
+         fprintf chan "EXE=$(SRC:.c=%s)\n"
+           (match Cfg.mode with
+            | Mode.Std|Mode.PreSi -> ".exe"
+            | Mode.Kvm -> ".flat") ;
+         fprintf chan "T=$(SRC:.c=.t)\n" ;
+         fprintf chan "\n" ;
+         (* Entry points *)
+         fprintf chan "all: $(EXE) $(T)\n" ;
+         fprintf chan "\n" ;
           makefile_clean chan "";
           makefile_utils chan utils ;
           ()
