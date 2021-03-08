@@ -87,11 +87,13 @@ module Make(O:Config)(Tar:Tar.S)(D:Test) =
     let assemble_test chan name source =
       let sS = MyName.outname name ".s" in
       if O.is_out then
-        let sS = MyName.outname name ".t" in
         let com =
           match O.mode with
-          | Mode.Kvm -> sprintf "cat ${TDIR}/%s" sS
-          | Mode.Std|Mode.PreSi -> sprintf "cat %s" sS in
+          | Mode.Kvm ->
+             let sC = MyName.outname name ".c" in
+             sprintf "awk -f ${TDIR}/show.awk ${TDIR}/%s" sC
+          | Mode.Std|Mode.PreSi -> sprintf "cat %s" (MyName.outname name ".t")
+        in
         output_line chan com
       else begin
         let source = Tar.outname source in
