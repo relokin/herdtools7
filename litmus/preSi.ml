@@ -1265,6 +1265,7 @@ module Make
                   | Z ->
                       O.fii "(void)litmus_set_pte(_vars->pte_%s,litmus_set_pte_invalid(*_vars->pte_%s));" x x
                   | V (o,pteval) ->
+                      O.fii "cache_flush((void *)%s);" x;
                       let is_default = PTEVal.is_default pteval in
                       if not (o = None && is_default) then begin
                         let arg = match o with
