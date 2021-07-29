@@ -197,6 +197,25 @@ module Make
 (***************************************)
 (* Various inclusions from C utilities *)
 (***************************************)
+      (************)
+      (* Outcomes *)
+      (************)
+
+      let does_pad t =
+        let open CType in
+        match t with
+        | Pointer _
+        | Array (("int"|"int32_t"|"uint32_t"|"int64_t"|"uint64_t"),_)
+        | Base ("int"|"int32_t"|"uint32_t"|"int64_t"|"uint64_t") -> true
+        | _ -> false
+
+      let dump_loc_tag_coded loc =  sprintf "%s_idx" (A.dump_loc_tag loc)
+
+      let dump_rloc_tag_coded loc =  sprintf "%s_idx" (A.dump_rloc_tag loc)
+
+      let choose_dump_rloc_tag rloc env =
+        if U.is_rloc_ptr rloc env then dump_rloc_tag_coded rloc
+        else  A.dump_rloc_tag rloc
 
 (* Time base *)
       let dump_read_timebase () =
@@ -220,16 +239,101 @@ module Make
 (* Fault handler *)
       let filter_fault_lbls =
         List.filter
-          (fun ((_,o),_) -> Misc.is_some o)
+          (fun ((_,o),_,_) -> Misc.is_some o)
 
       let tag_seen f =  sprintf "see_%s" (SkelUtil.dump_fatom_tag A.V.pp_v f)
-      and tag_code ((p,lbl),_) = sprintf "code_P%d%s" p
+      and tag_code ((p,lbl),_,_) = sprintf "code_P%d%s" p
           (match lbl with None -> assert false | Some lbl -> "_" ^ lbl)
       and tag_log f =  SkelUtil.dump_fatom_tag A.V.pp_v f
       and dump_addr_idx s = sprintf "_idx_%s" s
 
+      let fault_prop_fmt_var var f =
+        SkelUtil.dump_fatom_tag (fun _ -> var) f
 
-      let dump_fault_handler doc test =
+      let fault_prop_get_types_locs env f =
+        let rlocs = match f with
+          | (_,_,Some prop) -> T.C.rlocations_prop prop
+          | _ -> A.RLocSet.empty in
+        A.RLocSet.fold
+          (fun loc k -> (U.find_rloc_type loc env,loc)::k)
+          rlocs []
+
+      let fault_prop_iter_vars env f fault =
+        let fields = fault_prop_get_types_locs env fault in
+        List.iter
+          (fun (t,rloc) ->
+            if CType.is_ptr t then
+              let name = dump_loc_tag_coded (ConstrGen.loc_of_rloc rloc) in
+              let name = fault_prop_fmt_var name fault in
+              f "int" name
+            else
+              match rloc with
+              | ConstrGen.Loc (A.Location_global a as loc) ->
+                 let ctype = SkelUtil.dump_global_type (G.as_addr a) t in
+                 let name = fault_prop_fmt_var (A.dump_loc_tag loc) fault in
+                 f ctype name
+              | _ ->
+                 let ctype = CType.dump t in
+                 let name = fault_prop_fmt_var (A.dump_rloc_tag rloc) fault in
+                 f ctype name)
+          fields
+
+      let fault_prop_declare_vars env fault =
+        fault_prop_iter_vars env (fun t n -> O.fi "%s %s;" t n) fault
+
+      let fault_prop_init_vars env fault =
+        fault_prop_iter_vars env (fun _ n -> O.fi "p->%s = 0;" n) fault
+
+      let fault_prop_read_vars env indent fault =
+        let rlocs = match fault with
+          | (_,_,Some prop) -> T.C.rlocations_prop prop
+          | _ -> A.RLocSet.empty in
+        A.RLocSet.iter
+          (fun loc ->
+            let tag = A.dump_rloc_tag loc in
+            match U.find_rloc_type loc env with
+            | Array (_,sz) ->
+               O.fx indent
+                 "for (int _j = 0 ; _j < %i ; _j++) sf->%s[_j] = vars_ptr[i]->%s[_j];"
+                 sz (fault_prop_fmt_var tag fault) tag
+            | _ ->
+               let lhs = sprintf "sf->%s" (fault_prop_fmt_var tag fault)
+               and rhs =
+                 let open ConstrGen in
+                 match loc with
+                 | Deref (v,i) ->
+                    sprintf "vars_ptr[i]->%s[%d]" (A.dump_loc_tag v) i
+                 | _ -> "*(vars_ptr[i])->"^tag in
+               O.fx indent "%s = %s;" lhs rhs)
+          rlocs
+
+      let fault_prop_save_vars env f =
+        let rlocs = match f with
+          | (_,_,Some prop) -> T.C.rlocations_prop prop
+          | _ -> A.RLocSet.empty in
+        A.RLocSet.iter
+          (fun loc ->
+            let tag = fault_prop_fmt_var (A.dump_rloc_tag loc) f in
+            match U.find_rloc_type loc env with
+            | Array (_,sz) ->
+               O.fii
+                 "for (int _j = 0 ; _j < %i ; _j++) %s[_j] = %s[_j];"
+                 sz (OutUtils.fmt_presi_index tag) tag
+            | _ ->
+               let lhs =
+                 (if U.is_rloc_ptr loc env then
+                    OutUtils.fmt_presi_ptr_index
+                  else OutUtils.fmt_presi_index) tag
+               and rhs =
+                 let open ConstrGen in
+                 match loc with
+                 | Deref (v,i) ->
+                    sprintf "%s[%d]" (A.dump_loc_tag v) i
+                 | _ -> tag in
+               O.fii "%s = _ctx->f.%s;" lhs rhs)
+          rlocs
+
+      let dump_fault_handler doc test env =
         if have_fault_handler then begin
           O.o "/* Fault Handling */" ;
           O.o "#define HAVE_FAULT_HANDLER 1" ;
@@ -275,6 +379,7 @@ module Make
               end ;
               O.o "typedef struct {" ;
               O.fi "int %s;" (String.concat "," (List.map tag_seen faults)) ;
+              List.iter (fault_prop_declare_vars env) faults ;
               O.o "} see_fault_t;" ;
               O.o "" ;
               O.o "static see_fault_t *see_fault[NEXE];" ;
@@ -282,7 +387,10 @@ module Make
               O.o "" ;
               O.o "static void init_see_fault(see_fault_t *p) {" ;
               List.iter
-                (fun f -> O.fi "p->%s = 0;" (tag_seen f))
+                (fun f ->
+                  O.fi "p->%s = 0;" (tag_seen f);
+                  fault_prop_init_vars env f;
+                )
                 faults ;
               O.o "}" ;
               O.o "" ;
@@ -296,22 +404,23 @@ module Make
               O.oi "see_fault_t *sf = see_fault[i];" ;
               O.oi "switch (w->proc) {" ;
               Misc.group_iter
-                (fun ((p,_),_) ((q,_),_) -> Misc.int_eq p q)
-                (fun ((p,_),_) fs ->
+                (fun ((p,_),_,_) ((q,_),_,_) -> Misc.int_eq p q)
+                (fun ((p,_),_,_) fs ->
                   O.fi "case %d: {" p ;
                   Misc.group_iteri
-                    (fun (_,v) (_,w) -> A.V.compare v w = 0)
-                    (fun k (_,v) fs ->
+                    (fun (_,v,_) (_,w,_) -> A.V.compare v w = 0)
+                    (fun k (_,v,_) fs ->
                       let prf = if k > 0 then "else if" else "if"
                       and test =
                         sprintf "idx_loc == %s" (dump_addr_idx (A.V.pp_v v)) in
                       O.fii "%s (%s) {" prf test ;
-                      let no_lbl ((_,o),_) = Misc.is_none o in
+                      let no_lbl ((_,o),_,_) = Misc.is_none o in
                       let no,fs = List.partition no_lbl fs in
                       begin match no with
                       | [] -> ()
                       | f::_ ->
                           O.fiii "atomic_inc_fetch(&sf->%s);" (tag_seen f) ;
+                          fault_prop_read_vars env Indent.indent3 f;
                       end ;
                       List.iteri
                         (fun k f  ->
@@ -319,7 +428,8 @@ module Make
                           and test = sprintf "pc == labels.%s" (tag_code f)
                           and act =  sprintf "atomic_inc_fetch(&sf->%s)" (tag_seen f) in
                           O.fiii "%s (%s) {" prf test ;
-                          O.fiv "%s;" act)
+                          O.fiv "%s;" act;
+                          fault_prop_read_vars env Indent.indent4 f;)
                         fs ;
                       if Misc.consp fs then O.fiii "}" ;
                       O.fii "}")
@@ -460,26 +570,6 @@ module Make
         O.o "" ;
         Topo.dump_alloc (get_addrs test)
 
-(************)
-(* Outcomes *)
-(************)
-
-      let does_pad t =
-        let open CType in
-        match t with
-        | Pointer _
-        | Array (("int"|"int32_t"|"uint32_t"|"int64_t"|"uint64_t"),_)
-        | Base ("int"|"int32_t"|"uint32_t"|"int64_t"|"uint64_t") -> true
-        | _ -> false
-
-      let dump_loc_tag_coded loc =  sprintf "%s_idx" (A.dump_loc_tag loc)
-
-      let dump_rloc_tag_coded loc =  sprintf "%s_idx" (A.dump_rloc_tag loc)
-
-      let choose_dump_rloc_tag rloc env =
-        if U.is_rloc_ptr rloc env then dump_rloc_tag_coded rloc
-        else  A.dump_rloc_tag rloc
-
 (* Collected locations *)
 
       let fmt_outcome test env locs =
@@ -549,8 +639,8 @@ module Make
         begin match faults with
         | [] -> ()
         | fs ->
-            O.fi "int %s;"
-              (String.concat "," (List.map tag_log fs))
+            O.fi "int %s;" (String.concat "," (List.map tag_log fs));
+            List.iter (fault_prop_declare_vars env) fs
         end ;
         if pad  then O.oi "uint32_t _pad;" ;
         O.o "} log_t;" ;
@@ -643,55 +733,57 @@ module Make
         end ;
         O.o "/* Dump of outcome */" ;
         O.f "static void pp_log(%slog_t *p) {" (k_nkvm  "FILE *chan,") ;
-        let fmt = fmt_outcome test env rlocs
-        and args =
-          A.RLocSet.map_list
-            (fun rloc -> match U.find_rloc_type rloc env with
-            | Pointer _ ->
-                None,
-                [sprintf "pretty_addr[p->%s]" (dump_rloc_tag_coded rloc)]
-            | Array (_,sz) ->
-                let tag = A.dump_rloc_tag rloc in
-                let rec pp_rec k =
-                  if k >= sz then []
-                  else
-                    sprintf "p->%s[%i]" tag k::pp_rec (k+1) in
-                None,pp_rec 0
-            | Base "pteval_t" ->
-                let v = sprintf "p->%s" (A.dump_rloc_tag rloc) in
-                let fs =
-                  sprintf "pretty_addr_physical[unpack_oa(%s)]" v::
-                  List.map
-                    (fun f -> sprintf "unpack_%s(%s)" f v)
-                    ["af";"db";"dbm";"valid";"el0";] in
-                Some v,fs
-            | _ ->
-                None,[sprintf "p->%s" (A.dump_rloc_tag rloc)])
-            rlocs in
-        let fst = ref true in
-        List.iter2
-          (fun (p1,p2) (as_whole,arg) ->
-            let prf = if !fst then "" else " " in
-            fst := false ;
-            match as_whole with
-            | Some as_whole -> (* Assuming a pteval_t *)
-                O.fi "if (%s == NULL_PACKED) {" as_whole ;
-                EPF.fii ~out:"chan"
-                  "%s;" ["\""^prf^p1^"="^(if Cfg.hexa then "0x0" else "0")^"\""] ;
-                O.oi "} else {" ;
-                let oa,rem = match arg with
-                  | oa::rem -> oa,rem
-                  | [] -> assert false
-                and oa_fmt,rem_fmt = match p2 with
-                  | o::oa::rem -> o^oa,rem
-                  | _ -> assert false in
-                EPF.fii ~out:"chan" (sprintf "%s%s=%s" prf p1 oa_fmt) [oa] ;
-                let ds =
-                  let open PTEVal in
-                  let p = prot_default in
-                  let ds = [p.af; p.db; p.dbm; p.valid;p.el0;] in
-                  List.map (sprintf "%i") ds in
-                let rec do_rec ds fs fmts = match ds,fs,fmts with
+        let dump_rlocs prefix rlocs =
+          let fmt = fmt_outcome test env rlocs
+          and args =
+            A.RLocSet.map_list
+              (fun rloc ->
+                match U.find_rloc_type rloc env with
+                | Pointer _ ->
+                   None,
+                   [sprintf "pretty_addr[%s%s]" prefix (dump_rloc_tag_coded rloc)]
+                | Array (_,sz) ->
+                   let tag = A.dump_rloc_tag rloc in
+                   let rec pp_rec k =
+                     if k >= sz then []
+                     else
+                       sprintf "%s%s[%i]" prefix tag k::pp_rec (k+1) in
+                   None,pp_rec 0
+                | Base "pteval_t" ->
+                   let v = sprintf "%s%s" prefix (A.dump_rloc_tag rloc) in
+                   let fs =
+                     sprintf "pretty_addr_physical[unpack_oa(%s)]" v::
+                       List.map
+                         (fun f -> sprintf "unpack_%s(%s)" f v)
+                         ["af";"db";"dbm";"valid";"el0";] in
+                   Some v,fs
+                | _ ->
+                   None,[sprintf "%s%s" prefix (A.dump_rloc_tag rloc)])
+              rlocs in
+          let fst = ref true in
+          List.iter2
+            (fun (p1,p2) (as_whole,arg) ->
+              let prf = if !fst then "" else " " in
+              fst := false ;
+              match as_whole with
+              | Some as_whole -> (* Assuming a pteval_t *)
+                 O.fi "if (%s == NULL_PACKED) {" as_whole ;
+                 EPF.fii ~out:"chan"
+                   "%s;" ["\""^prf^p1^"="^(if Cfg.hexa then "0x0" else "0")^"\""] ;
+                 O.oi "} else {" ;
+                 let oa,rem = match arg with
+                   | oa::rem -> oa,rem
+                   | [] -> assert false
+                 and oa_fmt,rem_fmt = match p2 with
+                   | o::oa::rem -> o^oa,rem
+                   | _ -> assert false in
+                 EPF.fii ~out:"chan" (sprintf "%s%s=%s" prf p1 oa_fmt) [oa] ;
+                 let ds =
+                   let open PTEVal in
+                   let p = prot_default in
+                   let ds = [p.af; p.db; p.dbm; p.valid;p.el0;] in
+                   List.map (sprintf "%i") ds in
+                 let rec do_rec ds fs fmts = match ds,fs,fmts with
                   | [],[],[c] ->
                       let c = sprintf "\"%s\"" (String.escaped c) in
                       EPF.fii ~out:"chan" "%s;" [c]
@@ -701,22 +793,37 @@ module Make
                       do_rec ds fs fmts
                   |_ ->  (* All, defaults, arguments and formats agree *)
                      assert false in
-                do_rec ds rem rem_fmt ;
-                O.oi "}"
-            | None ->
-                let p2 = String.concat "" p2 in
-                EPF.fi ~out:"chan" (sprintf "%s%s=%s;" prf p1 p2) arg)
-          fmt args ;
+                 do_rec ds rem rem_fmt ;
+                 O.oi "}"
+              | None ->
+                 let p2 = String.concat "" p2 in
+                 EPF.fi ~out:"chan" (sprintf "%s%s=%s;" prf p1 p2) arg)
+            fmt args ;
+        in
+        dump_rlocs "p->" rlocs;
         begin match faults with
         | [] -> () (* Would output 'printf("");', which gcc may reject. *)
         | _::_ ->
-            let fmt2 = U.fmt_faults faults
-            and args2 =
-              List.map
-                (fun f -> sprintf "p->%s?\"\":\"~\""
-                    (SkelUtil.dump_fatom_tag A.V.pp_v f))
-                faults in
-            EPF.fi ~out:"chan" fmt2 args2 ;
+           let pp_log_f f =
+             O.oi (sprintf "if (p->%s) {" (SkelUtil.dump_fatom_tag A.V.pp_v f)) ;
+             begin match f with
+             | ((p,lbl),v,Some prop) ->
+                let fmt_fault =
+                  sprintf "fault(P%d%s,%s," p
+                    (match lbl with None -> "" | Some lbl -> ":" ^ lbl) (A.V.pp_v v) in
+                EPF.fii ~out:"chan" fmt_fault [];
+                let rlocs = T.C.rlocations_prop prop in
+                let prefix = sprintf "p->%s" (SkelUtil.dump_fatom_tag (fun _ -> "") f) in
+                dump_rlocs prefix rlocs ;
+                EPF.fii ~out:"chan" ");" [];
+             | _ ->
+                ()
+             end ;
+             O.oi "} else {" ;
+             let fmt_fault = sprintf "~%s;" (Fault.pp_fatom A.V.pp_v f) in
+             EPF.fii ~out:"chan" fmt_fault [];
+             O.oi "}"
+           in List.iter pp_log_f faults;
         end ;
         O.o "}" ;
         O.o "" ;
@@ -743,6 +850,11 @@ module Make
           | f::fs ->
               let tag = SkelUtil.dump_fatom_tag A.V.pp_v f in
               O.fii "p->%s == q->%s &&" tag tag ;
+              O.fii "(p->%s ? (" tag;
+              let check_var _ n = O.fiii "p->%s == q->%s &&" n n in
+              fault_prop_iter_vars env check_var f;
+              O.fiii "1";
+              O.fii ") : 1) &&";
               do_eq_faults fs in
         let rec do_rec = function
           | [] -> do_eq_faults faults
@@ -781,7 +893,11 @@ module Make
                 type location = A.location
                 type t = location ConstrGen.rloc
                 let compare = A.rlocation_compare
-                let dump rloc = sprintf "p->%s" (choose_dump_rloc_tag rloc env)
+                let dump fo rloc = match fo with
+                  | Some f -> sprintf "p->%s%s"
+                                (SkelUtil.dump_fatom_tag (fun _ -> "") f)
+                                (choose_dump_rloc_tag rloc env)
+                  | None ->  sprintf "p->%s" (choose_dump_rloc_tag rloc env)
                 let dump_fatom dump a = sprintf "p->%s" (SkelUtil.dump_fatom_tag dump a)
               end
             end) in
@@ -1318,9 +1434,11 @@ module Make
 (* Collect faults *)
         if Cfg.is_kvm then begin
           List.iter
-            (fun ((p,_),_ as f) ->
-              if Proc.compare proc p = 0 then
-                O.fii "_log->%s = _ctx->f.%s?1:0;" (tag_log f) (tag_seen f))
+            (fun ((p,_),_,_ as f) ->
+              if Proc.compare proc p = 0 then begin
+                  O.fii "_log->%s = _ctx->f.%s?1:0;" (tag_log f) (tag_seen f);
+                  fault_prop_save_vars env f
+                end)
             faults
         end ;
 (* Synchronise *)
@@ -1449,7 +1567,7 @@ module Make
         | _::_ ->
             O.oi "if (_c->role == 0 && _c->inst == 0) {" ;
             List.iter
-              (fun ((p,lbl),_ as f) -> match lbl with
+              (fun ((p,lbl),_,_ as f) -> match lbl with
               | None ->
                   O.fii "labels.%s = (ins_t *) &&CODE%d;" (tag_code f) p
               | Some lbl ->
@@ -1532,7 +1650,7 @@ module Make
               O.o "static void init_labels(void) {" ;
               O.oi "ins_t nop = getnop();" ;
               List.iter
-                (fun ((p,lbl),_ as f) ->
+                (fun ((p,lbl),_,_ as f) ->
                   let lbl = Misc.as_some lbl in
                   let off = U.find_label_offset p lbl test+1 in (* +1 because of added inital nop *)
                   let lhs = sprintf "labels.%s" (tag_code f)
@@ -1864,7 +1982,7 @@ module Make
         let env = U.build_env test in
         let stats = get_stats test in
         let some_ptr = dump_outcomes env test in
-        dump_fault_handler doc test ;
+        dump_fault_handler doc test env ;
         dump_cond_def env test ;
         dump_parameters env test ;
         dump_hash_def doc.Name.name env test ;

@@ -50,20 +50,20 @@ let match_rloc f g = function
 type ('loc,'v) atom =
   | LV of 'loc rloc * 'v
   | LL of 'loc * 'loc
-  | FF of 'v Fault.atom
+  | FF of ('v, ('loc,'v) prop) Fault.atom
+
+and ('l,'v) prop =
+  | Atom of ('l, 'v) atom
+  | Not of ('l,'v) prop
+  | And of ('l,'v) prop list
+  | Or of ('l,'v) prop list
+  | Implies of ('l,'v) prop * ('l,'v) prop
 
 let dump_atom pp_loc pp_rloc pp_v = function
   | LV (rloc,v) ->  sprintf "%s=%s" (dump_rloc pp_loc rloc)  (pp_v v)
   | LL (loc1,loc2) ->
       sprintf "%s=%s" (pp_loc loc1) (pp_rloc loc2)
   | FF f -> Fault.pp_fatom pp_v f
-
-type ('l,'v) prop =
-  | Atom of ('l, 'v) atom
-  | Not of ('l,'v) prop
-  | And of ('l,'v) prop list
-  | Or of ('l,'v) prop list
-  | Implies of ('l,'v) prop * ('l,'v) prop
 
 type 'prop constr =
     ForallStates of 'prop
