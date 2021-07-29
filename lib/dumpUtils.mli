@@ -15,4 +15,4 @@
 (****************************************************************************)
 
 val dump_locations :
- ('loc -> string) -> ('v -> string) -> ('loc ,'v) LocationsItem.t list -> string
+ ('loc1 -> string) -> ('v -> string) -> ('loc1,'loc2,'v) LocationsItem.t list -> string

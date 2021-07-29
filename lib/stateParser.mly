@@ -79,13 +79,13 @@ let mk_lab p s = Label (p,s)
 %start init
 %type <MiscParser.location> main_location
 %start main_location
-%type < (MiscParser.location,MiscParser.maybev) LocationsItem.t list * MiscParser.prop option * MiscParser.constr * (string * MiscParser.quantifier) list> constraints
+%type < (MiscParser.location,MiscParser.location,MiscParser.maybev) LocationsItem.t list * MiscParser.prop option * MiscParser.constr * (string * MiscParser.quantifier) list> constraints
 %start constraints
 %type  <MiscParser.constr> main_constr
 %start main_constr
 %type  <MiscParser.constr> skip_loc_constr
 %start skip_loc_constr
-%type  <(MiscParser.location,MiscParser.maybev) LocationsItem.t list * MiscParser.constr> main_loc_constr
+%type  <(MiscParser.location,MiscParser.location,MiscParser.maybev) LocationsItem.t list * MiscParser.constr> main_loc_constr
 %start main_loc_constr
 %type <MiscParser.prop option> main_filter
 %start main_filter
@@ -220,7 +220,9 @@ rloc_typ:
 | rloc NAME { ($1, Ty $2) }
 | rloc NAME STAR { ($1, Pointer $2) }
 
-fault: FAULT LPAR lbl COMMA NAME RPAR { ($3,mk_sym $5) }
+fault:
+| FAULT LPAR lbl COMMA NAME RPAR { ($3,mk_sym $5,None) }
+| FAULT LPAR lbl COMMA NAME COMMA atom_prop RPAR { ($3,mk_sym $5,Some $7) }
 
 loc_item:
 | rloc_typ { let a,t = $1 in LocationsItem.Loc (a,t) }
@@ -339,7 +341,6 @@ atom_prop:
       Not (Atom (LV (Loc $1,vec))) }
 | location EQUAL location_deref {Atom (LL ($1,$3))}
 | location EQUALEQUAL location_deref {Atom (LL ($1,$3))}
-| fault { Atom (FF $1) }
 | location EQUAL LPAR separated_nonempty_list(COMMA, maybev_prop) RPAR
   { Atom (LV (Loc $1, mk_pte_val $1 $4)) }
 
@@ -350,6 +351,8 @@ prop:
     {Or []}
 | atom_prop
     { $1 }
+| fault
+    { Atom (FF $1) }
 | NOT prop
     {Not $2}
 | prop AND prop

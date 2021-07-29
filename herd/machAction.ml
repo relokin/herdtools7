@@ -304,7 +304,7 @@ end = struct
     | Access _|Amo _|Commit _|Barrier _ | TooFar | Inv _ | DC _|Arch _ -> false
 
   let to_fault = function
-    | Fault (i,A.Location_global x,msg) -> Some ((i.A.proc,i.A.labels),x,msg)
+    | Fault (i,A.Location_global x,msg) -> Some ((i.A.proc,i.A.labels),x,None,msg)
     | Fault _|Access _|Amo _|Commit _|Barrier _ |TooFar|Inv _|DC _|Arch _
       -> None
 

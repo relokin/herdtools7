@@ -44,7 +44,7 @@ module LocMap : MyMap.S with type key = location
 type rlocation = location ConstrGen.rloc
 module RLocSet : MySet.S with type elt = rlocation
 
-type locations = (location,maybev) LocationsItem.t list
+type locations = (location,location,maybev) LocationsItem.t list
 
 type prop = (location, maybev) ConstrGen.prop
 type constr = prop ConstrGen.constr
@@ -82,7 +82,7 @@ type ('i, 'p, 'prop, 'loc, 'v) result =
       prog : 'p ;
       filter : 'prop option ;
       condition : 'prop ConstrGen.constr ;
-      locations : ('loc,'v) LocationsItem.t list ;
+      locations : ('loc,'loc,'v) LocationsItem.t list ;
       extra_data : extra_data ;
     }
 

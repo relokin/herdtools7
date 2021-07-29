@@ -92,7 +92,7 @@ module type S = sig
 (**********)
 (* Faults *)
 (**********)
-  include Fault.S with type loc_global := v
+  include Fault.S with type loc_global := v and type prop = (location,v) ConstrGen.prop
 
 (*********)
 (* State *)
@@ -379,6 +379,7 @@ module Make(C:Config) (I:I) : S with module I = I
       module FaultArg = struct
         include LocArg
         open Constant
+        type prop = (location,v) ConstrGen.prop
 
 (* Compare id in fault and other id, at least one id must be allowed in fault *)
         let same_sym_fault sym1 sym2 = match sym1,sym2 with
@@ -762,7 +763,7 @@ module Make(C:Config) (I:I) : S with module I = I
         else
           let noflts =
             FaultAtomSet.fold
-              (fun ((p,lab),loc as fa) k ->
+              (fun ((p,lab),loc,prop as fa) k ->
                 if
                   FaultSet.exists (fun f -> check_one_fatom f fa) flts
                 then k
@@ -770,7 +771,7 @@ module Make(C:Config) (I:I) : S with module I = I
                   let tr_lab = match lab with
                     | None -> Label.Set.empty
                     | Some lab -> Label.Set.singleton lab in
-                  (" ~"^pp_fault (((p,tr_lab),loc,None))^";")::k)
+                  (" ~"^pp_fault (((p,tr_lab),loc,prop,None))^";")::k)
               fobs [] in
           pp_st ^ " " ^
           FaultSet.pp_str " " (fun f -> pp_fault f ^ ";") flts ^
