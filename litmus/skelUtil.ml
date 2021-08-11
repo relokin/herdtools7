@@ -450,7 +450,7 @@ module Make
 (* Dump *)
       open ConstrGen
 
-      let pp_atom tr_out a =
+      let rec pp_atom tr_out a =
         match a with
         | LV (loc,v) ->
             sprintf "%s=%s"
@@ -459,7 +459,7 @@ module Make
         | LL (loc1,loc2) ->
             sprintf "%s=%s" (tr_out (A.pp_location loc1))
               (tr_out (A.pp_rval loc2))
-        | FF f -> Fault.pp_fatom A.V.pp_v f
+        | FF f -> Fault.pp_fatom A.V.pp_v (pp_atom tr_out) f
 
       let pp_cond test =
         let tr_out = tr_out test in

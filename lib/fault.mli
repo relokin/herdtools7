@@ -28,7 +28,7 @@ end
 
 type ('loc,'prop) atom =  (Proc.t * Label.t option) * 'loc * 'prop option
 
-val pp_fatom : ('loc -> string) -> ('loc,'v) atom -> string
+val pp_fatom : ('loc -> string) -> ('a -> string) -> ('loc,'v) atom -> string
 
 val atom_compare : ('loc -> 'loc -> int) -> ('loc,'prop) atom -> ('loc,'prop) atom -> int
 

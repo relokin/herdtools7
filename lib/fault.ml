@@ -27,15 +27,20 @@ end
 
 type ('loc,'prop) atom =  (Proc.t * Label.t option) * 'loc * 'prop option
 
-let pp_gen f pp_lbl pp_loc (lbl,x,_c) =
-  sprintf "%s(%s,%s)" f (pp_lbl lbl) (pp_loc x)
+let pp_gen f pp_lbl pp_loc pp_atom (lbl,x,prop) =
+  let prop = 
+    match prop with
+    | Some p -> ConstrGen.constraints_to_string pp_atom p 
+    | None -> ""
+  in
+  sprintf "%s(%s,%s%s)" f (pp_lbl lbl) (pp_loc x) (prop)
 
-let pp_fatom pp_loc =
+let pp_fatom pp_loc pp_prop pp_atom =
   pp_gen "fault"
     (fun (p,lbl) -> match lbl with
     | None -> Proc.pp p
     | Some lbl -> sprintf "%s:%s" (Proc.pp p) (Label.pp lbl))
-    pp_loc
+    pp_loc pp_atom
 
 let atom_compare compare ((p1,lbl1),v1,_prop1) ((p2,lbl2),v2,_prop2) =
   match Proc.compare p1 p2 with
