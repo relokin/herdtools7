@@ -234,18 +234,19 @@ and pline bds fs abs = parse
 | blank* fault blank*
     '(' blank* ('P'? (num as proc)) (':' (name as lbl))? blank* ','
      ((loc|new_loc) as loc) (':' alpha+)? blank* (* skip optional tag *)
+     (',' blank* (name (':' name)? as ftype))? blank*
       (',' [^')']*)?  (* skip optional comment *)
       ')' blank* ';'
     {
      let loc = Constant.old2new loc in
-     let f = (to_proc proc,lbl),loc in
+     let f = (to_proc proc,lbl),loc,ftype in
      let f = HashedFault.as_hashed f in
      pline bds (f::fs) abs lexbuf }
 | blank* '~' fault blank* '(' blank* ('P'? (num as proc)) (':' (name as lbl))? blank* ','
-    ((loc|new_loc) as loc) blank* ')' blank* ';'
+    ((loc|new_loc) as loc) (',' blank* (name (':' name)? as ftype))? blank* ')' blank* ';'
     {
      let loc = Constant.old2new loc in
-     let f = (to_proc proc,lbl),loc in
+     let f = (to_proc proc,lbl),loc,ftype in
      let f = HashedFault.as_hashed f in
      pline bds fs (f::abs) lexbuf }
 | blank* ('#' [^'\n']*)?  nl  { incr_lineno lexbuf ; bds,fs,abs }

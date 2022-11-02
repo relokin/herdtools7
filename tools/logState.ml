@@ -465,7 +465,7 @@ module LC =
       let state_fault st f =
         let open HashedFaults in
         let {HashedState.S.f=fs; _;} = HashedState.as_t st in
-        let (p0,lbl0),v0,_ftype = f in
+        let (p0,lbl0),v0,ftype0 = f in
         let eq_label = match lbl0 with
         | None -> fun _ -> true
         | Some lbl0 ->
@@ -474,8 +474,13 @@ module LC =
         let rec find fs = match fs.Hashcons.node with
           | Nil -> false
           | Cons (f,fs) ->
-              let ((p,lbl),sym) = HashedFault.as_t f in
-              Misc.int_eq p0 p && eq_label lbl && Misc.string_eq sym sym0 ||
+              let ((p,lbl),sym,ftype) = HashedFault.as_t f in
+              let eq_ft = match ftype0, ftype with
+                | Some ft0, Some ft when Misc.string_eq ft0 ft -> true
+                | None, _ | _, None ->
+                   true
+                | _, _ -> false in
+              Misc.int_eq p0 p && eq_label lbl && Misc.string_eq sym sym0 && eq_ft ||
               find fs in
         find fs
 
