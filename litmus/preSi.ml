@@ -618,7 +618,7 @@ module Make
                 O.f "#define %-25s  %d" (SkelUtil.instr_symb_id flbl) (i + 1))
               CfgLoc.labels ;
             O.o "" ;
-            O.f "static char *instr_symb_name[] = {" ;
+            O.f "static const char *instr_symb_name[] = {" ;
             O.oi "\"UNKNOWN\"," ;
             (* Define names for inst symbols *)
             List.iter (fun (_,lbl) -> O.fi "\"%s\"," lbl ) CfgLoc.labels ;
@@ -656,7 +656,7 @@ module Make
                 end)
               test.T.globals ;
             O.o "" ;
-            O.f "static char *data_symb_name[] = {" ;
+            O.f "static const char *data_symb_name[] = {" ;
             (* Define names for data symbols *)
             O.oi "\"UNKNOWN\"," ;
             List.iter
