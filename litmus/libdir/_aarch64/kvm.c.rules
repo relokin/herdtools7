@@ -1,5 +1,5 @@
 clean:
-	/bin/rm -f *.o *.s *.t *.elf *.flat *~ *.t $(H)
+	/bin/rm -f *.o *.s *.t *.elf *.flat *.so *.efi *~ *.t $(H)
 
 %.s: %.c
 	$(CC) -DASS $(GCCOPTS) -S $<
@@ -13,8 +13,24 @@ clean:
 %.h: %.t
 	sh toh.sh $< > $@
 
-%.elf: LDFLAGS = -nostdlib -pie -n
+ifeq ($(CONFIG_EFI),y)
+%.so: EFI_LDFLAGS = -Bsymbolic -shared -nostdlib -defsym=EFI_SUBSYSTEM=0xa --no-undefined
+%.so: %.o $(OBJ) utils.o kvm_timeofday.o $(FLATLIBS) $(SRCDIR)/arm/efi/elf_aarch64_efi.lds $(cstart.o)
+	$(CC) $(GCCOPTS) -c -o $(@:.so=.aux.o) $(SRCDIR)/lib/auxinfo.c \
+		-DPROGNAME=\"$(@:.so=.efi)\" -DAUXFLAGS=$(AUXFLAGS)
+	$(LD) $(EFI_LDFLAGS) -o $@ -T $(SRCDIR)/arm/efi/elf_aarch64_efi.lds \
+		$(filter %.o, $^) $(FLATLIBS) $(@:.so=.aux.o)
+		$(EFI_LIBS)
+	$(RM) $(@:.so=.aux.o)
 
+%.efi: %.so
+	$(call arch_elf_check, $^)
+	$(OBJCOPY) -j .text -j .sdata -j .data -j .dynamic -j .dynsym \
+		-j .rel -j .rela -j .rel.* -j .rela.* -j .rel* -j .rela* \
+		-j .reloc \
+		-O binary $^ $@
+else
+%.elf: LDFLAGS = -nostdlib -pie -n
 run.elf: run.o $(OBJ) utils.o kvm_timeofday.o $(FLATLIBS) $(SRCDIR)/arm/flat.lds $(cstart.o)
 	$(CC) $(CFLAGS) -c -o $(@:.elf=.aux.o) $(SRCDIR)/lib/auxinfo.c \
 		-DPROGNAME=\"$(@:.elf=.flat)\" -DAUXFLAGS=$(AUXFLAGS)
@@ -27,3 +43,4 @@ run.elf: run.o $(OBJ) utils.o kvm_timeofday.o $(FLATLIBS) $(SRCDIR)/arm/flat.lds
 	$(call arch_elf_check, $^)
 	$(OBJCOPY) -O binary $^ $@
 	@chmod a-x $@
+endif

@@ -383,7 +383,7 @@ let dump_shell_cont arch sources utils =
       fprintf chan "EXE=$(SRC:.c=%s)\n"
         (match Cfg.mode with
         | Mode.Std|Mode.PreSi -> ".exe"
-        | Mode.Kvm -> ".flat") ;
+        | Mode.Kvm -> ".$(EXT)") ;
       fprintf chan "T=$(SRC:.c=.t)\n" ;
       fprintf chan "\n" ;
 (* Entry points *)
@@ -568,7 +568,7 @@ let dump_c_cont xcode arch sources utils nts =
       if not xcode then begin
         fprintf chan "OBJ=$(SRC:.c=.o)%s\n"
           (if shared_topology then " topology.o" else "") ;
-        fprintf chan "EXE=run.%s\n" (if is_kvm then "flat" else "exe") ;
+        fprintf chan "EXE=run.%s\n" (if is_kvm then "$(EXT)" else "exe") ;
         fprintf chan "\n" ;
       end ;
 (* Entry point *)
