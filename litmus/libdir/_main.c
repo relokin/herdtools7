@@ -50,9 +50,7 @@ int RUN(int argc,char **argv,FILE *out) {
 #endif
   init_getinstrs();
   init_global(glo_ptr);
-#ifdef KVM
   if (!feature_check()) return -1;
-#endif
 #ifdef OUT
 #ifdef HAVE_TIMEBASE
   const int delta_tb = DELTA_TB;

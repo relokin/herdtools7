@@ -80,7 +80,8 @@ module Make
 
     let do_label_init = not (Label.Full.Set.is_empty CfgLoc.label_init)
 
-    let do_ascall = Cfg.ascall || Cfg.is_kvm || do_label_init
+    let do_ascall = Cfg.ascall || Cfg.is_kvm || do_label_init ||
+                      Cfg.variant Variant_litmus.Self
 
     let do_precise = Precision.is_fatal Cfg.precision
 
@@ -272,16 +273,18 @@ module Make
         if do_self then begin
           Insert.insert O.o "self.c" ;
           O.o "" ;
-          if Cfg.is_kvm then begin
-            Insert.insert O.o "kvm-self.c" ;
-            O.o ""
-          end
+          if Cfg.is_kvm then
+            Insert.insert O.o "kvm-self.c"
+          else
+            Insert.insert O.o "presi-self.c" ;
+          O.o "" ;
         end ;
         if CfgLoc.need_prelude then begin
           ObjUtil.insert_lib_file O.o "_prelude_size.c"
         end ;
         if do_label_init then begin
           O.o "/* Code analysis */" ;
+
           O.o "#define SOME_LABELS 1" ;
           O.o "" ;
           O.o "typedef struct {" ;
@@ -1319,9 +1322,10 @@ module Make
           O.f "#define VOFF %d" voff ;
         end ;
         O.o "" ;
-        if Cfg.is_kvm && (some_vars test || do_self) then begin
-          let has_user = Misc.consp procs_user in
+        if some_vars test || do_self then begin
           O.o "static void vars_init(vars_t *_vars,intmax_t *_mem) {" ;
+          if Cfg.is_kvm then begin
+          let has_user = Misc.consp procs_user in
           if some_vars test then begin
               O.oi "const size_t _sz = LINE/sizeof(intmax_t);";
               O.oi "pteval_t *_p;" ;
@@ -1338,7 +1342,8 @@ module Make
               end ;
               O.oi "_mem += _sz ;")
             test.T.globals ;
-          if has_user then O.oi "flush_tlb_all();" ;
+          if has_user then O.oi "flush_tlb_all();"
+          end ;
           if do_self then begin
               let open OutUtils in
               List.iter
@@ -1347,8 +1352,13 @@ module Make
                     (fmt_code_size n) (fmt_code n) (A.Out.get_nrets t) ;
                   O.fi "_vars->%s = prelude_size((ins_t *)%s);"
                     (fmt_prelude n) (fmt_code n);
-                  O.fi "_vars->%s = memalign_pages(LINE, _vars->%s);"
-                    (fmt_code n) (fmt_code_size n))
+                  if Cfg.is_kvm then
+                    O.fi "_vars->%s = memalign_pages(LINE, _vars->%s);"
+                      (fmt_code n) (fmt_code_size n)
+                  else
+                    O.fi "_vars->%s = mmap_exec(_vars->%s);"
+                      (fmt_code n) (fmt_code_size n)
+                )
                 test.T.code
             end ;
           O.o "}" ;
@@ -1358,7 +1368,11 @@ module Make
               let open OutUtils in
               List.iter
                 (fun (n,_) ->
-                  O.fi "free_pages(_vars->%s);" (fmt_code n))
+                  if Cfg.is_kvm then
+                    O.fi "free_pages(_vars->%s);" (fmt_code n)
+                  else
+                    O.fi "munmap_exec(_vars->%s, _vars->%s);" (fmt_code n)
+                      (fmt_code_size n))
                 test.T.code
             end ;
           O.o "}" ;
@@ -2112,14 +2126,13 @@ module Make
         dump_run_def env test some_ptr stats procs_user ;
         dump_zyva_def doc.Name.name env test db procs_user ;
         dump_prelude_def doc test ;
+        O.o "static int feature_check(void) {" ;
+        if do_self then
+          O.oi "cache_line_size = getcachelinesize();" ;
         if Cfg.is_kvm then begin
-          O.o "static int feature_check(void) {" ;
-          if do_self then
-            O.oi "cache_line_size = getcachelinesize();" ;
           match db with
           | None ->
              O.oi "return 1;" ;
-             O.o "}"
           | Some db ->
              let open DirtyBit in
              let to_check,msg  =
@@ -2147,10 +2160,12 @@ module Make
                   "puts(\"Test %s, hardware management of %s not available on this system\\n\");"
                   doc.Name.name msg
              end ;
-             O.oi "return 0;" ;
-             O.o "}" ;
-             O.o ""
-          end ;
+             O.oi "return 0;"
+          end
+        else
+          O.oi "return 1;" ;
+        O.o "}" ;
+        O.o "" ;
         dump_main_def doc env test stats ;
         ()
 
