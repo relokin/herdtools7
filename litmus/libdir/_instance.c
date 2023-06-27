@@ -169,14 +169,16 @@ static void set_role(global_t *g,thread_ctx_t *c,int part) {
 #ifdef HAVE_FAULT_HANDLER
     whoami[c->id].instance = inst ;
     whoami[c->id].proc = c->role ;
-#ifdef SEE_FAULTS
+#if defined(SEE_FAULTS) || defined(PRECISE)
     if (c->role == 0) {
 #ifdef SOME_VARS
       vars_ptr[inst] = &c->ctx->v;
 #else
       vars_ptr[inst] = NULL;
 #endif
+#ifdef SEE_FAULTS
       th_faults[inst] = c->ctx->out.th_faults;
+#endif
     }
 #endif
 #endif
