@@ -47,6 +47,7 @@ static void instance_init(ctx_t *p, int id, intmax_t *mem) {
   interval_init((int *)&p->ind,N) ;
 #ifdef SOME_VARS
   vars_init(&p->v,mem);
+  labels_init(&p->v);
 #endif
 }
 
