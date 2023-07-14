@@ -644,12 +644,12 @@ module Make
 (* Fault types *)
       let dump_fault_type test =
         if need_labels test then begin
-            O.o "typedef struct {" ;
-            List.iter (fun (p,lbl) -> O.fi "ins_t *code_P%d_%s;"  p lbl) CfgLoc.labels ;
-            O.fi "ins_t *ret[N];" ;
-            O.o "} labels_t;" ;
-            O.o ""
-          end ;
+          O.o "typedef struct {" ;
+          List.iter (fun (p,lbl) -> O.fi "ins_t *%s;" (OutUtils.fmt_lbl_var p lbl)) CfgLoc.labels ;
+          O.fi "ins_t *ret[N];" ;
+          O.o "} labels_t;" ;
+          O.o ""
+        end ;
         if see_faults test then begin
             O.f "#define %-25s 0" (SkelUtil.instr_symb_id "UNKNOWN") ;
             (* Define indices for labels *)
@@ -668,8 +668,8 @@ module Make
             O.o "static int get_instr_symb_id(labels_t *lbls, const unsigned long pc) {" ;
             List.iter
               (fun (p,lbl) ->
-                let flbl = sprintf "P%d_%s" p lbl in
-                O.fi "if (pc == (unsigned long)lbls->code_%s)" flbl ;
+                let flbl = (OutUtils.fmt_lbl_var p lbl) in
+                O.fi "if (pc == (unsigned long)lbls->%s)" flbl ;
                 O.fii "return %s;" (SkelUtil.instr_symb_id flbl))
               CfgLoc.labels ;
             O.fi "return %s;" (SkelUtil.instr_symb_id "UNKNOWN") ;
@@ -1395,6 +1395,37 @@ module Make
                 test.T.code
             end ;
           O.o "}" ;
+          O.o "static void labels_init(vars_t *_vars) {" ;
+          if do_precise || Misc.consp CfgLoc.labels then
+            O.fi "labels_t *lbls = &_vars->labels;" ;
+          List.iter (fun (p,lbl) ->
+              let off = U.find_label_offset p lbl test in
+              let lhs = sprintf "lbls->%s" (OutUtils.fmt_lbl_var p lbl) in
+              let proc = if do_self then
+                  sprintf "_vars->%s" (LangUtils.code_fun p)
+                else
+                  LangUtils.code_fun p in
+              let rhs =
+                sprintf "((ins_t *)%s)+find_ins(nop,(ins_t *)%s,0)+%d"
+                  proc (LangUtils.code_fun p) off in
+              O.fi "%s = %s;" lhs rhs)
+            CfgLoc.labels ;
+          if do_precise then begin
+            List.iter
+              (fun (p,(t,_)) ->
+                 let proc =
+                   if do_self then
+                     sprintf "_vars->%s" (LangUtils.code_fun p)
+                   else
+                     LangUtils.code_fun p in
+                 let rhs =
+                   sprintf "((ins_t *)%s)+find_ins(nop,(ins_t *)%s,%d)"
+                     proc (LangUtils.code_fun p)
+                     (A.Out.get_nnops t-1) in
+                 O.fi "lbls->ret[%d] = %s;" p rhs)
+              test.T.code
+          end ;
+          O.o "}";
           ()
         end ;
         O.o "" ;
@@ -1494,11 +1525,6 @@ module Make
         if do_self then
           O.fii "code_init(%s, %s, _vars->%s);" (LangUtils.code_fun_cpy proc)
             (OutUtils.fmt_code proc) (OutUtils.fmt_code_size proc) ;
-        if need_labels test then begin
-            if proc = 0 then
-            O.oii "init_labels(_vars);" ;
-            O.oii "barrier_wait(_b);"
-          end ;
         (* Initialize them *)
         List.iter
           (fun a ->
@@ -1767,40 +1793,6 @@ module Make
           O.o "}" ;
           O.o ""
         end ;
-        if need_labels test then begin
-            O.o "static void init_labels(vars_t *_vars) {" ;
-            if do_precise || Misc.consp CfgLoc.labels then
-              O.fi "labels_t *lbls = &_vars->labels;" ;
-            List.iter (fun (p,lbl) ->
-                let off = U.find_label_offset p lbl test in
-                let lhs = sprintf "lbls->code_P%d_%s" p lbl in
-                let proc = if do_self then
-                             sprintf "_vars->%s" (LangUtils.code_fun p)
-                           else
-                             LangUtils.code_fun p in
-                let rhs =
-                  sprintf "((ins_t *)%s)+find_ins(nop,(ins_t *)%s,0)+%d"
-                    proc proc off in
-                O.fi "%s = %s;" lhs rhs)
-              CfgLoc.labels ;
-            if do_precise then begin
-                List.iter
-                  (fun (p,(t,_)) ->
-                    let proc =
-                      if do_self then
-                        sprintf "_vars->%s" (LangUtils.code_fun p)
-                      else
-                        LangUtils.code_fun p in
-                    let rhs = sprintf
-                                "((ins_t *)%s)+find_ins(nop,(ins_t *)%s,%d)"
-                                proc proc
-                                (A.Out.get_nnops t-1) in
-                    O.fi "lbls->ret[%d] = %s;" p rhs)
-                  test.T.code
-              end ;
-            O.o "}" ;
-            O.o ""
-          end ;
         O.o "inline static int do_run(thread_ctx_t *_c, param_t *_p,global_t *_g) {" ;
         if not do_ascall then begin match faults with
         | [] -> ()
