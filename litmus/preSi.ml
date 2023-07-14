@@ -293,25 +293,10 @@ module Make
         if CfgLoc.need_prelude then begin
           ObjUtil.insert_lib_file O.o "_prelude_size.c"
         end ;
-        if do_label_init then begin
-          O.o "/* Code analysis */" ;
-
-          O.o "#define SOME_LABELS 1" ;
-          O.o "" ;
-          O.o "typedef struct {" ;
-          UD.define_label_fields CfgLoc.label_init ;
-          O.o "} code_labels_t;" ;
-          O.o "" ;
-          O.o "static void code_labels_init(code_labels_t *p);" ;
-          O.o "" ;
-        end ;
         dump_find_ins
 
 
       (* Fault handler *)
-      and tag_code ((p,lbl),_,_) = sprintf "code_P%d%s" p
-          (match lbl with None -> assert false | Some lbl -> "_" ^ lbl)
-
       let dump_vector_table is_user name tgt =
         O.f "static ins_t *get_vector_table%s(void) {" name ;
         O.oi "ins_t *r;" ;
@@ -1794,29 +1779,7 @@ module Make
         let faults = U.get_faults test in
         (* Notice: initialise the "nop" global variable before others *)
         UD.dump_init_getinstrs test ;
-        if do_label_init then begin
-          UD.define_label_offsets test CfgLoc.label_init ;
-          O.o "" ;
-          O.o "static void code_labels_init(code_labels_t *p) {" ;
-          UD.initialise_labels "p" CfgLoc.label_init ;
-          O.o "}" ;
-          O.o ""
-        end ;
         O.o "inline static int do_run(thread_ctx_t *_c, param_t *_p,global_t *_g) {" ;
-        if not do_ascall then begin match faults with
-        | [] -> ()
-        | _::_ ->
-            O.oi "if (_c->role == 0 && _c->inst == 0) {" ;
-            List.iter
-              (fun ((p,lbl),_,_ as f) -> match lbl with
-              | None ->
-                  O.fii "labels.%s = (ins_t *) &&CODE%d;" (tag_code f) p
-              | Some lbl ->
-                  let off = U.find_label_offset p  lbl test in
-                  O.fii "labels.%s = ((ins_t *)&&CODE%d) + %d;" (tag_code f) p off)
-              faults ;
-            O.oi "}" ;
-        end ;
         O.oi "int _ok = 0;" ;
         O.oi "int _role = _c->role;" ;
         O.oi "if (_role < 0) return _ok;" ;
