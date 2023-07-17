@@ -68,7 +68,7 @@ module type S = sig
   val get_init_labels : t -> Label.Full.Set.t
   val get_exported_labels : t -> Label.Full.Set.t
   val from_labels : t -> (Label.Full.full * P.ins) list
-  val all_labels : t -> Label.Full.full list
+  val all_labels : t -> Label.Full.Set.t
 end
 
 
@@ -212,6 +212,7 @@ struct
     P.from_labels lbls src.MiscParser.prog
 
   let all_labels { src; _ } =
-    P.all_labels src.MiscParser.prog
+    List.fold_left (fun k lbl -> Label.Full.Set.add lbl k) Label.Full.Set.empty
+      (P.all_labels src.MiscParser.prog)
 
 end

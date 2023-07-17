@@ -74,8 +74,7 @@ module Make
         (CfgLoc:
            sig
              val label_init : Label.Full.Set.t
-             val labels : Label.Full.full list
-             val need_prelude : bool
+             val labels : Label.Full.Set.t
            end) = struct
 
     let do_label_init = not (Label.Full.Set.is_empty CfgLoc.label_init)
@@ -163,7 +162,8 @@ module Make
         List.exists
           (fun (_,o,_) -> Misc.is_some o)
           (U.get_faults test)
-      let need_labels test = do_precise || Misc.consp CfgLoc.labels || see_faults test
+      let have_labels = not (Label.Full.Set.is_empty CfgLoc.labels)
+      let need_labels test = do_precise || have_labels || see_faults test
 
 (***************)
 (* File header *)
@@ -270,25 +270,17 @@ module Make
         O.o "" ;
         O.o "/* Full memory barrier */" ;
         UD.dump_mbar_def () ;
-        let dump_find_ins = do_self || CfgLoc.need_prelude || do_precise || Misc.consp CfgLoc.labels in
-        if dump_find_ins then begin
-          ObjUtil.insert_lib_file O.o "_find_ins.c" ;
-          O.o ""
-        end ;
         if do_self then begin
           Insert.insert O.o "self.c" ;
+          O.o "" ;
+          ObjUtil.insert_lib_file O.o "_find_ins.c" ;
           O.o "" ;
           if Cfg.is_kvm then
             Insert.insert O.o "kvm-self.c"
           else
             Insert.insert O.o "presi-self.c" ;
           O.o "" ;
-        end ;
-        if CfgLoc.need_prelude then begin
-          ObjUtil.insert_lib_file O.o "_prelude_size.c"
-        end ;
-        dump_find_ins
-
+        end
 
       (* Fault handler *)
       let dump_vector_table is_user name tgt =
@@ -303,7 +295,7 @@ module Make
         O.o "}" ;
         O.o ""
 
-      let dump_fault_handler find_ins_inserted doc test =
+      let dump_fault_handler doc test =
         if have_fault_handler then begin
           let ok,no = T.partition_asmhandlers test in
           begin match no with
@@ -346,17 +338,10 @@ module Make
                   Warn.user_error "No asymetric mode for litmus kvm variant"
              end ;
 
-             let insert_ins_ops () =
-               if not find_ins_inserted then begin
-                 ObjUtil.insert_lib_file O.o "_find_ins.c" ;
-                 O.o ""
-               end in
-
              let faults = U.get_faults test in
              begin match faults with
              | [] ->
                 if do_precise then begin
-                    insert_ins_ops () ;
                     if do_dynalloc then begin
                         O.o "static vars_t **vars_ptr;" ;
                         O.o "" ;
@@ -374,10 +359,6 @@ module Make
              | _::_ ->
                 O.o "#define SEE_FAULTS 1" ;
                 O.o "" ;
-                begin match CfgLoc.labels with
-                | [] -> if do_precise then insert_ins_ops ()
-                | _ -> insert_ins_ops ()
-                end ;
                 if do_dynalloc then begin
                     O.o "static th_faults_info_t **th_faults;" ;
                     O.o "static vars_t **vars_ptr;" ;
@@ -630,7 +611,7 @@ module Make
       let dump_fault_type test =
         if need_labels test then begin
           O.o "typedef struct {" ;
-          List.iter (fun (p,lbl) -> O.fi "ins_t *%s;" (OutUtils.fmt_lbl_var p lbl)) CfgLoc.labels ;
+          UD.define_label_fields CfgLoc.labels ;
           O.fi "ins_t *ret[N];" ;
           O.o "} labels_t;" ;
           O.o ""
@@ -638,7 +619,7 @@ module Make
         if see_faults test then begin
             O.f "#define %-25s 0" (SkelUtil.instr_symb_id "UNKNOWN") ;
             (* Define indices for labels *)
-            List.iteri
+            Label.Full.Set.iteri
               (fun i (p,lbl) ->
                 let flbl = sprintf "P%d_%s" p lbl in
                 O.f "#define %-25s  %d" (SkelUtil.instr_symb_id flbl) (i + 1))
@@ -647,11 +628,11 @@ module Make
             O.f "static const char *instr_symb_name[] = {" ;
             O.oi "\"UNKNOWN\"," ;
             (* Define names for inst symbols *)
-            List.iter (fun (_,lbl) -> O.fi "\"%s\"," lbl ) CfgLoc.labels ;
+            Label.Full.Set.iter (fun (_,lbl) -> O.fi "\"%s\"," lbl ) CfgLoc.labels ;
             O.o "};" ;
             O.o "" ;
             O.o "static int get_instr_symb_id(labels_t *lbls, const unsigned long pc) {" ;
-            List.iter
+            Label.Full.Set.iter
               (fun (p,lbl) ->
                 let flbl = (OutUtils.fmt_lbl_var p lbl) in
                 O.fi "if (pc == (unsigned long)lbls->%s)" flbl ;
@@ -1351,11 +1332,9 @@ module Make
           if do_self then begin
               let open OutUtils in
               List.iter
-                (fun (n,(t,_)) ->
+                (fun (n, (t,_)) ->
                   O.fi "_vars->%s = code_size((ins_t *)%s,%i);"
                     (fmt_code_size n) (fmt_code n) (A.Out.get_nrets t) ;
-                  O.fi "_vars->%s = prelude_size((ins_t *)%s);"
-                    (fmt_prelude n) (fmt_code n);
                   if Cfg.is_kvm then
                     O.fi "_vars->%s = memalign_pages(LINE, _vars->%s);"
                       (fmt_code n) (fmt_code_size n)
@@ -1380,34 +1359,36 @@ module Make
                 test.T.code
             end ;
           O.o "}" ;
+          O.o "" ;
           O.o "static void labels_init(vars_t *_vars) {" ;
-          if do_precise || Misc.consp CfgLoc.labels then
+          if do_precise || have_labels then
             O.fi "labels_t *lbls = &_vars->labels;" ;
-          List.iter (fun (p,lbl) ->
-              let off = U.find_label_offset p lbl test in
-              let lhs = sprintf "lbls->%s" (OutUtils.fmt_lbl_var p lbl) in
-              let proc = if do_self then
-                  sprintf "_vars->%s" (LangUtils.code_fun p)
-                else
-                  LangUtils.code_fun p in
-              let rhs =
-                sprintf "((ins_t *)%s)+find_ins(nop,(ins_t *)%s,0)+%d"
-                  proc (LangUtils.code_fun p) off in
-              O.fi "%s = %s;" lhs rhs)
+          Label.Full.Set.iter
+            (fun (p,lbl) ->
+               O.fi "extern ins_t %s;" (OutUtils.fmt_lbl p lbl) ;
+               let rhs =
+                 if do_self then
+                   let proc = sprintf "_vars->%s" (LangUtils.code_fun p) in
+                   sprintf "((uintptr_t)%s + (uintptr_t)&%s - (uintptr_t)&%s)"
+                     proc (OutUtils.fmt_lbl p lbl) (LangUtils.code_fun p)
+                 else
+                   sprintf "&%s" (OutUtils.fmt_lbl p lbl)
+               in
+               O.fi "lbls->%s = (ins_t *)%s;" (OutUtils.fmt_lbl_var p lbl) rhs)
             CfgLoc.labels ;
           if do_precise then begin
             List.iter
-              (fun (p,(t,_)) ->
-                 let proc =
-                   if do_self then
-                     sprintf "_vars->%s" (LangUtils.code_fun p)
-                   else
-                     LangUtils.code_fun p in
+              (fun (p,_) ->
+                 O.fi "extern ins_t %s;" (OutUtils.fmt_lbl_end p);
                  let rhs =
-                   sprintf "((ins_t *)%s)+find_ins(nop,(ins_t *)%s,%d)"
-                     proc (LangUtils.code_fun p)
-                     (A.Out.get_nnops t-1) in
-                 O.fi "lbls->ret[%d] = %s;" p rhs)
+                   if do_self then
+                     let proc = sprintf "_vars->%s" (LangUtils.code_fun p) in
+                     sprintf "((uintptr_t)%s+(uintptr_t)&%s-(uintptr_t)&%s)"
+                       proc (OutUtils.fmt_lbl_end p) (LangUtils.code_fun p)
+                   else
+                     sprintf "&%s" (OutUtils.fmt_lbl_end p)
+                 in
+                 O.fi "lbls->ret[%d] = (ins_t *)%s;" p rhs)
               test.T.code
           end ;
           O.o "}";
@@ -2085,10 +2066,6 @@ module Make
             (struct
               let label_init = T.get_init_labels test
               let labels = T.all_labels test
-              let need_prelude =
-                not (Label.Full.Set.is_empty label_init)
-                || Misc.consp (T.from_labels test)
-                || Cfg.variant Variant_litmus.Self
             end) in
         let open MLoc in
         let db = DirtyBit.get test.T.info
@@ -2098,7 +2075,7 @@ module Make
         UD.dump_getinstrs test ;
         dump_delay_def () ;
         dump_read_timebase () ;
-        let find_ins_inserted = dump_mbar_def () in
+        dump_mbar_def () ;
         dump_cache_def () ;
         dump_barrier_def () ;
         dump_topology doc test ;
@@ -2107,7 +2084,7 @@ module Make
         let stats = get_stats test in
         dump_fault_type test ;
         let some_ptr = dump_outcomes env test in
-        dump_fault_handler find_ins_inserted doc test ;
+        dump_fault_handler doc test ;
         dump_cond_def env test ;
         dump_parameters env test ;
         dump_hash_def doc.Name.name env test ;

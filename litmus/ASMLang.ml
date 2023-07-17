@@ -403,7 +403,9 @@ module RegMap = A.RegMap)
       let dump_code chan proc func code =
         let dump_ins k ins =
           begin match ins.Tmpl.label with
-          | Some _ ->
+          | Some lbl ->
+             fprintf chan "\".local %s\\n\"\n" (OutUtils.fmt_lbl proc lbl) ;
+             fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl proc lbl) ;
              fprintf chan "\"%s_litmus_P%i%s_%i\\n\"\n" Tmpl.comment proc func k
           | None ->
              fprintf chan "\"%s_litmus_P%i%s_%i\\n%s\"\n" Tmpl.comment proc func k
@@ -419,8 +421,10 @@ module RegMap = A.RegMap)
         let dump_ins k ins =
           fprintf chan "\"%s\\n\"\n" (Tmpl.to_string ins) ;
           k + 1 in
+        fprintf chan "\".local %s%s\\n\"\n" (LangUtils.start_label proc) func ;
         fprintf chan "\"%s%s:\\n\"\n" (LangUtils.start_label proc) func ;
         let _ = List.fold_left dump_ins 0 code in
+        fprintf chan "\".local %s%s\\n\"\n" (LangUtils.end_label proc) func ;
         fprintf chan "\"%s%s:\\n\"\n" (LangUtils.end_label proc) func
 
       let dump_main chan proc code =
@@ -442,9 +446,13 @@ module RegMap = A.RegMap)
          compile_out_reg compile_val compile_cpy chan indent env proc t trashed;
         fprintf chan "asm __volatile__ (\n" ;
         fprintf chan "\"\\n\"\n" ;
+        fprintf chan "\".local %s\\n\"\n" (OutUtils.fmt_lbl_start proc) ;
+        fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl_start proc) ;
         dump_main chan proc t.Tmpl.code ;
         if t.Tmpl.fhandler <> [] then
           dump_fh chan proc t.Tmpl.fhandler ;
+        fprintf chan "\".local %s\\n\"\n" (OutUtils.fmt_lbl_end proc) ;
+        fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl_end proc) ;
         dump_outputs args0 compile_addr compile_out_reg chan proc t trashed ;
         dump_inputs args0 compile_val chan t trashed ;
         dump_clobbers chan args0.Template.clobbers t  ;
@@ -613,15 +621,12 @@ module RegMap = A.RegMap)
         match O.mode,do_self with
         | Mode.Std,false ->
            sprintf "_a->%s" (fmt_lbl_var p lbl)
-        | (Mode.PreSi|Mode.Kvm),false ->
-           sprintf "_g->lbl.%s" (fmt_lbl_var p lbl)
         | Mode.Std,true ->
            sprintf "&_a->%s[_i*_a->%s+_a->%s+%s]"
              (fmt_code p) (fmt_code_size p)
              (fmt_prelude p) (fmt_lbl_offset p lbl)
-        | (Mode.PreSi|Mode.Kvm),true ->
-           sprintf "(ins_t *)_vars->%s+_vars->%s+%s"
-             (fmt_code p) (fmt_prelude p) (fmt_lbl_offset p lbl)
+        | (Mode.PreSi|Mode.Kvm),_ ->
+          sprintf "_vars->labels.%s" (fmt_lbl_var p lbl)
 
       let compile_instr_call i = AL.GetInstr.instr_name i
       let indirect_star =

@@ -627,16 +627,13 @@ module Make
 
 (* Output offset of labels *)
         let define_label_offsets test lbls =
-          if not (Label.Full.Set.is_empty lbls) then begin
-            let find p lbl = find_label_offset p lbl test in
-            Label.Full.Set.iter
-              (fun (p,lbl) ->
-                let off = find p lbl in
-                O.f "static const size_t %s = %i;"
-                  (OutUtils.fmt_lbl_offset p lbl) off)
-              lbls ;
-            O.o ""
-          end
+          let find p lbl = find_label_offset p lbl test in
+          Label.Full.Set.iter
+            (fun (p,lbl) ->
+               let off = find p lbl in
+               O.fi "static const size_t %s = %i;"
+                 (OutUtils.fmt_lbl_offset p lbl) off)
+            lbls
 
         open Preload
 
@@ -881,30 +878,33 @@ module Make
           let module D = A.GetInstr.Make(O) in
           let lbl2instr,is = all_instrs t in
           if not (A.V.Instr.Set.is_empty is && Misc.nilp lbl2instr) then begin
-            O.o "/***************************/" ;
-            O.o "/* Get instruction opcodes */" ;
-            O.o "/***************************/" ;
-            O.o "" ;
-            A.V.Instr.Set.iter
-              (fun i -> D.dump i ; O.o "")
-              is ;
-            A.V.Instr.Set.iter
-              (fun i -> O.f "static ins_t %s;" (A.GetInstr.instr_name i))
-              is ;
-            List.iter
-              (fun ((p,lab as lbl),_) ->
-                O.f "static ins_t %s;" (OutUtils.fmt_lbl_instr lbl) ;
-                O.f "static const size_t %s=%d;"
-                  (OutUtils.fmt_lbl_instr_offset lbl)
-                  (find_label_offset p lab t)
-              )
-              lbl2instr ;
-            O.o ""
+            if Cfg.variant Variant_litmus.Self || Cfg.mode = Mode.Std then begin
+              O.o "/***************************/" ;
+              O.o "/* Get instruction opcodes */" ;
+              O.o "/***************************/" ;
+              O.o "" ;
+              A.V.Instr.Set.iter
+                (fun i -> D.dump i ; O.o "")
+                is ;
+              A.V.Instr.Set.iter
+                (fun i -> O.f "static ins_t %s;" (A.GetInstr.instr_name i))
+                is ;
+              List.iter
+                (fun (lbl,_) -> O.f "static ins_t %s;" (OutUtils.fmt_lbl_instr lbl))
+                lbl2instr ;
+              O.o ""
+            end
           end
 
         let dump_init_getinstrs t =
-          let  lbl2instr,is = all_instrs t in
+          let lbl2instr,is = all_instrs t in
+          let need_prelude = Cfg.variant Variant_litmus.Self && Cfg.mode != Mode.Std && not (Misc.nilp lbl2instr) in
+          if need_prelude then begin
+            ObjUtil.insert_lib_file O.o "_prelude_size.c" ;
+            O.o ""
+          end ;
           O.o "static void init_getinstrs(void) {" ;
+          if Cfg.variant Variant_litmus.Self || Cfg.mode = Mode.Std then begin
           A.V.Instr.Set.iter
             (fun i ->
               O.fi "%s = %s();"
@@ -924,14 +924,18 @@ module Make
                   O.fi "size_t %s = prelude_size((ins_t *)code%i);"
                     (fmt_prelude p) p ;
                   List.iter
-                    (fun ((p,_ as lbl),_) ->
-                      O.fi
+                    (fun ((p,lab as lbl),_) ->
+                       O.fi "const size_t %s=%d;"
+                         (OutUtils.fmt_lbl_offset p lab)
+                         (find_label_offset p lab t) ;
+                       O.fi
                         "%s = *(((ins_t *)code%i)+%s+%s);"
                         (fmt_lbl_instr lbl) p
                         (fmt_prelude p)
-                        (fmt_lbl_instr_offset lbl))
+                        (fmt_lbl_offset p lab))
                     ps)
-            lbl2instrs ;
+            lbl2instrs
+            end ;
           O.o "}" ;
           O.o ""
 
