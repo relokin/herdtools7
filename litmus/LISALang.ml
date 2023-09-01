@@ -101,8 +101,9 @@ module Make(V:Constant.S) = struct
 
   and compile_out_reg_fun p r = sprintf "*%s" (Tmpl.dump_out_reg p r)
 
-  let dump_fun ?user chan _args0 env globEnv _volatileEnv proc t =
+  let dump_fun ?user ?hash chan _args0 env globEnv _volatileEnv proc t =
     assert (Misc.is_none user) ;
+    assert (Misc.is_none hash) ;
     let addrs_proc = A.Out.get_addrs_only t in
     let addrs =
       List.map
@@ -150,6 +151,6 @@ module Make(V:Constant.S) = struct
     LangUtils.dump_code_call chan indent f_id args
 
 
-  let dump _chan _indent _env _globEnv _volatileEnv _proc _t = ()
+  let dump _hash _chan _indent _env _globEnv _volatileEnv _proc _t = ()
 
 end

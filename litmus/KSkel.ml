@@ -651,7 +651,7 @@ let dump_threads _tname env test =
     (fun (proc,(out,(_outregs,envVolatile))) ->
       let myenv = U.select_proc proc env in
       Lang.dump_fun O.out Template.no_extra_args
-        myenv global_env envVolatile proc out ;
+        myenv global_env envVolatile proc out;
       O.f "static int thread%i(void *_p) {" proc ;
       O.oi "ctx_t *_a = (ctx_t *)_p;" ;
       O.o "" ;

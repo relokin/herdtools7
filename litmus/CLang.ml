@@ -90,8 +90,9 @@ module Make(C:Config)(E:Extra) = struct
       (List.map
          (fun (x,ty) -> sprintf "%s -> %s" x (CType.debug ty))
          env)
-  let dump_fun ?user chan _args0 env globEnv _envVolatile proc t =
+  let dump_fun ?user ?hash chan _args0 env globEnv _envVolatile proc t =
     assert (Misc.is_none user) ;
+    assert (Misc.is_none hash) ;
     if dbg then
       begin
         let pp = pp_env globEnv in
@@ -175,7 +176,7 @@ module Make(C:Config)(E:Extra) = struct
     LangUtils.dump_code_call chan indent f_id args
 
 
-  let dump chan indent env (globEnv,_) _envVolatile proc t =
+  let dump _hash chan indent env (globEnv,_) _envVolatile proc t =
     let out x = fprintf chan x in
     out "%sdo {\n" indent;
     begin

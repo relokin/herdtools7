@@ -1952,8 +1952,8 @@ module Make
               let f_id =
                 if do_self then LangUtils.code_fun_cpy proc else
                 LangUtils.code_fun proc in
-              Lang.dump_call f_id [] (fun _ s -> s) else Lang.dump)
-              O.out (Indent.as_string iloop) myenv (global_env,aligned_env) envVolatile proc out ;
+              Lang.dump_call f_id [] (fun _ s -> s) else Lang.dump "")
+              O.out (Indent.as_string iloop) myenv (global_env,aligned_env) envVolatile proc out;
             if do_verbose_barrier && have_timebase  then begin
               if do_timebase then begin
                 O.fx iloop "_a->tb_delta[%i][_i] = _delta;" proc ;

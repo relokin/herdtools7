@@ -1363,30 +1363,31 @@ module Make
           O.o "static void labels_init(vars_t *_vars) {" ;
           if do_precise || have_labels then
             O.fi "labels_t *lbls = &_vars->labels;" ;
+          let hash = List.assoc "Hash" test.T.info in
           Label.Full.Set.iter
             (fun (p,lbl) ->
-               O.fi "extern ins_t %s;" (OutUtils.fmt_lbl p lbl) ;
+               O.fi "extern ins_t %s;" (OutUtils.fmt_lbl p lbl hash) ;
                let rhs =
                  if do_self then
                    let proc = sprintf "_vars->%s" (LangUtils.code_fun p) in
                    sprintf "((uintptr_t)%s + (uintptr_t)&%s - (uintptr_t)&%s)"
-                     proc (OutUtils.fmt_lbl p lbl) (LangUtils.code_fun p)
+                     proc (OutUtils.fmt_lbl p lbl hash) (LangUtils.code_fun p)
                  else
-                   sprintf "&%s" (OutUtils.fmt_lbl p lbl)
+                   sprintf "&%s" (OutUtils.fmt_lbl p lbl hash)
                in
                O.fi "lbls->%s = (ins_t *)%s;" (OutUtils.fmt_lbl_var p lbl) rhs)
             CfgLoc.labels ;
           if do_precise then begin
             List.iter
               (fun (p,_) ->
-                 O.fi "extern ins_t %s;" (OutUtils.fmt_lbl_end p);
+                 O.fi "extern ins_t %s;" (OutUtils.fmt_lbl_end p hash);
                  let rhs =
                    if do_self then
                      let proc = sprintf "_vars->%s" (LangUtils.code_fun p) in
                      sprintf "((uintptr_t)%s+(uintptr_t)&%s-(uintptr_t)&%s)"
-                       proc (OutUtils.fmt_lbl_end p) (LangUtils.code_fun p)
+                       proc (OutUtils.fmt_lbl_end p hash) (LangUtils.code_fun p)
                    else
-                     sprintf "&%s" (OutUtils.fmt_lbl_end p)
+                     sprintf "&%s" (OutUtils.fmt_lbl_end p hash)
                  in
                  O.fi "lbls->ret[%d] = (ins_t *)%s;" p rhs)
               test.T.code
@@ -1431,7 +1432,7 @@ module Make
 
 (* Thread code, as functions *)
       let dump_thread_code
-            procs_user env (proc,(out,(_outregs,envVolatile)))  =
+            procs_user env hash (proc,(out,(_outregs,envVolatile)))  =
         let myenv = U.select_proc proc env
         and global_env = U.select_global env in
         let global_env =
@@ -1455,7 +1456,7 @@ module Make
                 else [];
             }
           else no_extra_args in
-        Lang.dump_fun ~user
+        Lang.dump_fun ~user ~hash
           O.out args0 myenv global_env envVolatile proc out
 
 (* Untouched variables, per thread + responsability *)
@@ -1611,6 +1612,7 @@ module Make
           O.oii "do { _delta = read_timebase() - _tb0; } while (_delta < _delay);"
         end ;
         (* Dump code *)
+        let hash = List.assoc "Hash" test.T.info in
         if do_ascall then begin
             Lang.dump_call
               ((if do_self then LangUtils.code_fun_cpy else LangUtils.code_fun) proc)
@@ -1619,7 +1621,7 @@ module Make
               O.out (Indent.as_string Indent.indent2)
             my_regs (global_env,[]) envVolatile proc out
         end else begin
-          Lang.dump
+          Lang.dump hash
             O.out (Indent.as_string Indent.indent2)
             my_regs (global_env,[]) envVolatile proc out
         end ;
@@ -1742,8 +1744,9 @@ module Make
         O.o "/*************/" ;
         O.o "" ;
         if do_ascall then begin
+            let hash = List.assoc "Hash" test.T.info in
             List.iter
-              (dump_thread_code procs_user env)
+              (dump_thread_code procs_user env hash)
               test.T.code
           end
 

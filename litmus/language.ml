@@ -21,6 +21,7 @@ module type S = sig
 
   val dump_fun :
     ?user:bool ->
+    ?hash:string ->
     out_channel ->
     Template.extra_args ->
     CType.t RegMap.t ->
@@ -45,6 +46,7 @@ module type S = sig
 
 (* Inline dump *)
   val dump :
+    string ->
     out_channel ->
     string ->
     CType.t RegMap.t ->

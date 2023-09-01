@@ -400,12 +400,12 @@ module RegMap = A.RegMap)
             indent env proc t
         end
 
-      let dump_code chan proc func code =
+      let dump_code chan hash proc func code =
         let dump_ins k ins =
           begin match ins.Tmpl.label with
           | Some lbl ->
-             fprintf chan "\".local %s\\n\"\n" (OutUtils.fmt_lbl proc lbl) ;
-             fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl proc lbl) ;
+             fprintf chan "\".global %s\\n\"\n" (OutUtils.fmt_lbl proc lbl hash) ;
+             fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl proc lbl hash) ;
              fprintf chan "\"%s_litmus_P%i%s_%i\\n\"\n" Tmpl.comment proc func k
           | None ->
              fprintf chan "\"%s_litmus_P%i%s_%i\\n%s\"\n" Tmpl.comment proc func k
@@ -417,42 +417,47 @@ module RegMap = A.RegMap)
         let _ = List.fold_left dump_ins 0 code in
         fprintf chan "\"%s%s\\n\"\n" (LangUtils.end_comment Tmpl.comment proc) func
 
-      let dump_code_labels chan proc func code =
+      let dump_code_labels chan hash proc func code =
         let dump_ins k ins =
+          begin match ins.Tmpl.label with
+            | Some lbl ->
+              fprintf chan "\".global %s\\n\"\n" (OutUtils.fmt_lbl proc lbl hash) ;
+              fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl proc lbl hash) ;
+            | None ->
+              ()
+          end ;
           fprintf chan "\"%s\\n\"\n" (Tmpl.to_string ins) ;
           k + 1 in
-        fprintf chan "\".local %s%s\\n\"\n" (LangUtils.start_label proc) func ;
         fprintf chan "\"%s%s:\\n\"\n" (LangUtils.start_label proc) func ;
         let _ = List.fold_left dump_ins 0 code in
-        fprintf chan "\".local %s%s\\n\"\n" (LangUtils.end_label proc) func ;
         fprintf chan "\"%s%s:\\n\"\n" (LangUtils.end_label proc) func
 
-      let dump_main chan proc code =
+      let dump_main chan hash proc =
         if O.asmcommentaslabel then
-          dump_code_labels chan proc "" code
+          dump_code_labels chan hash proc ""
         else
-          dump_code chan proc "" code
+          dump_code chan hash proc ""
 
-      let dump_fh chan proc code =
+      let dump_fh chan hash proc =
         if O.asmcommentaslabel then
-          dump_code_labels chan proc ".F" code
+          dump_code_labels chan hash proc ".F"
         else
-          dump_code chan proc ".F" code
+          dump_code chan hash proc ".F"
 
       let do_dump args0 compile_val compile_addr compile_cpy compile_out_reg
-          chan indent env proc t =
+          chan indent env proc t hash =
         let trashed = Tmpl.trashed_regs t in
         before_dump args0
          compile_out_reg compile_val compile_cpy chan indent env proc t trashed;
         fprintf chan "asm __volatile__ (\n" ;
         fprintf chan "\"\\n\"\n" ;
-        fprintf chan "\".local %s\\n\"\n" (OutUtils.fmt_lbl_start proc) ;
-        fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl_start proc) ;
-        dump_main chan proc t.Tmpl.code ;
+        fprintf chan "\".global %s\\n\"\n" (OutUtils.fmt_lbl_start proc hash) ;
+        fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl_start proc hash) ;
+        dump_main chan hash proc t.Tmpl.code ;
         if t.Tmpl.fhandler <> [] then
-          dump_fh chan proc t.Tmpl.fhandler ;
-        fprintf chan "\".local %s\\n\"\n" (OutUtils.fmt_lbl_end proc) ;
-        fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl_end proc) ;
+          dump_fh chan hash proc t.Tmpl.fhandler ;
+        fprintf chan "\".global %s\\n\"\n" (OutUtils.fmt_lbl_end proc hash) ;
+        fprintf chan "\"%s:\\n\"\n" (OutUtils.fmt_lbl_end proc hash) ;
         dump_outputs args0 compile_addr compile_out_reg chan proc t trashed ;
         dump_inputs args0 compile_val chan t trashed ;
         dump_clobbers chan args0.Template.clobbers t  ;
@@ -470,7 +475,7 @@ module RegMap = A.RegMap)
           (String.concat " " pp)
 
 
-      let dump chan indent env (globEnv,_) _volatileEnv proc t =
+      let dump hash chan indent env (globEnv,_) _volatileEnv proc t =
 
         if debug then debug_globEnv globEnv ;
 
@@ -490,7 +495,7 @@ module RegMap = A.RegMap)
           Template.no_extra_args compile_val_inline compile_addr_inline
           (fun x -> sprintf "_a->%s[_i]" (Tmpl.addr_cpy_name (Constant.as_address x) proc))
           compile_out_reg
-          chan indent env proc t
+          chan indent env proc t hash
 
       let add_pteval k = sprintf "_pteval%d" k
 
@@ -531,7 +536,7 @@ module RegMap = A.RegMap)
 
       let nop_init t = List.exists (fun (_,v) -> A.V.is_nop v) t.Tmpl.init
 
-      let dump_fun ?(user=false) chan args0 env globEnv _volatileEnv proc t =
+      let dump_fun ?(user=false) ?(hash="") chan args0 env globEnv _volatileEnv proc t =
         let args0 = match t.Tmpl.fhandler with
           | [] -> args0
           | _ ->
@@ -612,7 +617,7 @@ module RegMap = A.RegMap)
           compile_addr_fun
           (fun sym -> compile_cpy_fun proc (Constant.as_address sym))
           (fun p r  -> sprintf "*%s" (Tmpl.dump_out_reg p r))
-          chan "  " env proc t ;
+          chan "  " env proc t hash ;
         fprintf chan "}\n\n" ;
         ()
 
