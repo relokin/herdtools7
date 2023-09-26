@@ -82,12 +82,11 @@ module Make
       LocMake
         (CfgLoc:
            sig
-             val label_init : Label.Full.full list
              val all_labels : Label.Full.full list
              val need_prelude : bool
            end) = struct
 
-    let do_label_init = Misc.consp CfgLoc.label_init
+    let do_label_init = Misc.consp CfgLoc.all_labels
 
     let do_ascall = Cfg.ascall || Cfg.is_kvm || do_label_init ||
                       Cfg.variant Variant_litmus.Self
@@ -384,7 +383,7 @@ module Make
              | _::_ ->
                 O.o "#define SEE_FAULTS 1" ;
                 O.o "" ;
-                begin match CfgLoc.label_init with
+                begin match CfgLoc.all_labels with
                 | [] -> if do_precise then insert_ins_ops ()
                 | _ -> insert_ins_ops ()
                 end ;
@@ -674,7 +673,7 @@ module Make
           List.iter
             (fun (p,lbl) ->
               O.fi "ins_t *%s;"
-                (OutUtils.fmt_lbl_var p lbl)) CfgLoc.label_init ;
+                (OutUtils.fmt_lbl_var p lbl)) CfgLoc.all_labels ;
           if do_precise then O.fi "ins_t *ret[N];" ;
           O.o "} labels_t;" ;
           O.o ""
@@ -686,7 +685,7 @@ module Make
               (fun i (p,lbl) ->
                 let flbl = sprintf "P%d_%s" p lbl in
                 O.f "#define %-25s  %d" (SkelUtil.instr_symb_id flbl) (i + 1))
-              CfgLoc.label_init ;
+              CfgLoc.all_labels ;
             O.o "" ;
             O.f "static const char *instr_symb_name[] = {" ;
             O.oi "\"UNKNOWN\"," ;
@@ -1409,7 +1408,7 @@ module Make
                 sprintf "((ins_t *)%s)+find_ins(nop,(ins_t *)%s,0)+%d"
                   proc (LangUtils.code_fun p) off in
               O.fi "%s = %s;" lhs rhs)
-            CfgLoc.label_init ;
+            CfgLoc.all_labels ;
           if do_precise then begin
             List.iter
               (fun (p,(t,_)) ->
