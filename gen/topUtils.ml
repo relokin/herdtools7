@@ -309,9 +309,9 @@ module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
       | _,_,_ -> false
 
     let fetch_val n =
-      let has_I = List.exists C.E.is_ifetch [n.C.C.prev.C.C.edge.C.E.a1; n.C.C.edge.C.E.a2] in
-      match n.C.C.prev.C.C.edge.C.E.edge, n.C.C.edge.C.E.edge, has_I with
-      | C.E.Irf _,_,_ | C.E.Rf _,_,true-> 2
-      | _,C.E.Ifr _,_ | _,C.E.Fr _,true -> 1
-      | _,_,_ -> 0
+      let n = C.C.find_node (fun n -> C.E.is_com n.C.C.edge) n.C.C.prev in
+      match n.C.C.edge.C.E.edge with
+      | C.E.Irf _ | C.E.Rf _-> 2
+      | C.E.Ifr _ | C.E.Fr _ -> 1
+      | _ -> 0
   end

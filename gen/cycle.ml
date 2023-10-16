@@ -705,12 +705,10 @@ let remove_store n0 =
 (* Set locations of events *)
 (***************************)
 
-  let is_non_fetch_and_same e =
-    is_real_edge e && same_loc e && not (E.is_fetch e)
   let is_read_same_nonfetch n m =
     n.evt.loc = m.evt.loc && n.evt.dir = Some R && not (E.is_ifetch n.edge.E.a1)
 
-  let check_fetch n0 sd =
+  let check_fetch n0 =
     let rec do_rec m =
       let p = find_real_edge_prev m.prev in
       (* ensure Instr read is followed or preceded by plain read to same location*)
@@ -720,13 +718,11 @@ let remove_store n0 =
       then
         Warn.user_error "Instruction read followed by ifetch to different location [%s] => [%s]"
           (str_node p) (str_node m);
-      if
-        (E.is_fetch p.edge && is_non_fetch_and_same m.edge ||
-        E.is_fetch m.edge && is_non_fetch_and_same p.edge) && sd = Diff
-      then begin
-        Warn.user_error "Ambiguous Data/Code location es [%s] => [%s]"
-          (str_node p) (str_node m)
-      end ;
+      match m.edge.E.edge, p.edge.E.edge, m.evt.loc with
+      | E.Irf _,_,_ | _, E.Ifr _,_-> ()
+      | _,_,Code.Code _ -> if m.evt.dir = Some W && not (E.is_ifetch m.edge.E.a1) then
+        Warn.user_error "Plain annotation on write to code location not possible";
+      | _ -> ();
       if m.next != n0 then do_rec m.next in
   do_rec n0
 
@@ -736,7 +732,14 @@ let set_diff_loc st n0 =
     let loc,st =
       if same_loc p.edge then begin
         p.evt.loc,st
-      end else next_loc m.edge st in
+      end
+    else
+      let n1 = try
+        (* check if new location needs to be ifetch *)
+        find_node
+          (fun n -> (if not (same_loc n.edge) then raise Not_found); E.is_ifetch n.edge.E.a1 ) m
+        with Not_found -> m in
+      next_loc n1.edge st in
     m.evt <- { m.evt with loc=loc ; bank=E.atom_to_bank m.evt.atom; } ;
 (*    eprintf "LOC SET: %a [p=%a]\n%!" debug_node m debug_node p; *)
     if m.store != nil then begin
@@ -1104,7 +1107,7 @@ let finish n =
             (fun (loc,(v,_pte)) -> sprintf "%s -> 0x%x"
                 (Code.pp_loc loc) v) vs))
   end ;
-  if O.variant Variant_gen.Self then check_fetch n sd;
+  if O.variant Variant_gen.Self then check_fetch n;
   initvals
 
 

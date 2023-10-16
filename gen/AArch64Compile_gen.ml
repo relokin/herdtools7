@@ -1206,10 +1206,9 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
         | R,None ->
             let r,init,cs,st = LDR.emit_fetch st p init lab in
             Some r,init,cs,st
-        | W,Some (Instr, None) ->
+        | W,_ ->
             let init,cs,st = STR.emit_store_nop st p init lab in
             None,init,cs,st
-        | W, None -> Warn.fatal "Cannot have plain write to code location"
         | R, Some (Instr, None) ->
             let r,init,cs,st = LDR.emit_load st p init lab in
             Some r,init,cs,st
@@ -1336,7 +1335,7 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
             let init,cs,st = emit_stp opt idx st p init loc e in
             None,init,cs,st
         | W,Some (Pair _,Some _) -> assert false
-        | (R|W), Some (Instr, _) -> Warn.fatal "Instr annotation did not create code location"
+        | (R|W), Some (Instr, _) -> Warn.fatal "Instr annotation did not create code location %s" (C.debug_evt e)
         | R,Some (Pte (Read|ReadAcq|ReadAcqPc as rk),None) ->
             let emit = match rk with
             | Read -> LDR.emit_load_var
