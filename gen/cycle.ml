@@ -713,8 +713,10 @@ let remove_store n0 =
       let p = find_real_edge_prev m.prev in
       (* ensure Instr read is followed or preceded by plain read to same location*)
       if E.is_ifetch m.edge.E.a1 && m.evt.dir = Some R && not
-        (is_read_same_nonfetch m.next m ||
-        try (find_node_prev (fun n -> is_read_same_nonfetch n m) m) != m with Not_found -> false)
+        (try
+          ignore (find_node_prev (fun n -> is_read_same_nonfetch n m) m);
+          true
+        with Not_found -> false)
       then
         Warn.user_error "Instruction read followed by ifetch to different location [%s] => [%s]"
           (str_node p) (str_node m);

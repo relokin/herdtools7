@@ -165,9 +165,11 @@ let applies_atom (a,_) d = match a,d with
 | (Plain _|Atomic _|Tag|CapaTag|CapaSeal|Neon _|Pair _|Instr),(R|W)
   -> true
 | _ -> false
+
 let is_ifetch a = match a with
 | Some (Instr,_) -> true
 | _ -> false
+
    let pp_plain = "P"
 (* Annotation A is taken by load aquire *)
    let pp_as_a = None
@@ -800,6 +802,7 @@ include
         | _ -> false
 
       let pp_reg = pp_reg
+      let pp_i n = pp_i n
       let free_registers = allowed_for_symb
 
       type special = reg

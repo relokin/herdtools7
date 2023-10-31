@@ -187,10 +187,7 @@ module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
             | Code.Pte ->
                 Some (P evt.C.C.pte)
             | Code.Instr ->
-              let s = match evt.C.C.ins with
-              | 1 -> "instr:\"NOP\""
-              | 0 -> "instr:\"B .+12\""
-              | _ -> Warn.user_error "invalid value with instruction store" in
+              let s = C.A.pp_i evt.C.C.ins in
               Some (S s)
             end
         | Some Code.W ->

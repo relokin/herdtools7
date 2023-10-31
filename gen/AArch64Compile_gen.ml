@@ -457,15 +457,16 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
           emit_load_var_reg vr st p init rB
 
         let emit_load =  emit_load_var L.sz0
+
         let emit_fetch st _p init lab =
           let rA,st = next_reg st in
-          let lab0 = Label.next_label "L" in
+          let lab0 = ".+12" in
           let lab1 = Label.next_label "L" in
           let cs =
             Label (lab,Instruction (b lab0))::
             Instruction (mov rA 2)::
             Instruction (b lab1)::
-            Label (lab0,Instruction (mov rA 1))::
+            Instruction (mov rA 1)::
             Label (lab1,Nop)::
             [] in
           rA,init,cs,st
@@ -1206,7 +1207,7 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
         | R,None ->
             let r,init,cs,st = LDR.emit_fetch st p init lab in
             Some r,init,cs,st
-        | W,_ ->
+        | W,(None | Some (Instr, None)) ->
             let init,cs,st = STR.emit_store_nop st p init lab in
             None,init,cs,st
         | R, Some (Instr, None) ->

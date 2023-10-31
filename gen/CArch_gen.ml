@@ -131,6 +131,7 @@ let location_compare loc1 loc2 = match loc1,loc2 with
 end
 
 let of_reg p r = Reg (p,r)
+let pp_i _ = "instr:\"NOP\""
 let of_loc loc = Loc (as_data loc)
 
 type tbase = TypBase.t
