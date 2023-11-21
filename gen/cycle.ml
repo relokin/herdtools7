@@ -705,27 +705,32 @@ let remove_store n0 =
 (* Set locations of events *)
 (***************************)
 
-  let is_read_same_nonfetch n m =
-    n.evt.loc = m.evt.loc && n.evt.dir = Some R && not (E.is_ifetch n.edge.E.a1)
+  let is_read_same_nonfetch m =
+    let check n = (n != m && (loc_compare n.evt.loc  m.evt.loc) = 0 && n.evt.dir = Some R &&
+                  not (E.is_ifetch n.edge.E.a1)) in
+    try ignore (find_node_prev (fun n -> check n) m); true
+    with Not_found -> false
 
   let check_fetch n0 =
     let rec do_rec m =
       let p = find_real_edge_prev m.prev in
       (* ensure Instr read is followed or preceded by plain read to same location*)
-      if E.is_ifetch m.edge.E.a1 && m.evt.dir = Some R && not
-        (try
-          ignore (find_node_prev (fun n -> is_read_same_nonfetch n m) m);
-          true
-        with Not_found -> false)
-      then
-        Warn.user_error "Instruction read followed by ifetch to different location [%s] => [%s]"
-          (str_node p) (str_node m);
-      match m.edge.E.edge, p.edge.E.edge, m.evt.loc with
-      | E.Irf _,_,_ | _, E.Ifr _,_-> ()
-      | _,_,Code.Code _ -> if m.evt.dir = Some W && not (E.is_ifetch m.edge.E.a1) then
-        Warn.user_error "Plain annotation on write to code location not possible";
-      | _ -> ();
-      if m.next != n0 then do_rec m.next in
+      begin match m.edge.E.edge, p.edge.E.edge, m.evt.loc, m.evt.dir with
+        | E.Irf _,_,_,_ | _, E.Ifr _,_,_ -> ()
+        | _,_,Code.Code _, Some R when not (E.is_ifetch m.edge.E.a1) ->
+            if is_read_same_nonfetch m then begin
+              Printf.printf "%s" (str_node m);
+              Warn.user_error "Multiple ifetch reads to same code location"
+              end;
+        | _,_,Code.Code _, Some R when E.is_ifetch m.edge.E.a1 ->
+            if not (is_read_same_nonfetch m) then begin
+             Warn.user_error "Reading from label that doesn't exist [%s]" (str_node m)
+            end;
+        | _,_,Code.Code _, Some W when not (E.is_ifetch m.edge.E.a1) ->
+          Warn.user_error "Writing non-instruction value to code location: [%s]" (str_node m)
+        | _ -> ();
+        end;
+        if m.next != n0 then do_rec m.next in
   do_rec n0
 
 (* Loc is changing *)
@@ -739,7 +744,7 @@ let set_diff_loc st n0 =
       let n1 = try
         (* check if new location needs to be ifetch *)
         find_node
-          (fun n -> (if not (same_loc n.edge) then raise Not_found); E.is_ifetch n.edge.E.a1 ) m
+          (fun n -> (if not (same_loc n.prev.edge) then raise Not_found); E.is_ifetch n.edge.E.a1 ) m.next
         with Not_found -> m in
       next_loc n1.edge st in
     m.evt <- { m.evt with loc=loc ; bank=E.atom_to_bank m.evt.atom; } ;

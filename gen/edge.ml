@@ -210,6 +210,7 @@ and type rmw = F.rmw = struct
 
   let merge_atoms = F.merge_atoms
   let is_ifetch = F.is_ifetch
+
   let atom_to_bank = function
     | None -> Ord
     | Some a -> F.atom_to_bank a
@@ -752,7 +753,7 @@ let fold_tedges f r =
   | Irf _|Ifr _ -> true
   | Rf _ -> is_ifetch e.a1
   | Fr _ -> is_ifetch e.a2
-  | _ -> is_ifetch e.a1 || ( Same == (do_loc_sd e.edge) && is_ifetch e.a2)
+  | _ -> is_ifetch e.a1 || ( loc_sd e = Same && is_ifetch e.a2)
 
   let compat_atoms a1 a2 = match F.merge_atoms a1 a2 with
   | None -> false

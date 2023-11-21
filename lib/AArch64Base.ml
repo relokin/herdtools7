@@ -311,7 +311,7 @@ let pp_reg r = match r with
 let pp_i n = match n with
   | 1 -> "instr:\"NOP\""
   | 0 -> "instr:\"B .+12\""
-  | _ -> Warn.fatal "test"
+  | _ -> Warn.fatal "instruction currently not supported"
 let pp_wreg r = match r with
 | Symbolic_reg r -> "W%" ^ r
 | Internal i -> Printf.sprintf "i%i" i

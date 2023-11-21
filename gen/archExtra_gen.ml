@@ -114,7 +114,7 @@ with type arch_reg = I.arch_reg and type special = I.special
         else sprintf "%i:%s" i (I.pp_reg r)
     | Loc loc -> sprintf "[%s]" (pp_symbol loc)
 
-  let pp_i n = I.pp_i n
+  let pp_i = I.pp_i
 
   let location_compare loc1 loc2 = match loc1,loc2 with
   | Reg _,Loc _ -> -1
