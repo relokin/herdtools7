@@ -303,13 +303,20 @@ let check_balance =
 
 let build_cycle =
 
+  let convert_ins e = match e.E.edge with
+  | E.Irf ie -> E.parse_edge (sprintf "Rf%sIP" (pp_ie ie))
+  | E.Ifr ie -> E.parse_edge (sprintf "Fr%sPI" (pp_ie ie))
+  | _ -> e in
+
   let rec do_rec idx es = match es with
   | [] -> assert false (* Empty cycle is absurd *)
   | [e] ->
+      let e = convert_ins e in
       let n,_ = alloc_node idx e in
       n.next <- n ; n.prev <- n ;
       n
   | e::es ->
+      let e = convert_ins e in
       let n,idx = alloc_node idx e in
       cons_cycle n (do_rec idx es) in
 
@@ -378,9 +385,6 @@ let non_pseudo e = E.is_non_pseudo e.E.edge
 let find_non_pseudo m = find_edge non_pseudo m
 let find_non_pseudo_prev m = find_edge_prev non_pseudo m
 
-let is_real_edge e =  non_pseudo e && non_insert_store e
-
-let find_real_edge_prev = find_edge_prev is_real_edge
 
 (* generic scan *)
   let fold f m k =
@@ -713,20 +717,18 @@ let remove_store n0 =
 
   let check_fetch n0 =
     let rec do_rec m =
-      let p = find_real_edge_prev m.prev in
       (* ensure Instr read is followed or preceded by plain read to same location*)
-      begin match m.edge.E.edge, p.edge.E.edge, m.evt.loc, m.evt.dir with
-        | E.Irf _,_,_,_ | _, E.Ifr _,_,_ -> ()
-        | _,_,Code.Code _, Some R when not (E.is_ifetch m.edge.E.a1) ->
+      begin match m.evt.loc, m.evt.dir with
+        | Code.Code _, Some R when not (E.is_ifetch m.edge.E.a1) ->
             if is_read_same_nonfetch m then begin
               Printf.printf "%s" (str_node m);
               Warn.user_error "Multiple ifetch reads to same code location"
               end;
-        | _,_,Code.Code _, Some R when E.is_ifetch m.edge.E.a1 ->
+        | Code.Code _, Some R when E.is_ifetch m.edge.E.a1 ->
             if not (is_read_same_nonfetch m) then begin
              Warn.user_error "Reading from label that doesn't exist [%s]" (str_node m)
             end;
-        | _,_,Code.Code _, Some W when not (E.is_ifetch m.edge.E.a1) ->
+        | Code.Code _, Some W when not (E.is_ifetch m.edge.E.a1) ->
           Warn.user_error "Writing non-instruction value to code location: [%s]" (str_node m)
         | _ -> ();
         end;
