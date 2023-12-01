@@ -461,13 +461,12 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
         let emit_fetch st _p init lab =
           let rA,st = next_reg st in
           let lab0 = ".+12" in
-          let lab1 = Label.next_label "L" in
+          let lab1 = ".+8" in
           let cs =
             Label (lab,Instruction (b lab0))::
             Instruction (mov rA 2)::
             Instruction (b lab1)::
             Instruction (mov rA 1)::
-            Label (lab1,Nop)::
             [] in
           rA,init,cs,st
 
