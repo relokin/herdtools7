@@ -1998,7 +1998,7 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
               Warn.fatal "No store acquire"
           | Some (AcqPc _,_) ->
               Warn.fatal "No store acquirePc"
-          | Some (Instr, _) -> Warn.fatal "No store ifetch"
+          | Some (Instr, _) -> Warn.fatal "No Plain Write to label (code location)"
           | Some (Plain a,Some (sz,o)) ->
               let module S =
                 STORE
