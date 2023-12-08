@@ -155,6 +155,7 @@ let  plain = Plain None
 type atom = atom_acc * MachMixed.t option
 
 let default_atom = Atomic PP,None
+let instr_atom = Some (Instr,None)
 
 let applies_atom (a,_) d = match a,d with
 | Acq _,R

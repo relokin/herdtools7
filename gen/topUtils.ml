@@ -225,7 +225,6 @@ module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
           | Fr _|Leave CFr|Back CFr -> "Fr"
           | Rf _|Leave CRf|Back CRf -> "Rf"
           | Ws _|Leave CWs|Back CWs -> "Co"
-          | Irf _ -> "Irf" | Ifr _ -> "Ifr"
           | _ -> assert false)
         nss
 
@@ -311,7 +310,7 @@ module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
     let fetch_val n =
       let n = C.C.find_node (fun n -> C.E.is_com n.C.C.edge) n.C.C.prev in
       match n.C.C.edge.C.E.edge with
-      | C.E.Irf _ | C.E.Rf _-> 2
-      | C.E.Ifr _ | C.E.Fr _ -> 1
+      | C.E.Rf _-> 2
+      | C.E.Fr _ -> 1
       | _ -> 0
   end

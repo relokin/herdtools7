@@ -106,6 +106,7 @@ module SIMD = NoSIMD
 type atom = string list
 
 let default_atom = [] (* Wrong, extract from bell file? *)
+let instr_atom = None
 
 let tr_dir = function
   | R -> BellName.r

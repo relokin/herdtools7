@@ -47,6 +47,7 @@ module Make
       type atom = atom_acc * MachMixed.t option
 
       let default_atom = Atomic,None
+      let instr_atom = None
 
       let applies_atom a d = match a,d with
       | ((Atomic,_),Code.W)

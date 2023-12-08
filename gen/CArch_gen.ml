@@ -28,6 +28,7 @@ module SIMD = NoSIMD
 type atom = MemOrder.t
 
 let default_atom = SC
+let instr_atom = None
 
 let applies_atom a d = match a,d with
 | (Acq|Acq_Rel|Con),W -> false

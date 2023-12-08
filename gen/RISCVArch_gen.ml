@@ -51,6 +51,7 @@ module Make
    type atom = MO of mo | Atomic of mo * mo | Mixed of MachMixed.t
 
    let default_atom = Atomic (Rlx,Rlx)
+   let instr_atom = None
 
    let applies_atom a d = match a with
    | MO mo ->

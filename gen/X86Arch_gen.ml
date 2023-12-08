@@ -27,6 +27,7 @@ module SIMD = NoSIMD
 type atom = Atomic
 
 let default_atom = Atomic
+let instr_atom = None
 
 let applies_atom a d = match a,d with
 | Atomic,W -> true

@@ -303,20 +303,13 @@ let check_balance =
 
 let build_cycle =
 
-  let convert_ins e = match e.E.edge with
-  | E.Irf ie -> E.parse_edge (sprintf "Rf%sIP" (pp_ie ie))
-  | E.Ifr ie -> E.parse_edge (sprintf "Fr%sPI" (pp_ie ie))
-  | _ -> e in
-
   let rec do_rec idx es = match es with
   | [] -> assert false (* Empty cycle is absurd *)
   | [e] ->
-      let e = convert_ins e in
       let n,_ = alloc_node idx e in
       n.next <- n ; n.prev <- n ;
       n
   | e::es ->
-      let e = convert_ins e in
       let n,idx = alloc_node idx e in
       cons_cycle n (do_rec idx es) in
 
@@ -460,7 +453,7 @@ let make_loc n =
 
 let next_loc e ((loc0,lab0),vs) = match E.is_fetch e with
 | true -> Code (sprintf "Lself%02i" lab0),((loc0,lab0+1),vs)
-| _ -> 
+| _ ->
   Code.Data (make_loc loc0),((loc0+1,lab0),vs)
 
 let same_loc e = match E.loc_sd e with
@@ -958,7 +951,7 @@ let set_same_loc st n0 =
           find_node
             (fun m -> match m.prev.edge.E.edge with
             | E.Fr _|E.Rf _|E.Ws _|E.Leave _|E.Back _
-            | E.Hat|E.Rmw _|E.Irf _|E.Ifr _ -> true
+            | E.Hat|E.Rmw _ -> true
             | E.Po _|E.Dp _|E.Fenced _|E.Insert _|E.Store|E.Node _ -> false
             | E.Id -> assert false) n in
         split_one_loc m

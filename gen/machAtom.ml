@@ -33,6 +33,7 @@ module Make(C:Config) = struct
   type atom = hidden_atom
 
   let default_atom = Atomic
+  let instr_atom = None
 
   open Code
 
