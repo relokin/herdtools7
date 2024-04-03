@@ -1,0 +1,11 @@
+AArch64 coRW-lxsx+dc.cvau
+{
+ 0:X1=x;
+ 0:X2=y;
+}
+ P0              ;
+ LDXR W0,[X1]    ;
+ DC CVAU,X2      ;
+ MOV W4,#1       ;
+ STXR W3,W4,[X1] ;
+exists(0:X3=1 /\ [x]=0)

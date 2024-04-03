@@ -189,3 +189,7 @@ let CMODX-unordered-conflicts =
   CMODX-conflicts \ (CMODX-ordering | CMODX-ordering^-1)
 
 flag ~empty CMODX-unordered-conflicts as violates-CMODX-requirements
+
+let lxsx-fw-progress-1 =
+  po; [Exp | DC.CVAU | IC | TLBI | FAULT | EXC-RET | ISB]; po
+flag ~empty lxsx & lxsx-fw-progress-1 as violates-LXSX-forward-progress-rule-1

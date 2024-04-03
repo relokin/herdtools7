@@ -1,0 +1,11 @@
+AArch64 coRW-lxsx+fault
+Variant=vmsa
+{
+ [PTE(y)]=(valid:0);
+ 0:X1=x;
+ 0:X2=y;
+}
+ P0              | P0.F            ;
+ LDXR W0,[X1]    | MOV W4,#1       ;
+ LDR W5,[X2]     | STXR W3,W4,[X1] ;
+exists(0:X3=1 /\ [x]=0)

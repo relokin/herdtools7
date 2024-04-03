@@ -1,0 +1,11 @@
+AArch64 coRW-lxsx+ic.ivau
+{
+ 0:X1=x;
+ 0:X2=y;
+}
+ P0              ;
+ LDXR W0,[X1]    ;
+ IC IVAU,X2      ;
+ MOV W4,#1       ;
+ STXR W3,W4,[X1] ;
+exists(0:X3=1 /\ [x]=0)
