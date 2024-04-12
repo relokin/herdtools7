@@ -1,0 +1,23 @@
+name: Create a new binary release for aarch64 CentOS 7
+
+on: workflow_dispatch
+
+permissions: read-all
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tree
+        uses: actions/checkout@v4
+
+  build:
+    runs-on: ubuntu-latest
+    container: ocaml/opam:centos-7-ocaml-4.14
+    needs: checkout
+    steps:
+      - run: opam init --root=/home/runner/work
+
+      - run: opam install /home/runner/work/herdtools7/herdtools7 --deps-only --with-test
+
+      - run: opam exec -- make build
