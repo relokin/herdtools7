@@ -1,0 +1,19 @@
+name: Create a new binary release for aarch64 CentOS 7
+
+on: workflow_dispatch
+
+permissions: read-all
+
+jobs:
+  build:
+    os:
+      - ubuntu-latest
+    container:
+      - "ocaml/opam:centos-7-ocaml-4.14"
+    steps:
+      - name: Checkout tree
+        uses: actions/checkout@v4
+
+      - run: opam install . --deps-only --with-test
+
+      - run: opam exec -- make build
