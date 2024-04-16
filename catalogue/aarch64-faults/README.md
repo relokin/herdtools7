@@ -1,7 +1,8 @@
 aarch64-faults: Catalogue that demonstrates supported Faults
 ============================================================
 
-The tests in this catalogue execute instructions that generate fautls.
+The tests in this catalogue execute instructions that generate
+different type of faults.
 
 Simulating with herd7
 ---------------------

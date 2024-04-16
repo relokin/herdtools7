@@ -2,7 +2,7 @@ aarch64-VMSA: Catalogue with the semantics of Armv8-A VMSA
 ============================================================
 
 Includes tests that exercise the semantics of the Virtual Memory
-System Architecture. Most of the tests in this catalogue, concurrently
+System Architecture. Most of the tests in this catalogue concurrently
 update and use Translation Table Descriptors.
 
 Simulating with herd7

@@ -1,8 +1,8 @@
-aarch64-ETS2: Catalogue with the semantics of Armv8-A VMSA
-============================================================
+aarch64-ETS2: Catalogue with the semantics of Armv8-A VMSA with support for FEAT_ETS2
+=====================================================================================
 
 Includes tests that exercise the semantics of the Virtual Memory
-System Architecture. Most of the tests in this catalogue, concurrently
+System Architecture. Most of the tests in this catalogue concurrently
 update and use Translation Table Descriptors. It is assumed that these
 tests run in a system that implements FEAT_ETS2.
 

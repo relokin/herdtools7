@@ -1,8 +1,8 @@
 aarch64-MTE-mixed: Catalogue for AArch64 with MTE and mixed size semantics
 ==========================================================================
 
-Tests that exercise the basic ordering rules of the MTE and mixed size
-semantics of the memory model.
+Tests that exercise the conjuction of MTE and mixed-size ordering
+semantics of the AArch64 architecture.
 
 Simulating with herd7
 ---------------------
