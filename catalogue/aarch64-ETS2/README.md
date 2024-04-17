@@ -37,7 +37,7 @@ litmus7 with following command:
 
     % litmus7 -mach kvm-armv8.1 -a 2 -o ${KUT_DIR}/litmus -kinds tests/ETS2-kinds.txt tests/@all
 
-> Note: litmus7 and the C compiler might emit warnings for the tests:
+> **_NOTE:_** litmus7 and the C compiler might emit warnings for the tests:
 > - LDR,
 > - LDRaf0-HA,
 > - LDRaf0-noHA,

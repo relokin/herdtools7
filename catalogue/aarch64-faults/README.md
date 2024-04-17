@@ -1,4 +1,4 @@
-aarch64-faults: Catalogue that demonstrates supported Faults
+aarch64-faults: Catalogue with test that demonstrate Faults
 ============================================================
 
 The tests in this catalogue execute instructions that generate
@@ -30,4 +30,4 @@ in the folder ${KUT_DIR}:
     % cd ..
     % sh ./litmus/run.sh
 
-> Note: litmus7 does not support MTE and, consencuently, cannot run the test LDRredF.
+> **_NOTE:_** litmus7 does not support MTE and, consencuently, cannot run the test LDRredF.

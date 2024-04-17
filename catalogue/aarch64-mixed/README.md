@@ -15,7 +15,7 @@ Running with litmus7
 --------------------
 
     # Assuming there exists a folder at the path ${TESTS_DIR}
-    % litmus7 -a 2 -kinds tests/kinds.txt -o ${TESTS_DIR}/ catalogue/tests/@all
+    % litmus7 -a 2 -kinds tests/kinds.txt -o ${TESTS_DIR}/ tests/@all
     % cd ${TESTS_DIR}
     % make
     % sh ./run.sh

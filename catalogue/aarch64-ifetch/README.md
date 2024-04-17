@@ -48,7 +48,7 @@ in the folder ${KUT_DIR}:
     % sh ./litmus/run.sh
 
 
-> Note: litmus7 and the C compiler might emit warnings for the tests:
+> **_NOTE:_** litmus7 and the C compiler might emit warnings for the tests:
 > - MP.FF+dc.cvau-dsb.ish-ic.ivau-dsb.ish+po,
 > - MP.FF+dc.cvau-dmb.ish+dsb.ish-ic.ivau-dsb.ish-rfiINSTNOP, and
 > - MP.FF+dc.cvau-dsb.ish-ic.ivau-dsb.ish+dmb.ish+rfiINST.
