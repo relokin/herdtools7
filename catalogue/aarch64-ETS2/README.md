@@ -25,11 +25,17 @@ source]{https://gitlab.com/kvm-unit-tests/kvm-unit-tests/-/blob/master/README.md
 in the folder ${KUT_DIR}:
 
     % mkdir ${KUT_DIR}/litmus
-    % litmus7 -mach kvm-aarch64 -a 2 -o ${KUT_DIR}/litmus -kinds tests/VMSA-ETS2-kinds.txt tests/@all
+    % litmus7 -mach kvm-aarch64 -a 2 -o ${KUT_DIR}/litmus -kinds tests/VMSA-ETS2-kinds.txt tests/@armv8-a
     % cd ${KUT_DIR}/litmus
     % make
     % cd ..
     % sh ./litmus/run.sh
+
+Some tests in this catalogue require support for FEAT_LSE. If hardware
+implements Armv8.1-A which includes FEAT_LSE, you can instead run
+litmus7 with following command:
+
+    % litmus7 -mach kvm-armv8.1 -a 2 -o ${KUT_DIR}/litmus -kinds tests/ETS2-kinds.txt tests/@all
 
 > Note: litmus7 and the C compiler might emit warnings for the tests:
 > - LDR,
@@ -66,8 +72,6 @@ in the folder ${KUT_DIR}:
 > - STRx+STCLRptex+db3+dbm,
 > - STRx+STCLRptex+db3,
 > - STRx+STCLRptex+db4,
-> - Sc08+BIS,
-> - Sc09+BIS,
 > - coRWImpExp+WExp, and
 > - coRWImpExp.
 > These are known and do not affect the correctness of these tests.
