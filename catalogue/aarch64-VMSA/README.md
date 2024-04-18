@@ -5,6 +5,42 @@ Includes tests that exercise the semantics of the Virtual Memory
 System Architecture. Most of the tests in this catalogue concurrently
 update and use Translation Table Descriptors.
 
+The tests in this catalogue:
+- Can address the Stage 1, Level-3 Translation Table Descriptor (TTD)
+of a locations `x` as `PTE(x)`.
+- Assign a tuple of the following format as the value of `PTE(x)`
+`(oa:PA(x), valid:<OA>, af:{0,1}, db:{0,1}, dmb:{0,1}, el0:{0,1})` where:
+    - `oa`: The Output Address encoded of the TTD,
+    - `valid`: The Valid bit of the TTD,
+    - `af`: The AF bit of the TTD (Lower attributes),
+    - `db`: The complement of the nDirty bit of the TTD (Lower attributes),
+    - `dbm`: The DBM of the TTD (Upper attributes), and
+    - `el0`: The AP[1] bit of the TTD (Lower attributes).
+- Use `TLBI` instructions to invalidate one or more entries in the
+  TLB. For example, if `X9` is initialized with address of `x`, a test
+  will use a sequence of instructions such as the following to
+  invalidate the TLB for a location `x`
+
+>          LSR X9,X9,#12
+>          TLBI VAAE1IS,X9
+
+- In their post-condition, can include predicates that are validated
+if the execution has encountered an MMU Fault. As a result, the a
+predicate of the following format might appear in the post-condition of a test:
+`fault(P<n>[:<label>][:<location>][:<fault type>])` where:
+    - `P<n>` is the thread that encountered a fault, for example `P0`,
+    - `<label>` is the label of the instruction that raised the fault,
+      for example `L0`,
+    - `<location>` is the location that was associated with the fault,
+      for example `x`, and
+    - `<fault type>` is the type of fault, for example `MMU:Translation`.
+
+- Might specify handlers for faults that happen in a given thread. The
+  fault handlers are encoded as a separate thread with the label
+  `P<n>.F`. For example a thread with the label `P1.F` specifies the
+  handler that will be executed if there is a fault in the execution
+  of `P1`.
+
 Simulating with herd7
 ---------------------
 
