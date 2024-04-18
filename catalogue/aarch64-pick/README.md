@@ -1,4 +1,4 @@
-aarch64-mixed: Catalogue for AArch64 with pick dependencies
+aarch64-pick: Catalogue for AArch64 with pick dependencies
 ===========================================================
 
 Tests with memory instructions with a pick dependency semantics such
