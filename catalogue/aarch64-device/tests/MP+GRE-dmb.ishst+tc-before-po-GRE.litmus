@@ -1,0 +1,16 @@
+AArch64 MP+GRE-dmb.ishst+tc-before-po-GRE
+Variant=vmsa,fatal,mte,sync
+{
+ [PTE(x)]=(oa:PA(x),attrs:(Device-GRE));
+ [PTE(y)]=(oa:PA(y),attrs:(TaggedNormal));
+ [tag(y)]=:red;
+ 0:X1=x; 1:X1=x;
+ 0:X2=y:green; 0:X3=y;
+ 1:X3=y:green;
+}
+ P0          | P1          ;
+ MOV W0,#1   |L0:          ;
+ STR W0,[X1] | LDR W0,[X3] ;
+ DMB ISHST   | LDR W2,[X1] ;
+ STG X2,[X3] |             ;
+exists(~fault(P1:L0,y,TagCheck) /\ 1:X2=0)

@@ -1,1 +1,8 @@
 MP+GRE-dmb.st+dmb.ishld-GRE.litmus
+MP+GRE-dmb.ishst+addr-po-GRE.litmus
+MP+GRE-dmb.ishst+pick-addr-dep-GRE.litmus
+MP+GRE-dmb.ishst+pick-addr-dep-po-GRE.litmus
+MP+GRE-dmb.ishst+pick-ctrl-dep-GRE.litmus
+MP+GRE-dmb.ishst+tc-before-po-GRE.litmus
+MP+GRE-dmb.ishst+tr-ib-po-GRE.litmus
+MP+nGRE-rfi-addr+dmb.ishld-nGRE.litmus

@@ -1,2 +1,11 @@
 # MMRB 2024-09-27
 MP+GRE-dmb.st+dmb.ishld-GRE             Forbid
+
+# MMRB 2024-10-11
+MP+GRE-dmb.ishst+addr-po-GRE            Forbid
+MP+GRE-dmb.ishst+tr-ib-po-GRE           Forbid
+MP+GRE-dmb.ishst+tc-before-po-GRE       Forbid
+MP+GRE-dmb.ishst+pick-addr-dep-GRE      Forbid
+MP+GRE-dmb.ishst+pick-ctrl-dep-GRE      Forbid
+MP+GRE-dmb.ishst+pick-addr-dep-po-GRE   Forbid
+MP+nGRE-rfi-addr+dmb.ishld-nGRE         Forbid
