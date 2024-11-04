@@ -1,0 +1,15 @@
+AArch64 R+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE
+Variant=vmsa
+{
+ [PTE(x)]=(oa:PA(x),attrs:(Device-nGnRE));
+ [PTE(y)]=(oa:PA(y),attrs:(Device-nGnRE));
+ 0:X1=x; 1:X1=x;
+ 0:X3=y; 1:X3=y;
+}
+ P0          | P1          ;
+ MOV W0,#1   | MOV W0,#2   ;
+ STR W0,[X1] | STR W0,[X3] ;
+ DMB ISHST   | LDR W2,[X1] ;
+ MOV W2,#1   |             ;
+ STR W2,[X3] |             ;
+exists([y]=2 /\ 1:X2=0)
