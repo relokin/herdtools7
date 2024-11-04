@@ -7,6 +7,7 @@ MP+GRE-dmb.ishst+tc-before-po-GRE.litmus
 MP+GRE-dmb.ishst+tr-ib-po-GRE.litmus
 MP+nGRE-rfi-addr+dmb.ishld-nGRE.litmus
 
+# Non-Reordering only adds ordering restrictions for the arrival to the endpoint.
 MP+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE.litmus
 MP+nGnRE-po-nGnRE+nGnRE-dmb.ishld-nGnRE.litmus
 R+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE.litmus
