@@ -27,3 +27,20 @@ let scl = loc
  
 let va-loc = (tr-ib; same-low-order-bits; tr-ib^-1) & loc
 let po-va-loc = po & va-loc
+
+let WB = range([iWB & oWB]; tr-ib; [M & Exp | DC | IC])
+let WT = range([iWT & oWT]; tr-ib; [M & Exp | DC | IC])
+let NC = range([iNC & oNC]; tr-ib; [M & Exp | DC | IC])
+let Device-GRE = range([Device-GRE]; tr-ib; [M & Exp | DC | IC])
+let Device-nGRE = range([Device-nGRE]; tr-ib; [M & Exp | DC | IC])
+let Device-nGnRE = range([Device-nGnRE]; tr-ib; [M & Exp | DC | IC])
+let Device-nGnRnE = range([Device-nGnRnE]; tr-ib; [M & Exp | DC | IC])
+
+(* All Effects that are not permitted to be cached *)
+let UC = (if "T00" then WT else {}) | NC | Device-GRE | Device-nGRE | Device-nGnRE | Device-nGnRnE
+
+let same-ch = if "vmsa" then
+            [WB]; loc; [WB]
+            | [WT]; loc; [WT]
+            | [UC]; loc; [UC]
+            else loc
