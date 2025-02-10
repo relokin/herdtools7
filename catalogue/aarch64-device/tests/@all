@@ -12,3 +12,6 @@ MP+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE.litmus
 MP+nGnRE-po-nGnRE+nGnRE-dmb.ishld-nGnRE.litmus
 R+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE.litmus
 S+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE.litmus
+
+SM+B+dsb.ish-isb-GRE.litmus
+M+dsb.ishst-ic.ivau-dsb.ish-isb-GRE.litmus

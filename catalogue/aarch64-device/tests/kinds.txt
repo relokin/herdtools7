@@ -2,12 +2,16 @@
 MP+GRE-dmb.st+dmb.ishld-GRE             Forbid
 
 # MMRB 2024-10-11
-MP+GRE-dmb.ishst+addr-po-GRE            Forbid
-MP+GRE-dmb.ishst+tr-ib-po-GRE           Forbid
-MP+GRE-dmb.ishst+tc-before-po-GRE       Forbid
-MP+GRE-dmb.ishst+pick-addr-dep-GRE      Forbid
-MP+GRE-dmb.ishst+pick-ctrl-dep-GRE      Forbid
-MP+GRE-dmb.ishst+pick-addr-dep-po-GRE   Forbid
+# Prohibition of speculation of Reads to Device Memory only applies for endpoint ordering.
+MP+GRE-dmb.ishst+addr-po-GRE            Allow
+MP+GRE-dmb.ishst+tr-ib-po-GRE           Allow
+MP+GRE-dmb.ishst+tc-before-po-GRE       Allow
+MP+GRE-dmb.ishst+pick-addr-dep-GRE      Allow
+MP+GRE-dmb.ishst+pick-ctrl-dep-GRE      Allow
+MP+GRE-dmb.ishst+pick-addr-dep-po-GRE   Allow
+MP+GRE-dmb.ishst+ctrl-GRE               Forbid
+
+# Prohibition of Gathering means that store buffer forwarding is not allowed.
 MP+nGRE-rfi-addr+dmb.ishld-nGRE         Forbid
 
 # MMRB 2024-10-17
@@ -16,3 +20,7 @@ MP+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE Allow
 MP+nGnRE-po-nGnRE+nGnRE-dmb.ishld-nGnRE Allow
 R+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE  Allow
 S+nGnRE-dmb.ishst-nGnRE+nGnRE-po-nGnRE  Allow
+
+# The prohibition of caching of Device types doesn't apply to the instruction cache.
+SM+B+dsb.ish-isb-GRE                    Allow
+SM+dsb.ishst-ic.ivau-dsb.ish-isb-GRE    Forbid
