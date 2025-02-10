@@ -96,7 +96,9 @@ let dob =
  | ctrl; [Exp & W | HU | TLBI | DC.CVAU | IC]
  | addr; [Exp & M]; po; [Exp & W | HU]
  | addr; [Exp & M]; lrs; [Exp & R | Imp & Tag & R]
+ | addr; [Exp & M]; rfi & mismatched-attrs; [Exp & R]
  | data; [Exp & M]; lrs; [Exp & R | Imp & Tag & R]
+ | data; [Exp & M]; rfi & mismatched-attrs; [Exp & R]
  | [Imp & TTD & R]; tr-ib; [Exp & M]; po; [Exp & W]
  | [Imp & Tag & R]; tc-before; [Exp & M]; po; [Exp & W] 
 
@@ -115,6 +117,7 @@ let pob =
 let aob =
  [Exp & M]; rmw; [Exp & M]
  | [Exp & M]; rmw; lrs; [A | Q]
+ | [Exp & M]; rmw; rfi & mismatched-attrs; [A | Q]
  | [Imp & TTD & R]; rmw; [HU]
 
 (* Barrier-ordered-before *)
