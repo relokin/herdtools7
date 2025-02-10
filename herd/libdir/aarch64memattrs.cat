@@ -77,3 +77,36 @@ let Normal = try PTENormal with emptyset
 
 (*** Common attributes ***)
 let PTEXS = try PTEXS with emptyset
+
+(*** Definition of a relation between TTDs with the Same Attributes ***)
+let same-Device =
+  Device-GRE * Device-GRE
+  | Device-nGRE * Device-nGRE
+  | Device-nGnRE * Device-nGnRE
+  | Device-nGnRE * Device-nGnRnE
+  | Device-nGnRnE * Device-nGnRE
+  | Device-nGnRnE * Device-nGnRnE
+
+let same-shareability =
+  NSH * NSH
+  | ISH * ISH
+  | OSH * OSH
+
+let same-inner-cacheability =
+  iWB * iWB
+  | iWT * iWT
+  | iNC * iNC
+
+let same-outer-cacheability =
+  oWB * oWB
+  | oWT * oWT
+  | oNC * oNC
+
+let same-xs =
+  PTEXS * PTEXS
+  | (TTD \ PTEXS) * (TTD \ PTEXS)
+
+let same-Normal = (Normal * Normal) & same-shareability &
+    same-inner-cacheability & same-outer-cacheability & same-xs
+
+let TTD-same-attrs = same-Normal | same-Device

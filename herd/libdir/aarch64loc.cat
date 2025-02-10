@@ -2,6 +2,14 @@
 let tr-ib =
   [Imp & TTD & R]; iico_data; [B]; iico_ctrl; [Exp & M | MMU & FAULT]
 
+let TTD-mismatched-attrs = [Imp & TTD & R]; ~TTD-same-attrs; [Imp & TTD & R]
+
+let mismatched-attrs =
+  if "vmsa" then
+     ([Exp & M]; tr-ib^-1; TTD-mismatched-attrs; tr-ib; [Exp & M]) & loc
+  else
+     0
+
 (* Notions of Same Location - PA, VA, and including Fault Effects *)
 let TTD-same-oa =  same-oa(TTD*TTD) 
 let same-loc = [M]; loc; [M]
