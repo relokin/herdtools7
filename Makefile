@@ -618,6 +618,19 @@ ets2-test:
 		$(REGRESSION_TEST_MODE)
 		@ echo "herd7 catalogue aarch64-ETS2 tests: OK"
 
+cata-test:: cata-aarch64-attrs
+cata-aarch64-attrs:
+	@ echo
+	$(HERD_CATALOGUE_REGRESSION_TEST) \
+		-herd-timeout $(TIMEOUT) \
+		-j $(J) \
+		-herd-path $(HERD) \
+		-libdir-path ./herd/libdir \
+		-kinds-path catalogue/aarch64-attrs/tests/kinds.txt \
+		-shelf-path catalogue/aarch64-attrs/shelf.py \
+		$(REGRESSION_TEST_MODE)
+	@ echo "herd7 catalogue aarch64-attrs tests: OK"
+
 test.vmsa+mte:
 	@ echo
 	$(HERD_REGRESSION_TEST) \
