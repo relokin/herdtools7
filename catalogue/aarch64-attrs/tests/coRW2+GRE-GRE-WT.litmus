@@ -1,0 +1,15 @@
+AArch64 coRW2+GRE-GRE-WT
+Variant=vmsa
+{
+ [x]=0;
+ [PTE(x)]=(oa:PA(x),attrs:(Device-GRE));
+ [PTE(y)]=(oa:PA(x),attrs:(Device-GRE));
+ [PTE(z)]=(oa:PA(x),attrs:(Normal,iWT,oWT));
+ 0:X1=x; 0:X3=y;
+ 1:X2=z;
+}
+ P0          | P1          ;
+ LDR W0,[X1] | MOV W4,#1   ;
+ MOV W2,#2   | STR W4,[X2] ;
+ STR W2,[X3] |             ;
+exists(0:X0=1 /\ [x]=1)

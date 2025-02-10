@@ -1,0 +1,14 @@
+AArch64 coRR+NC-WB+nGnRnE
+Variant=vmsa
+{
+ [x]=0;
+ [PTE(x)]=(oa:PA(x),attrs:(Normal,iNC,oNC));
+ [PTE(y)]=(oa:PA(x),attrs:(Normal,iWB,oWB));
+ [PTE(z)]=(oa:PA(x),attrs:(Device-nGnRnE));
+ 0:X1=x; 0:X3=y;
+ 1:X2=z;
+}
+ P0          | P1          ;
+ LDR W0,[X1] | MOV W0,#1   ;
+ LDR W2,[X3] | STR W0,[X2] ;
+exists(0:X0=1 /\ 0:X2=0)

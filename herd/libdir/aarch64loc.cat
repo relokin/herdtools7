@@ -12,10 +12,10 @@ let mismatched-attrs =
 
 (* Notions of Same Location - PA, VA, and including Fault Effects *)
 let TTD-same-oa =  same-oa(TTD*TTD) 
-let same-loc = [M]; loc; [M]
+let same-loc = ([M]; loc \ mismatched-attrs; [M])
   | [MMU & Translation & FAULT]; same-low-order-bits
   | same-low-order-bits; [MMU & Translation & FAULT] 
-  | (tr-ib^-1; TTD-same-oa; tr-ib) & same-low-order-bits
+
 let po-loc = po & same-loc
 
 (* Same-cache-line relation *)

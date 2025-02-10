@@ -1,0 +1,13 @@
+AArch64 coWR+NC-NC
+Variant=vmsa
+{
+ [x]=0;
+ [PTE(y)]=(oa:PA(x),attrs:(Normal,iNC,oNC));
+ [PTE(z)]=(oa:PA(x),attrs:(Normal,iNC,oNC));
+ 0:X1=y; 0:X3=z;
+}
+ P0          ;
+ MOV W0,#1   ;
+ STR W0,[X1] ;
+ LDR W2,[X3] ;
+exists(0:X2=0);
