@@ -1,0 +1,16 @@
+AArch64 WWC-GRE-nGnRE-GRE+dmb.lds
+Variant=vmsa
+{
+ [x]=0;
+ [PTE(x)]=(oa:PA(x), attrs:(Device-GRE));
+ [PTE(y)]=(oa:PA(x), attrs:(Device-nGnRE));
+ [PTE(z)]=(oa:PA(x), attrs:(Device-GRE));
+ 0:X0=x; 1:X1=y; 2:X2=z;
+ 1:X3=f; 2:X3=f;
+}
+ P0          | P1           | P2          ;
+ MOV W4,#1   | LDR W4,[X1]  | LDR W5,[X3] ;
+ STR W4,[X0] | DMB LD       | DMB LD      ;
+             | MOV W5,#1    | MOV W4,#2   ;
+             | STR W5,[X3]  | STR W4,[X2] ;
+exists(1:X4=1 /\  2:X5=1 /\ [x]=1)

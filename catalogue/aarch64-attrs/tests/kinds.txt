@@ -1152,3 +1152,123 @@ MP+nGnRnE-coi-NC-dmb.st+dmb.ld			Forbid
 MP+nGnRnE-coi-GRE-dmb.st+dmb.ld			Forbid
 MP+nGnRnE-coi-nGnRE-dmb.st+dmb.ld			Forbid
 MP+nGnRnE-coi-nGnRnE-dmb.st+dmb.ld			Forbid
+
+WRC-WB-WB-WB+dmb.lds			Forbid
+WRC-WB-WB-WT+dmb.lds			Allow
+WRC-WB-WB-NC+dmb.lds			Allow
+WRC-WB-WT-WB+dmb.lds			Forbid
+WRC-WB-WT-WT+dmb.lds			Allow
+WRC-WB-WT-NC+dmb.lds			Allow
+WRC-WB-NC-WB+dmb.lds			Forbid
+WRC-WB-NC-WT+dmb.lds			Forbid
+WRC-WB-NC-NC+dmb.lds			Forbid
+
+WRC-WT-WB-WB+dmb.lds			Allow
+WRC-WT-WB-WT+dmb.lds			Forbid
+WRC-WT-WB-NC+dmb.lds			Forbid
+WRC-WT-WT-WB+dmb.lds			Allow
+WRC-WT-WT-WT+dmb.lds			Forbid
+WRC-WT-WT-NC+dmb.lds			Forbid
+WRC-WT-NC-WB+dmb.lds			Allow
+WRC-WT-NC-WT+dmb.lds			Forbid
+WRC-WT-NC-NC+dmb.lds			Forbid
+
+WRC-NC-WB-WB+dmb.lds			Allow
+WRC-NC-WB-WT+dmb.lds			Allow
+WRC-NC-WB-NC+dmb.lds			Forbid
+WRC-NC-WT-WB+dmb.lds			Allow
+WRC-NC-WT-WT+dmb.lds			Allow
+WRC-NC-WT-NC+dmb.lds			Forbid
+WRC-NC-NC-WB+dmb.lds			Allow
+WRC-NC-NC-WT+dmb.lds			Allow
+WRC-NC-NC-NC+dmb.lds			Forbid
+
+WWC-WB-WB-WB+dmb.lds			Forbid
+WWC-WB-WB-WT+dmb.lds			Allow
+WWC-WB-WB-NC+dmb.lds			Allow
+WWC-WB-WT-WB+dmb.lds			Forbid
+WWC-WB-WT-WT+dmb.lds			Allow
+WWC-WB-WT-NC+dmb.lds			Allow
+WWC-WB-NC-WB+dmb.lds			Forbid
+WWC-WB-NC-WT+dmb.lds			Forbid
+WWC-WB-NC-NC+dmb.lds			Forbid #?
+
+WWC-WT-WB-WB+dmb.lds			Forbid
+WWC-WT-WB-WT+dmb.lds			Forbid
+WWC-WT-WB-NC+dmb.lds			Forbid
+WWC-WT-WT-WB+dmb.lds			Forbid
+WWC-WT-WT-WT+dmb.lds			Forbid
+WWC-WT-WT-NC+dmb.lds			Forbid
+WWC-WT-NC-WB+dmb.lds			Forbid
+WWC-WT-NC-WT+dmb.lds			Forbid
+WWC-WT-NC-NC+dmb.lds			Forbid #?
+
+WWC-NC-WB-WB+dmb.lds		        Forbid #?
+WWC-NC-WB-WT+dmb.lds		        Forbid #?
+WWC-NC-WB-NC+dmb.lds			Forbid
+WWC-NC-WT-WB+dmb.lds		        Forbid #?
+WWC-NC-WT-WT+dmb.lds		        Forbid #?
+WWC-NC-WT-NC+dmb.lds			Forbid
+WWC-NC-NC-WB+dmb.lds			Forbid
+WWC-NC-NC-WT+dmb.lds			Forbid
+WWC-NC-NC-NC+dmb.lds			Forbid
+
+WWW+RR-WB-WB-WB+dmb.ishs			Forbid
+WWW+RR-WB-WB-WT+dmb.ishs			Allow
+WWW+RR-WB-WB-NC+dmb.ishs			Allow
+WWW+RR-WB-WT-WB+dmb.ishs			Allow
+WWW+RR-WB-WT-WT+dmb.ishs			Forbid
+WWW+RR-WB-WT-NC+dmb.ishs			Forbid
+WWW+RR-WB-NC-WB+dmb.ishs			Allow
+WWW+RR-WB-NC-WT+dmb.ishs			Allow
+WWW+RR-WB-NC-NC+dmb.ishs			Forbid
+
+WWW+RR-WT-WB-WB+dmb.ishs			Forbid
+WWW+RR-WT-WB-WT+dmb.ishs			Allow
+WWW+RR-WT-WB-NC+dmb.ishs			Allow
+WWW+RR-WT-WT-WB+dmb.ishs			Allow
+WWW+RR-WT-WT-WT+dmb.ishs			Forbid
+WWW+RR-WT-WT-NC+dmb.ishs			Forbid
+WWW+RR-WT-NC-WB+dmb.ishs			Allow
+WWW+RR-WT-NC-WT+dmb.ishs			Allow
+WWW+RR-WT-NC-NC+dmb.ishs			Forbid
+
+WWW+RR-NC-WB-WB+dmb.ishs		        Forbid
+WWW+RR-NC-WB-WT+dmb.ishs			Allow
+WWW+RR-NC-WB-NC+dmb.ishs			Allow
+WWW+RR-NC-WT-WB+dmb.ishs		        Allow
+WWW+RR-NC-WT-WT+dmb.ishs			Forbid
+WWW+RR-NC-WT-NC+dmb.ishs			Forbid
+WWW+RR-NC-NC-WB+dmb.ishs			Allow
+WWW+RR-NC-WT-WB+dmb.ishs			Allow
+WWW+RR-NC-NC-NC+dmb.ishs			Forbid
+
+WWW+RW-WB-WB-WB+dmb.ishs			Forbid
+WWW+RW-WB-WB-WT+dmb.ishs			Allow
+WWW+RW-WB-WB-NC+dmb.ishs			Allow
+WWW+RW-WB-WT-WB+dmb.ishs			Forbid
+WWW+RW-WB-WT-WT+dmb.ishs			Forbid
+WWW+RW-WB-WT-NC+dmb.ishs			Forbid
+WWW+RW-WB-NC-WB+dmb.ishs			Forbid
+WWW+RW-WB-NC-WT+dmb.ishs			Forbid
+WWW+RW-WB-NC-NC+dmb.ishs			Forbid #?
+
+WWW+RW-WT-WB-WB+dmb.ishs			Forbid
+WWW+RW-WT-WB-WT+dmb.ishs			Allow
+WWW+RW-WT-WB-NC+dmb.ishs			Allow
+WWW+RW-WT-WT-WB+dmb.ishs			Forbid
+WWW+RW-WT-WT-WT+dmb.ishs			Forbid
+WWW+RW-WT-WT-NC+dmb.ishs			Forbid
+WWW+RW-WT-NC-WB+dmb.ishs			Forbid
+WWW+RW-WT-NC-WT+dmb.ishs			Forbid
+WWW+RW-WT-NC-NC+dmb.ishs			Forbid #?
+
+WWW+RW-NC-WB-WB+dmb.ishs			Forbid #?
+WWW+RW-NC-WB-WT+dmb.ishs			Allow
+WWW+RW-NC-WB-NC+dmb.ishs			Allow
+WWW+RW-NC-WT-WB+dmb.ishs			Forbid
+WWW+RW-NC-WT-WT+dmb.ishs			Forbid
+WWW+RW-NC-WT-NC+dmb.ishs			Forbid
+WWW+RW-NC-NC-WB+dmb.ishs			Forbid
+WWW+RW-NC-NC-WT+dmb.ishs			Forbid
+WWW+RW-NC-NC-NC+dmb.ishs			Forbid

@@ -102,6 +102,7 @@ let Exp-obs =
   | [Exp & M]; ca & ext & same-ch; [Exp & W]
   | [Exp & R & UC]; ca & ext; [Exp & W & WT]
   | [Exp & W]; ca & ext; [Exp & W & (WT | UC)]
+  | [Exp & M]; ca & ext; [Exp & M & WB]; rf & ext; [Exp & R & UC]
 
 (** Tag-observed-by **)
 let Tag-obs =
