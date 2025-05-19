@@ -719,7 +719,6 @@ let max_set = IntSet.max_elt
       | Cycle|Observe ->
           let atoms = U.comp_atoms n in
           check_writes env_wide atoms 0  [] cos in
-    let open Final.FaultSet in
     match splitted,O.cond with
     | [],_ -> Warn.fatal "No proc"
 (*    | [_],Cycle -> Warn.fatal "One proc" *)
@@ -780,51 +779,52 @@ let max_set = IntSet.max_elt
           let get_faults ns =
           (* TODO: the `if-else` pattern on flags is not a good idea as it may short circuit *)
             if O.variant Variant_gen.NoFault then
-              Final.FaultSet.empty
+              F.FaultSet.empty
             else if do_memtag then
               let tagchange =
-                (* Filter all the write event when tag changes in `splitted`. *)
-                splitted
-                |> List.map
-                  ( fun ns -> List.filter_map
-                    ( fun n -> let evt = n.C.evt in
-                        match evt.C.dir,evt.C.loc,evt.C.bank with
-                        | Some W,Data x,Tag -> Some x
-                        | _ -> None
-                    ) ns )
-                |> List.flatten
-                |> StringSet.of_list in
-              ns
-              |> List.filter_map
-                (fun n -> match n.C.evt.C.loc,n.C.evt.C.bank with
-                | Data x,Ord when StringSet.mem x tagchange
-                    -> Some (None, None, (* no instruction label *) x)
-                | _ -> None)
-              |> Final.FaultSet.of_list
+                (* Get all tag writes. *)
+                List.fold_left
+                  (fun tags n ->
+                     let evt = n.C.evt in
+                     match evt.C.dir,evt.C.loc,evt.C.bank with
+                     | Some W,Data x,Tag -> StringSet.add x tags
+                     | _ -> tags)
+                  StringSet.empty ns in
+              List.fold_left
+                (fun flts n ->
+                   match n.C.evt.C.loc,n.C.evt.C.bank with
+                   | Data x,Ord when StringSet.mem x tagchange ->
+                     let proc = n.C.evt.C.proc in
+                     let flt = ((proc, Label.Set.empty), Some (A.Loc x), None, None) in
+                     F.FaultSet.add flt flts
+                   | _ -> flts) F.FaultSet.empty ns
             else if do_morello then
-              ns
-              |> List.filter_map
-                (fun n -> let evt = n.C.evt in
-                    match n.C.prev.C.edge.edge,evt.C.loc,evt.C.bank with
-                | Dp (dp,_,_),Data x,CapaTag when A.is_addr dp
-                          -> Some (None, None, (* no instruction label *) x)
-                | Dp (dp,_,_),Data x,CapaSeal when A.is_addr dp
-                          -> Some (None, None, (* no instruction label *) x)
-                | _ -> None)
-              |> Final.FaultSet.of_list
-            else if do_kvm then
-              ns
-              |> List.filter_map
-                  (fun n -> let e = n.C.evt in
-                    match e.C.check_fault,e.C.loc,e.C.bank with
-                    | Some (label,boolean),Data x,Ord -> Some (Some label, Some boolean, x)
-                    | _ -> None)
-              |> Final.FaultSet.of_list
-            else Final.FaultSet.empty in (* no fault-related flag *)
+             List.fold_left
+               (fun flts n ->
+                  let evt = n.C.evt in
+                  let proc = n.C.evt.C.proc in
+                  match n.C.prev.C.edge.edge,evt.C.loc,evt.C.bank with
+                  | Dp (dp,_,_),Data x,(CapaTag|CapaSeal) when A.is_addr dp ->
+                    let flt = ((proc, Label.Set.empty), Some (A.Loc x), None, None) in
+                    F.FaultSet.add flt flts
+                  | _ -> flts)
+               F.FaultSet.empty ns
+           else if do_kvm then
+             List.fold_left
+               (fun flts n ->
+                  let e = n.C.evt in
+                  match e.C.check_fault,e.C.loc,e.C.bank with
+                  | Some (lbl, _do_fault),Data x,Ord ->
+                    let proc = n.C.evt.C.proc in
+                    let flt = ((proc, (Label.Set.singleton lbl)), Some (A.Loc x), None, None) in
+                    F.FaultSet.add flt flts
+                  | _ -> flts) F.FaultSet.empty ns
+           else (* no fault-related flag *)
+             F.FaultSet.empty
+          in
           (* END of get_faults *)
           (* Extract faults from proc `i` and its node list `ns` *)
-          List.mapi (fun i ns -> i,get_faults ns) splitted
-          |> List.filter (fun (_,xs) -> not (Final.FaultSet.is_empty xs)) in
+          get_faults (List.flatten splitted) in
         (* Add the all the pair in `last_ptes` into the post-condition `final_env` *)
         let f =
           List.fold_left (fun f (x,p) -> F.cons_pteval (A.Loc x) p f) f last_ptes in

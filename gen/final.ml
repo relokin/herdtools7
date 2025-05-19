@@ -22,22 +22,6 @@ module type Config = sig
   val variant : Variant_gen.t -> bool
 end
 
-module FaultSetElm = struct
-  type t = string option * bool option * string
-
-  let compare (lhs_label, lhs_bool, lhs_var) (rhs_label, rhs_bool, rhs_var) =
-    let label =
-        Option.compare String.compare lhs_label rhs_label in
-    let boolean =
-        Option.compare Bool.compare lhs_bool rhs_bool in
-    match label, boolean with
-    | 0, 0 -> String.compare lhs_var rhs_var
-    | 0, boolean -> boolean
-    | label, _ -> label
-end
-
-module FaultSet = MySet.Make(FaultSetElm)
-
 module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
   sig
 
@@ -83,15 +67,13 @@ module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
       Code.proc -> C.A.arch_reg option -> C.C.node ->
       eventmap * fenv -> eventmap * fenv
 
-    (* - Proc.t: procedure nunmber
-       - FaultSet.t, i.e. set of optional label
-       and a boolean for if the memory event will fault *)
-    type faults = (Proc.t * FaultSet.t) list
+    include Fault.S with type loc_global := C.A.location and type fault_type := FaultType.No.t
+
     type final
 
-    val check : fenv -> faults -> final
-    val observe : fenv -> faults -> final
-    val run : C.C.event list list -> C.A.location C.C.EventMap.t -> faults -> final
+    val check : fenv -> FaultSet.t -> final
+    val observe : fenv -> FaultSet.t -> final
+    val run : C.C.event list list -> C.A.location C.C.EventMap.t -> FaultSet.t -> final
 
     val dump_final : out_channel -> final -> unit
     val dump_state : fenv -> string
@@ -250,14 +232,27 @@ module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
         else finals
     | None -> finals
 
-    type faults = (Proc.t * FaultSet.t) list
+    module FaultArg = struct
+      type arch_global = C.A.location
+      let pp_global = C.A.pp_location
+      let global_compare = C.A.location_compare
+
+      let same_id_fault _ _ = assert false
+
+      module FaultType = FaultType.No
+      type fault_type = FaultType.t
+      let pp_fault_type = FaultType.pp
+      let fault_type_compare = FaultType.compare
+    end
+
+    include Fault.Make(FaultArg)
 
     type cond_final =
       | Exists of fenv
       | Forall of (C.A.location * Code.v) list list
       | Locations of C.A.location list
 
-    type final = cond_final * faults
+    type final = cond_final * FaultSet.t
 
     module Run = Run_gen.Make(O)(C)
 
@@ -304,43 +299,22 @@ module Make : functor (O:Config) -> functor (C:ArchRun.S) ->
                  sprintf "(%s)" pp)
            fs)
 
-    let dump_one_flt proc (opt_label, opt_bool, var) =
-      match opt_label, opt_bool with
-        | Some label, Some boolean
-            -> sprintf "%sfault (%s:%s,%s)"
-                (if boolean then "" else "~")
-                (Proc.pp proc) label var
-        | None, None -> sprintf "fault (%s,%s)" (Proc.pp proc) var
-        | _ -> Warn.fatal "fault condition is incorrect."
-
-    let dump_flt sep (p,xs) = FaultSet.pp_str sep (dump_one_flt p) xs
-
     let dump_flts flts =
-      if do_kvm then
-        List.map (dump_flt " /\\ ") flts
-        |> String.concat " /\\ "
-      else
-       (* The following are for memtag etc *)
-       let pp = List.map (dump_flt " \\/ ") flts in
-       let pp = String.concat " \\/ " pp in
-       match flts with
-       | [] -> ""
-       | [_,xs] when FaultSet.is_singleton xs -> "~" ^ pp
-       | _ -> sprintf "~(%s)" pp
-
-    let faults_to_string flts =
-        flts |> List.map
-        (fun (p,xs) ->
-          FaultSet.map_list
-            (fun (_,_,loc) -> sprintf "fault (P%d,%s);" p loc)
-        xs)
-        |> List.flatten
+      if FaultSet.is_empty flts then
+        ""
+      else begin
+        let pp = String.concat " \\/ " (FaultSet.map_list pp_fault flts) in
+        if FaultSet.is_singleton flts then
+          sprintf "~%s" pp
+        else
+          sprintf "~(%s)" pp
+      end
 
     let dump_locations chan locs =
       fprintf chan "locations [%s]\n" (String.concat " " locs)
 
     let dump_final chan (f,flts) =
-      let loc_flts = if do_kvm then faults_to_string flts else [] in
+      let loc_flts = [] in
       match f with
       | Exists fs ->
           let ppfs = dump_state fs
