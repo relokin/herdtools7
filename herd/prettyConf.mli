@@ -52,7 +52,7 @@ val pp_dotcom : dotcom -> string
 val parse_dotcom : string -> dotcom option
 
 (* Events shown in figures *)
-type showevents = AllEvents | MemEvents | NonRegEvents | MemFenceEvents
+type showevents = AllEvents | MemEvents | NonRegEvents | MemFenceEvents | Explicit
 
 val tags_showevents : string list
 val pp_showevents : showevents -> string
