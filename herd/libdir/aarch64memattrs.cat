@@ -102,6 +102,8 @@ let same-outer-cacheability =
   | oWT * oWT
   | oNC * oNC
 
+let same-cacheability = same-inner-cacheability & same-outer-cacheability
+
 let same-xs =
   PTEXS * PTEXS
   | (TTD \ PTEXS) * (TTD \ PTEXS)

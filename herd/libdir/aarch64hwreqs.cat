@@ -136,9 +136,9 @@ let bob =
  | [Exp & M | Imp & Tag & R]; iico_order; [L]
 
 let po-scl-ob =
- [Exp & M]; (po & scl); [DC]
- | [DC]; (po & scl); [Exp & M]
- | [DC]; (po & scl); [DC]
+ [Exp & M & (iWB | iWT)]; po & scl & same-ch; [DC]
+ | [DC]; po & scl & same-ch; [Exp & M & (iWB | iWT)]
+ | [DC]; po & scl; [DC]
 
 let TLBUncacheable = MMU & (Translation | AccessFlag)
 

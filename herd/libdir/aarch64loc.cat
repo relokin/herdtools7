@@ -22,14 +22,18 @@ let po-loc = po & same-loc
 (* NOTE : currently assumes all locations are on different cache lines *)
 (*        also extends to IC without a location specified              *)
 let scl = loc
-  | (M | DC.CVAU | IC) * (IC.IALLU | IC.IALLUIS)
-  | (IC.IALLU | IC.IALLUIS) * (M | DC.CVAU | IC)
+  | (M | DC | IC) * (IC.IALLU | IC.IALLUIS)
+  | (IC.IALLU | IC.IALLUIS) * (M | DC | IC)
  
 let va-loc = (tr-ib; same-low-order-bits; tr-ib^-1) & loc
 let po-va-loc = po & va-loc
 
-let WB = range([iWB & oWB]; tr-ib; [M & Exp | DC | IC])
-let WT = range([iWT & oWT]; tr-ib; [M & Exp | DC | IC])
+let iWB = range([iWB]; tr-ib; [M & Exp | DC | IC])
+let oWB = range([oWB]; tr-ib; [M & Exp | DC | IC])
+let WB = iWB & oWB
+let iWT = range([iWT]; tr-ib; [M & Exp | DC | IC])
+let oWT = range([oWT]; tr-ib; [M & Exp | DC | IC])
+let WT = iWT & oWT
 let NC = range([iNC & oNC]; tr-ib; [M & Exp | DC | IC])
 let Device-GRE = range([Device-GRE]; tr-ib; [M & Exp | DC | IC])
 let Device-nGRE = range([Device-nGRE]; tr-ib; [M & Exp | DC | IC])
@@ -40,7 +44,5 @@ let Device-nGnRnE = range([Device-nGnRnE]; tr-ib; [M & Exp | DC | IC])
 let UC = (if "T00" then WT else {}) | NC | Device-GRE | Device-nGRE | Device-nGnRE | Device-nGnRnE
 
 let same-ch = if "vmsa" then
-            [WB]; loc; [WB]
-            | [WT]; loc; [WT]
-            | [UC]; loc; [UC]
-            else loc
+     [M & Exp | DC | IC]; tr-ib^-1; same-cacheability; tr-ib; [M & Exp | DC | IC]
+     else ((M & Exp | DC | IC) * (M & Exp | DC | IC))
