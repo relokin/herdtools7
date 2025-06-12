@@ -57,6 +57,9 @@ with TLBI-after from (all-TLBI-Imp_TTD_R-enums local-hw-reqs)
 with DC-after from (all-DC-Exp_W-enums local-hw-reqs)
 with IC-after from (all-IC-Imp_Instr_R-enums local-hw-reqs)
 
+(* DCIVAC-ordered-before *)
+let DCIVAC-ob = [M]; DC-after; [DC.IVAC]; DC-after; [M]
+
 (*** Hazard-ordered-before ***)
 
 (** Explicitly-hazard-ordered-before **)
@@ -100,7 +103,7 @@ let hw-reqs = local-hw-reqs | haz-ob
 let Exp-obs =
   [Exp & W]; rf & ext; [Exp & R]
   | [Exp & M & WB]; ca & ext; [Exp & W & WB]
-  | [Exp & R & UC]; ca & ext; [Exp & W & UC]
+  | [Exp & R & UC]; ca; [Exp & W & UC]
   | [Exp & W]; ca & ext; [Exp & W & UC]
   | [Exp & M]; ca & ext; [Exp & M & WB]; rf & ext; [Exp & R & UC]
 
@@ -172,7 +175,7 @@ irreflexive ob as external
 irreflexive [Exp & R]; ((po & same-loc) | rmw); [Exp & W]; rfi; [Exp & R] as coRW1-Exp
 irreflexive [Imp & Tag & R]; (po & same-loc); [Exp & Tag & W]; rfi; [Imp & Tag & R] as coRW1-MTE
 irreflexive [Exp & W]; (po & same-loc); [Exp & W]; (ca & int); [Exp & W] as coWW-Exp
-irreflexive [Exp & W]; (po & same-loc); [Exp & R]; (ca & int); [Exp & W] as coWR-Exp
+irreflexive [Exp & W]; (po & same-loc \ DCIVAC-ob); [Exp & R]; (ca & int); [Exp & W] as coWR-Exp
 irreflexive [Exp & Tag & W]; (po & same-loc); [Imp & Tag & R]; (ca & int) as coWR-MTE
 
 (*** Atomic: LDXR/STXR, AMO and HU constraint to forbid intervening writes. ***)
