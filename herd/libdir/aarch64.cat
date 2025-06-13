@@ -104,7 +104,7 @@ let Exp-obs =
   [Exp & W]; rf & ext; [Exp & R]
   | [Exp & M & WB]; ca & ext; [Exp & W & WB]
   | [Exp & R & UC]; ca; [Exp & W & UC]
-  | [Exp & W]; ca & ext; [Exp & W & UC]
+  | [Exp & W]; ca; [Exp & W & UC]
   | [Exp & M]; ca & ext; [Exp & M & WB]; rf & ext; [Exp & R & UC]
 
 let DC-obs =
@@ -172,7 +172,7 @@ let rec ob =
 irreflexive ob as external
 
 (*** Internal visibility requirements ***)
-irreflexive [Exp & R]; ((po & same-loc) | rmw); [Exp & W]; rfi; [Exp & R] as coRW1-Exp
+irreflexive [Exp & R]; ((po & same-loc) | rmw | (lob & loc)); [Exp & W]; rfi; [Exp & R] as coRW1-Exp
 irreflexive [Imp & Tag & R]; (po & same-loc); [Exp & Tag & W]; rfi; [Imp & Tag & R] as coRW1-MTE
 irreflexive [Exp & W]; (po & same-loc); [Exp & W]; (ca & int); [Exp & W] as coWW-Exp
 irreflexive [Exp & W]; (po & same-loc \ DCIVAC-ob); [Exp & R]; (ca & int); [Exp & W] as coWR-Exp

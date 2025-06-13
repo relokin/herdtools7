@@ -1,0 +1,17 @@
+AArch64 coWW+NC-dmb.sy-dc.cvac-WB-WB
+Variant=vmsa
+{
+ [x]=0;
+ [PTE(y)]=(oa:PA(x),attrs:(Normal,iNC,oNC));
+ [PTE(z)]=(oa:PA(x),attrs:(Normal,iWB,oWB));
+ [PTE(d)]=(oa:PA(x),attrs:(Normal,iWB,oWB));
+ 0:X1=y; 0:X3=z; 0:X4=d;
+}
+ P0          ;
+ MOV W0,#1   ;
+ STR W0,[X1] ;
+ DMB SY      ;
+ DC CVAC,X4  ;
+ MOV W2,#2   ;
+ STR W2,[X3] ;
+exists([x]=1)
