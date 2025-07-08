@@ -547,3 +547,843 @@ coRW+WT-dmb.sy-NC			Forbid
 coRW+NC-dmb.sy-WB			Forbid
 coRW+NC-dmb.sy-WT			Forbid
 coRW+NC-dmb.sy-NC			Forbid
+
+coRR+WB-dmb.ld-WB+WB			Forbid
+coRR+WB-dmb.ld-WB+WT			Forbid
+coRR+WB-dmb.ld-WB+NC			Forbid
+coRR+WB-dmb.ld-WT+WB			Allow
+coRR+WB-dmb.ld-WT+WT			Forbid
+coRR+WB-dmb.ld-WT+NC			Forbid
+coRR+WB-dmb.ld-NC+WB			Allow
+coRR+WB-dmb.ld-NC+WT			Forbid
+coRR+WB-dmb.ld-NC+NC			Forbid
+
+coRR+WT-dmb.ld-WB+WB			Forbid
+coRR+WT-dmb.ld-WB+WT			Allow
+coRR+WT-dmb.ld-WB+NC			Allow
+coRR+WT-dmb.ld-WT+WB			Forbid
+coRR+WT-dmb.ld-WT+WT			Forbid
+coRR+WT-dmb.ld-WT+NC			Forbid
+coRR+WT-dmb.ld-NC+WB			Forbid
+coRR+WT-dmb.ld-NC+WT			Forbid
+coRR+WT-dmb.ld-NC+NC			Forbid
+
+coRR+NC-dmb.ld-WB+WB			Forbid
+coRR+NC-dmb.ld-WB+WT			Allow
+coRR+NC-dmb.ld-WB+NC			Allow
+coRR+NC-dmb.ld-WT+WB			Forbid
+coRR+NC-dmb.ld-WT+WT			Forbid
+coRR+NC-dmb.ld-WT+NC			Forbid
+coRR+NC-dmb.ld-NC+WB			Forbid
+coRR+NC-dmb.ld-NC+WT			Forbid
+coRR+NC-dmb.ld-NC+NC			Forbid
+
+coRR+WB-dmb.sy-dc.civac-WB-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-WB+NC			Forbid
+
+coRR+WB-dmb.sy-dc.civac-WB-WT+WB			Allow
+coRR+WB-dmb.sy-dc.civac-WT-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-WT+WB			Allow
+coRR+WB-dmb.sy-dc.civac-WB-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-WT+NC			Forbid
+
+coRR+WB-dmb.sy-dc.civac-WB-NC+WB			Allow
+coRR+WB-dmb.sy-dc.civac-WT-NC+WB			Allow
+coRR+WB-dmb.sy-dc.civac-NC-NC+WB			Allow
+coRR+WB-dmb.sy-dc.civac-WB-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-NC+NC			Forbid
+
+coRR+WT-dmb.sy-dc.civac-WB-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-WB+WT			Allow
+coRR+WT-dmb.sy-dc.civac-NC-WB+WT			Allow
+coRR+WT-dmb.sy-dc.civac-WB-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-WB+NC			Allow
+coRR+WT-dmb.sy-dc.civac-NC-WB+NC			Allow
+
+coRR+WT-dmb.sy-dc.civac-WB-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-WT+NC			Forbid
+
+coRR+WT-dmb.sy-dc.civac-WB-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-NC+NC			Forbid
+
+coRR+NC-dmb.sy-dc.civac-WB-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-WB+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-WB+WT			Allow
+coRR+NC-dmb.sy-dc.civac-NC-WB+WT			Allow
+coRR+NC-dmb.sy-dc.civac-WB-WB+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-WB+NC			Allow
+coRR+NC-dmb.sy-dc.civac-NC-WB+NC			Allow
+
+coRR+NC-dmb.sy-dc.civac-WB-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-WT+NC			Forbid
+
+coRR+NC-dmb.sy-dc.civac-WB-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-NC+NC			Forbid
+
+coRR+WB-dmb.sy-dc.cvac-WB-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-WB+NC			Forbid
+
+coRR+WB-dmb.sy-dc.cvac-WB-WT+WB			Allow
+coRR+WB-dmb.sy-dc.cvac-WT-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-WT+WB			Allow
+coRR+WB-dmb.sy-dc.cvac-WB-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-WT+NC			Forbid
+
+coRR+WB-dmb.sy-dc.cvac-WB-NC+WB			Allow
+coRR+WB-dmb.sy-dc.cvac-WT-NC+WB			Allow
+coRR+WB-dmb.sy-dc.cvac-NC-NC+WB			Allow
+coRR+WB-dmb.sy-dc.cvac-WB-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-NC+NC			Forbid
+
+coRR+WT-dmb.sy-dc.cvac-WB-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-WB+WT			Allow
+coRR+WT-dmb.sy-dc.cvac-WT-WB+WT			Allow
+coRR+WT-dmb.sy-dc.cvac-NC-WB+WT			Allow
+coRR+WT-dmb.sy-dc.cvac-WB-WB+NC			Allow
+coRR+WT-dmb.sy-dc.cvac-WT-WB+NC			Allow
+coRR+WT-dmb.sy-dc.cvac-NC-WB+NC			Allow
+
+coRR+WT-dmb.sy-dc.cvac-WB-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-WT+NC			Forbid
+
+coRR+WT-dmb.sy-dc.cvac-WB-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-NC+NC			Forbid
+
+coRR+NC-dmb.sy-dc.cvac-WB-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-WB+WT			Allow
+coRR+NC-dmb.sy-dc.cvac-WT-WB+WT			Allow
+coRR+NC-dmb.sy-dc.cvac-NC-WB+WT			Allow
+coRR+NC-dmb.sy-dc.cvac-WB-WB+NC			Allow
+coRR+NC-dmb.sy-dc.cvac-WT-WB+NC			Allow
+coRR+NC-dmb.sy-dc.cvac-NC-WB+NC			Allow
+
+coRR+NC-dmb.sy-dc.cvac-WB-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-WT+NC			Forbid
+
+coRR+NC-dmb.sy-dc.cvac-WB-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-NC+NC			Forbid
+
+coRR+WB-dmb.sy-dc.ivac-WB-WB+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WT-WB+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-NC-WB+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WB-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WB-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-WB+NC			Forbid
+
+coRR+WB-dmb.sy-dc.ivac-WB-WT+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WT-WT+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-NC-WT+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WB-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WB-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-WT+NC			Forbid
+
+coRR+WB-dmb.sy-dc.ivac-WB-NC+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WT-NC+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-NC-NC+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WB-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WB-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-NC+NC			Forbid
+
+coRR+WT-dmb.sy-dc.ivac-WB-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-WB+WT			Allow
+coRR+WT-dmb.sy-dc.ivac-WT-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-WB+WT			Allow
+coRR+WT-dmb.sy-dc.ivac-WB-WB+NC			Allow
+coRR+WT-dmb.sy-dc.ivac-WT-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-WB+NC			Allow
+
+coRR+WT-dmb.sy-dc.ivac-WB-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-WT+NC			Forbid
+
+coRR+WT-dmb.sy-dc.ivac-WB-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-NC+NC			Forbid
+
+coRR+NC-dmb.sy-dc.ivac-WB-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-WB+WT			Allow
+coRR+NC-dmb.sy-dc.ivac-WT-WB+WT			Allow
+coRR+NC-dmb.sy-dc.ivac-NC-WB+WT			Allow
+coRR+NC-dmb.sy-dc.ivac-WB-WB+NC			Allow
+coRR+NC-dmb.sy-dc.ivac-WT-WB+NC			Allow
+coRR+NC-dmb.sy-dc.ivac-NC-WB+NC			Allow
+
+coRR+NC-dmb.sy-dc.ivac-WB-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-WT+NC			Forbid
+
+coRR+NC-dmb.sy-dc.ivac-WB-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-NC+NC			Forbid
+
+coRR+WB-dc.civac-WB-dmb.sy-WB+WB			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-WB+WB			Forbid
+coRR+WB-dc.civac-NC-dmb.sy-WB+WB			Forbid
+coRR+WB-dc.civac-WB-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.civac-NC-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.civac-WB-dmb.sy-WB+NC			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-WB+NC			Forbid
+coRR+WB-dc.civac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WB-dc.civac-WB-dmb.sy-WT+WB			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-WT+WB			Allow
+coRR+WB-dc.civac-NC-dmb.sy-WT+WB			Allow
+coRR+WB-dc.civac-WB-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.civac-NC-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.civac-WB-dmb.sy-WT+NC			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-WT+NC			Forbid
+coRR+WB-dc.civac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WB-dc.civac-WB-dmb.sy-NC+WB			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-NC+WB			Allow
+coRR+WB-dc.civac-NC-dmb.sy-NC+WB			Allow
+coRR+WB-dc.civac-WB-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.civac-NC-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.civac-WB-dmb.sy-NC+NC			Forbid
+coRR+WB-dc.civac-WT-dmb.sy-NC+NC			Forbid
+coRR+WB-dc.civac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WT-dc.civac-WB-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.civac-WT-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.civac-WB-dmb.sy-WB+WT			Allow
+coRR+WT-dc.civac-WT-dmb.sy-WB+WT			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-WB+WT			Allow
+coRR+WT-dc.civac-WB-dmb.sy-WB+NC			Allow
+coRR+WT-dc.civac-WT-dmb.sy-WB+NC			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-WB+NC			Allow
+
+coRR+WT-dc.civac-WB-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.civac-WT-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.civac-WB-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.civac-WT-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.civac-WB-dmb.sy-WT+NC			Forbid
+coRR+WT-dc.civac-WT-dmb.sy-WT+NC			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WT-dc.civac-WB-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.civac-WT-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.civac-WB-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.civac-WT-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.civac-WB-dmb.sy-NC+NC			Forbid
+coRR+WT-dc.civac-WT-dmb.sy-NC+NC			Forbid
+coRR+WT-dc.civac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+NC-dc.civac-WB-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.civac-WT-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.civac-NC-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.civac-WB-dmb.sy-WB+WT			Allow
+coRR+NC-dc.civac-WT-dmb.sy-WB+WT			Allow
+coRR+NC-dc.civac-NC-dmb.sy-WB+WT			Allow
+coRR+NC-dc.civac-WB-dmb.sy-WB+NC			Allow
+coRR+NC-dc.civac-WT-dmb.sy-WB+NC			Allow
+coRR+NC-dc.civac-NC-dmb.sy-WB+NC			Allow
+
+coRR+NC-dc.civac-WB-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.civac-WT-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.civac-NC-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.civac-WB-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.civac-WT-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.civac-NC-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.civac-WB-dmb.sy-WT+NC			Forbid
+coRR+NC-dc.civac-WT-dmb.sy-WT+NC			Forbid
+coRR+NC-dc.civac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+NC-dc.civac-WB-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.civac-WT-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.civac-NC-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.civac-WB-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.civac-WT-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.civac-NC-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.civac-WB-dmb.sy-NC+NC			Forbid
+coRR+NC-dc.civac-WT-dmb.sy-NC+NC			Forbid
+coRR+NC-dc.civac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WB-dc.cvac-WB-dmb.sy-WB+WB			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-WB+WB			Forbid
+coRR+WB-dc.cvac-NC-dmb.sy-WB+WB			Forbid
+coRR+WB-dc.cvac-WB-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.cvac-NC-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.cvac-WB-dmb.sy-WB+NC			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-WB+NC			Forbid
+coRR+WB-dc.cvac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WB-dc.cvac-WB-dmb.sy-WT+WB			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-WT+WB			Allow
+coRR+WB-dc.cvac-NC-dmb.sy-WT+WB			Allow
+coRR+WB-dc.cvac-WB-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.cvac-NC-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.cvac-WB-dmb.sy-WT+NC			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-WT+NC			Forbid
+coRR+WB-dc.cvac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WB-dc.cvac-WB-dmb.sy-NC+WB			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-NC+WB			Allow
+coRR+WB-dc.cvac-NC-dmb.sy-NC+WB			Allow
+coRR+WB-dc.cvac-WB-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.cvac-NC-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.cvac-WB-dmb.sy-NC+NC			Forbid
+coRR+WB-dc.cvac-WT-dmb.sy-NC+NC			Forbid
+coRR+WB-dc.cvac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WT-dc.cvac-WB-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.cvac-WT-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.cvac-NC-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.cvac-WB-dmb.sy-WB+WT			Allow
+coRR+WT-dc.cvac-WT-dmb.sy-WB+WT			Allow
+coRR+WT-dc.cvac-NC-dmb.sy-WB+WT			Allow
+coRR+WT-dc.cvac-WB-dmb.sy-WB+NC			Allow
+coRR+WT-dc.cvac-WT-dmb.sy-WB+NC			Allow
+coRR+WT-dc.cvac-NC-dmb.sy-WB+NC			Allow
+
+coRR+WT-dc.cvac-WB-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.cvac-WT-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.cvac-NC-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.cvac-WB-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.cvac-WT-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.cvac-NC-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.cvac-WB-dmb.sy-WT+NC			Forbid
+coRR+WT-dc.cvac-WT-dmb.sy-WT+NC			Forbid
+coRR+WT-dc.cvac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WT-dc.cvac-WB-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.cvac-WT-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.cvac-NC-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.cvac-WB-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.cvac-WT-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.cvac-NC-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.cvac-WB-dmb.sy-NC+NC			Forbid
+coRR+WT-dc.cvac-WT-dmb.sy-NC+NC			Forbid
+coRR+WT-dc.cvac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+NC-dc.cvac-WB-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.cvac-WT-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.cvac-NC-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.cvac-WB-dmb.sy-WB+WT			Allow
+coRR+NC-dc.cvac-WT-dmb.sy-WB+WT			Allow
+coRR+NC-dc.cvac-NC-dmb.sy-WB+WT			Allow
+coRR+NC-dc.cvac-WB-dmb.sy-WB+NC			Allow
+coRR+NC-dc.cvac-WT-dmb.sy-WB+NC			Allow
+coRR+NC-dc.cvac-NC-dmb.sy-WB+NC			Allow
+
+coRR+NC-dc.cvac-WB-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.cvac-WT-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.cvac-NC-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.cvac-WB-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.cvac-WT-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.cvac-NC-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.cvac-WB-dmb.sy-WT+NC			Forbid
+coRR+NC-dc.cvac-WT-dmb.sy-WT+NC			Forbid
+coRR+NC-dc.cvac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+NC-dc.cvac-WB-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.cvac-WT-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.cvac-NC-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.cvac-WB-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.cvac-WT-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.cvac-NC-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.cvac-WB-dmb.sy-NC+NC			Forbid
+coRR+NC-dc.cvac-WT-dmb.sy-NC+NC			Forbid
+coRR+NC-dc.cvac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WB-dc.ivac-WB-dmb.sy-WB+WB			Allow
+coRR+WB-dc.ivac-WT-dmb.sy-WB+WB			Allow
+coRR+WB-dc.ivac-NC-dmb.sy-WB+WB			Allow
+coRR+WB-dc.ivac-WB-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.ivac-WT-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.ivac-NC-dmb.sy-WB+WT			Forbid
+coRR+WB-dc.ivac-WB-dmb.sy-WB+NC			Forbid
+coRR+WB-dc.ivac-WT-dmb.sy-WB+NC			Forbid
+coRR+WB-dc.ivac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WB-dc.ivac-WB-dmb.sy-WT+WB			Allow
+coRR+WB-dc.ivac-WT-dmb.sy-WT+WB			Allow
+coRR+WB-dc.ivac-NC-dmb.sy-WT+WB			Allow
+coRR+WB-dc.ivac-WB-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.ivac-WT-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.ivac-NC-dmb.sy-WT+WT			Forbid
+coRR+WB-dc.ivac-WB-dmb.sy-WT+NC			Forbid
+coRR+WB-dc.ivac-WT-dmb.sy-WT+NC			Forbid
+coRR+WB-dc.ivac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WB-dc.ivac-WB-dmb.sy-NC+WB			Allow
+coRR+WB-dc.ivac-WT-dmb.sy-NC+WB			Allow
+coRR+WB-dc.ivac-NC-dmb.sy-NC+WB			Allow
+coRR+WB-dc.ivac-WB-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.ivac-WT-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.ivac-NC-dmb.sy-NC+WT			Forbid
+coRR+WB-dc.ivac-WB-dmb.sy-NC+NC			Forbid
+coRR+WB-dc.ivac-WT-dmb.sy-NC+NC			Forbid
+coRR+WB-dc.ivac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WT-dc.ivac-WB-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.ivac-WT-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-WB+WB			Forbid
+coRR+WT-dc.ivac-WB-dmb.sy-WB+WT			Allow
+coRR+WT-dc.ivac-WT-dmb.sy-WB+WT			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-WB+WT			Allow
+coRR+WT-dc.ivac-WB-dmb.sy-WB+NC			Allow
+coRR+WT-dc.ivac-WT-dmb.sy-WB+NC			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-WB+NC			Allow
+
+coRR+WT-dc.ivac-WB-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.ivac-WT-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-WT+WB			Forbid
+coRR+WT-dc.ivac-WB-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.ivac-WT-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-WT+WT			Forbid
+coRR+WT-dc.ivac-WB-dmb.sy-WT+NC			Forbid
+coRR+WT-dc.ivac-WT-dmb.sy-WT+NC			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WT-dc.ivac-WB-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.ivac-WT-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-NC+WB			Forbid
+coRR+WT-dc.ivac-WB-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.ivac-WT-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-NC+WT			Forbid
+coRR+WT-dc.ivac-WB-dmb.sy-NC+NC			Forbid
+coRR+WT-dc.ivac-WT-dmb.sy-NC+NC			Forbid
+coRR+WT-dc.ivac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+NC-dc.ivac-WB-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.ivac-WT-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.ivac-NC-dmb.sy-WB+WB			Forbid
+coRR+NC-dc.ivac-WB-dmb.sy-WB+WT			Allow
+coRR+NC-dc.ivac-WT-dmb.sy-WB+WT			Allow
+coRR+NC-dc.ivac-NC-dmb.sy-WB+WT			Allow
+coRR+NC-dc.ivac-WB-dmb.sy-WB+NC			Allow
+coRR+NC-dc.ivac-WT-dmb.sy-WB+NC			Allow
+coRR+NC-dc.ivac-NC-dmb.sy-WB+NC			Allow
+
+coRR+NC-dc.ivac-WB-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.ivac-WT-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.ivac-NC-dmb.sy-WT+WB			Forbid
+coRR+NC-dc.ivac-WB-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.ivac-WT-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.ivac-NC-dmb.sy-WT+WT			Forbid
+coRR+NC-dc.ivac-WB-dmb.sy-WT+NC			Forbid
+coRR+NC-dc.ivac-WT-dmb.sy-WT+NC			Forbid
+coRR+NC-dc.ivac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+NC-dc.ivac-WB-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.ivac-WT-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.ivac-NC-dmb.sy-NC+WB			Forbid
+coRR+NC-dc.ivac-WB-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.ivac-WT-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.ivac-NC-dmb.sy-NC+WT			Forbid
+coRR+NC-dc.ivac-WB-dmb.sy-NC+NC			Forbid
+coRR+NC-dc.ivac-WT-dmb.sy-NC+NC			Forbid
+coRR+NC-dc.ivac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-NC+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-NC+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-NC+WB			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.civac-WB-dmb.sy-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-WT-dmb.sy-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.civac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.civac-WB-dmb.sy-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-WT-dmb.sy-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.civac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-WB+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-WB+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-WB+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-WB+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-WB+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.civac-WB-dmb.sy-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-WT-dmb.sy-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.civac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-WB+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-WT+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-NC+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-NC+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-NC+WB			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.cvac-WB-dmb.sy-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-WT-dmb.sy-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.cvac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-WB+WT			Allow
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-WB+WT			Allow
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-WB+WT			Allow
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-WB+NC			Allow
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-WB+NC			Allow
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-WB+NC			Allow
+
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.cvac-WB-dmb.sy-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-WT-dmb.sy-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.cvac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-WB+WT			Allow
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-WB+WT			Allow
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-WB+WT			Allow
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-WB+NC			Allow
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-WB+NC			Allow
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-WB+NC			Allow
+
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.cvac-WB-dmb.sy-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-WT-dmb.sy-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.cvac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-WB+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-WB+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-WB+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-WB+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-WB+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-WT+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-WT+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-WT+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-WT+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-WT+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-NC+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-NC+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-NC+WB			Allow
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-NC+WT			Forbid
+coRR+WB-dmb.sy-dc.ivac-WB-dmb.sy-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-WT-dmb.sy-NC+NC			Forbid
+coRR+WB-dmb.sy-dc.ivac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-WB+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-WT+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-WT+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-WT+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-NC+WB			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-NC+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-dmb.sy-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-dmb.sy-NC+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-NC-dmb.sy-NC+NC			Forbid
+
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-WB+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-WB+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-WB+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-WB+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-WB+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-WB+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-WB+NC			Forbid
+
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-WT+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-WT+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-WT+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-WT+NC			Forbid
+
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-NC+WB			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-NC+WT			Forbid
+coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-NC+NC			Forbid
+coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-NC+NC			Forbid
