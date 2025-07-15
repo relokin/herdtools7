@@ -791,11 +791,11 @@ coRR+WB-dmb.sy-dc.ivac-NC-NC+NC			Forbid
 coRR+WT-dmb.sy-dc.ivac-WB-WB+WB			Forbid
 coRR+WT-dmb.sy-dc.ivac-WT-WB+WB			Forbid
 coRR+WT-dmb.sy-dc.ivac-NC-WB+WB			Forbid
-coRR+WT-dmb.sy-dc.ivac-WB-WB+WT			Allow
-coRR+WT-dmb.sy-dc.ivac-WT-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-WB+WT			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-WB+WT			Allow
 coRR+WT-dmb.sy-dc.ivac-NC-WB+WT			Allow
-coRR+WT-dmb.sy-dc.ivac-WB-WB+NC			Allow
-coRR+WT-dmb.sy-dc.ivac-WT-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-WB-WB+NC			Forbid
+coRR+WT-dmb.sy-dc.ivac-WT-WB+NC			Allow
 coRR+WT-dmb.sy-dc.ivac-NC-WB+NC			Allow
 
 coRR+WT-dmb.sy-dc.ivac-WB-WT+WB			Forbid
@@ -821,10 +821,10 @@ coRR+WT-dmb.sy-dc.ivac-NC-NC+NC			Forbid
 coRR+NC-dmb.sy-dc.ivac-WB-WB+WB			Forbid
 coRR+NC-dmb.sy-dc.ivac-WT-WB+WB			Forbid
 coRR+NC-dmb.sy-dc.ivac-NC-WB+WB			Forbid
-coRR+NC-dmb.sy-dc.ivac-WB-WB+WT			Allow
+coRR+NC-dmb.sy-dc.ivac-WB-WB+WT			Forbid
 coRR+NC-dmb.sy-dc.ivac-WT-WB+WT			Allow
 coRR+NC-dmb.sy-dc.ivac-NC-WB+WT			Allow
-coRR+NC-dmb.sy-dc.ivac-WB-WB+NC			Allow
+coRR+NC-dmb.sy-dc.ivac-WB-WB+NC			Forbid
 coRR+NC-dmb.sy-dc.ivac-WT-WB+NC			Allow
 coRR+NC-dmb.sy-dc.ivac-NC-WB+NC			Allow
 
@@ -1387,3 +1387,5 @@ coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-NC+WT			Forbid
 coRR+NC-dmb.sy-dc.ivac-WB-dmb.sy-NC+NC			Forbid
 coRR+NC-dmb.sy-dc.ivac-WT-dmb.sy-NC+NC			Forbid
 coRR+NC-dmb.sy-dc.ivac-NC-dmb.sy-NC+NC			Forbid
+
+MP+WB-dc.ivac-dmb.sy+dmb.ld-WB							Allow
