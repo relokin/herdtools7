@@ -371,8 +371,8 @@ coWW+NC-dc.civac-WT-dmb.sy-NC			Forbid
 coWW+NC-dc.civac-NC-dmb.sy-NC			Forbid
 
 coWW+WB-dmb.sy-dc.ivac-WB-WB			Forbid
-coWW+WB-dmb.sy-dc.ivac-WT-WB			Forbid
-coWW+WB-dmb.sy-dc.ivac-NC-WB			Forbid
+coWW+WB-dmb.sy-dc.ivac-WT-WB			Allow
+coWW+WB-dmb.sy-dc.ivac-NC-WB			Allow
 coWW+WB-dmb.sy-dc.ivac-WB-WT			Allow
 coWW+WB-dmb.sy-dc.ivac-WT-WT			Forbid
 coWW+WB-dmb.sy-dc.ivac-NC-WT			Allow
@@ -430,7 +430,7 @@ coWW+WB-dmb.sy-dc.civac-WB-WB			Forbid
 coWW+WB-dmb.sy-dc.civac-WT-WB			Forbid
 coWW+WB-dmb.sy-dc.civac-NC-WB			Forbid
 coWW+WB-dmb.sy-dc.civac-WB-WT			Allow
-coWW+WB-dmb.sy-dc.civac-WT-WT			Allow
+coWW+WB-dmb.sy-dc.civac-WT-WT			Forbid
 coWW+WB-dmb.sy-dc.civac-NC-WT			Allow
 coWW+WB-dmb.sy-dc.civac-WB-NC			Allow
 coWW+WB-dmb.sy-dc.civac-WT-NC			Allow
