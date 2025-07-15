@@ -64,7 +64,7 @@ let DCIVAC-ob = [M]; DC-after; [DC.IVAC]; DC-after; [M]
 
 (** Explicitly-hazard-ordered-before **)
 let Exp-haz-ob =
-  [Exp & R]; (po & same-loc); [Exp & R]; (ca & ext); [Exp & W]
+  [Exp & R]; (po & same-loc \ DCIVAC-ob); [Exp & R]; (ca & ext); [Exp & W]
 
 (** TLBI-ordered-before **)
 
@@ -102,7 +102,7 @@ let hw-reqs = local-hw-reqs | haz-ob
 (** Explicitly-observed-by **)
 let Exp-obs =
   [Exp & W]; rf & ext; [Exp & R]
-  | [Exp & M & WB]; ca & ext; [Exp & W & WB]
+  | [Exp & M & WB]; ca & ext \ DCIVAC-ob^-1; [Exp & W & WB]
   | [Exp & R & UC]; ca; [Exp & W & UC]
   | [Exp & W]; ca; [Exp & W & UC]
   | [Exp & M]; ca & ext; [Exp & M & WB]; rf & ext; [Exp & R & UC]
