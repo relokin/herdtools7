@@ -86,8 +86,8 @@ let all-TLBI-Imp_TTD_R-enums rel =
 
 let all-DC-Exp_W-enums rel =
     enumerate-ordered-pairs (
-        scl & (DC.CVAU * (Exp & W)),
-        rel | (IW * (_\IW))
+        scl & (DC * (M \ IW)),
+        rel
     )
 
 let all-IC-Imp_Instr_R-enums rel =
