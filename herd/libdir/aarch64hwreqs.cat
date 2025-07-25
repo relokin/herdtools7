@@ -65,8 +65,8 @@ let f-ib =
 
 (* DSB-ordered-before *)
 let DSB-ob =
-[M | DC.CVAU | IC]; po; [dsb.full]; po; [~(Imp & TTD & M | Imp & Instr & R)]
- | (if "ETS2" || "ETS3" then [M | DC.CVAU | IC]; po; [dsb.full]; po; [Imp & TTD & M] else 0)
+[M | DC | IC]; po; [dsb.full]; po; [~(Imp & TTD & M | Imp & Instr & R)]
+ | (if "ETS2" || "ETS3" then [M | DC | IC]; po; [dsb.full]; po; [Imp & TTD & M] else 0)
  | [(Exp & R) \ NoRet | Imp & Tag & R]; po; [dsb.ld]; po; [~(Imp & TTD & M | Imp & Instr & R)]
  | (if "ETS2" || "ETS3" then [(Exp & R) \ NoRet]; po; [dsb.ld]; po; [Imp & TTD & M] else 0)
  | [Exp & W]; po; [dsb.st]; po; [~(Imp & TTD & M | Imp & Instr & R)]
@@ -93,7 +93,7 @@ let IFB-ob =
 let dob =
  addr
  | data
- | ctrl; [Exp & W | HU | TLBI | DC.CVAU | IC]
+ | ctrl; [Exp & W | HU | TLBI | DC | IC]
  | addr; [Exp & M]; po; [Exp & W | HU]
  | addr; [Exp & M]; lrs; [Exp & R | Imp & Tag & R]
  | addr; [Exp & M]; rfi & mismatched-attrs; [Exp & R]
@@ -108,9 +108,9 @@ let f-ob =
 
 (* Pick-ordered-before *)
 let pob = 
- pick-addr-dep; [Exp & W | HU | TLBI | DC.CVAU | IC]
+ pick-addr-dep; [Exp & W | HU | TLBI | DC | IC]
  | pick-data-dep
- | pick-ctrl-dep; [Exp & W | HU | TLBI | DC.CVAU | IC]
+ | pick-ctrl-dep; [Exp & W | HU | TLBI | DC | IC]
  | pick-addr-dep; [Exp & M]; po; [Exp & W | HU]
 
 (* Atomic-ordered-before *)
@@ -123,9 +123,9 @@ let aob =
 (* Barrier-ordered-before *)
 let bob =
  [Exp & M | Imp & Tag & R]; po; [dmb.full]; po; [Exp & M | Imp & Tag & R | MMU & FAULT]
- | [Exp & M]; po; [dmb.full]; po; [DC.CVAU]
- | [DC.CVAU]; po; [dmb.full]; po; [Exp & M]
- | [DC.CVAU]; po; [dmb.full]; po; [DC.CVAU]
+ | [Exp & M]; po; [dmb.full]; po; [DC]
+ | [DC]; po; [dmb.full]; po; [Exp & M]
+ | [DC]; po; [dmb.full]; po; [DC]
  | [Exp & (R \ NoRet) | Imp & Tag & R]; po; [dmb.ld]; po; [Exp & M | Imp & Tag & R | MMU & FAULT]
  | [Exp & W]; po; [dmb.st]; po; [Exp & W | MMU & FAULT]
  | [range([A];amo;[L])]; po; [Exp & M | Imp & Tag & R | MMU & FAULT]
@@ -136,9 +136,9 @@ let bob =
  | [Exp & M | Imp & Tag & R]; iico_order; [L]
 
 let po-scl-ob =
- [Exp & M]; (po & scl); [DC.CVAU]
- | [DC.CVAU]; (po & scl); [Exp & M]
- | [DC.CVAU]; (po & scl); [DC.CVAU]
+ [Exp & M]; (po & scl); [DC]
+ | [DC]; (po & scl); [Exp & M]
+ | [DC]; (po & scl); [DC]
 
 let TLBUncacheable = MMU & (Translation | AccessFlag)
 

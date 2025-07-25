@@ -1,6 +1,6 @@
 (* Translation-intrinsically-before *)
 let tr-ib =
-  [Imp & TTD & R]; iico_data; [B]; iico_ctrl; [Exp & M | MMU & FAULT]
+  [Imp & TTD & R]; iico_data; [B]; iico_ctrl; [Exp & M | DC | IC.IVAU | MMU & FAULT]
 
 let TTD-mismatched-attrs = [Imp & TTD & R]; ~TTD-same-attrs; [Imp & TTD & R]
 
