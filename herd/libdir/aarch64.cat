@@ -104,6 +104,11 @@ let Exp-obs =
   | [Exp & W]; ca & ext; [Exp & W & UC]
   | [Exp & M]; ca & ext; [Exp & M & WB]; rf & ext; [Exp & R & UC]
 
+let DC-obs =
+  [Exp & R]; ca; [Exp & W & WB]; DC-after; [DC.CVAC | DC.CIVAC]
+  | [Exp & R]; ca; [Exp & W & UC]; DC-after; [DC.IVAC | DC.CIVAC]
+  | [Exp & W]; ca; [Exp & W]; DC-after; [DC]
+
 (** Tag-observed-by **)
 let Tag-obs =
    [Exp & W]; rf & ext; [Imp & Tag & R]
@@ -148,6 +153,7 @@ let Instr-obs =
 (** Observed-by **)
 let obs =
     Exp-obs; sca-class?
+    | DC-obs
     | Tag-obs; sca-class?
     | TTD-obs
     | Instr-obs
