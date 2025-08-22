@@ -944,10 +944,10 @@ MP+nGnRE-dmb.st+dmb.ld-WB			Allow
 MP+nGnRnE-dmb.st+dmb.ld-WB			Allow
 MP+WB-dmb.st+dmb.ld-WT			Allow
 MP+WT-dmb.st+dmb.ld-WT			Forbid
-MP+NC-dmb.st+dmb.ld-WT			Allow
-MP+GRE-dmb.st+dmb.ld-WT			Allow
-MP+nGnRE-dmb.st+dmb.ld-WT			Allow
-MP+nGnRnE-dmb.st+dmb.ld-WT			Allow
+MP+NC-dmb.st+dmb.ld-WT			Forbid
+MP+GRE-dmb.st+dmb.ld-WT			Forbid
+MP+nGnRE-dmb.st+dmb.ld-WT		Forbid
+MP+nGnRnE-dmb.st+dmb.ld-WT		Forbid
 MP+WB-dmb.st+dmb.ld-NC			Allow
 MP+WT-dmb.st+dmb.ld-NC			Forbid
 MP+NC-dmb.st+dmb.ld-NC			Forbid
@@ -1157,8 +1157,8 @@ WRC-WB-WB-WB+dmb.lds			Forbid
 WRC-WB-WB-WT+dmb.lds			Allow
 WRC-WB-WB-NC+dmb.lds			Allow
 WRC-WB-WT-WB+dmb.lds			Forbid
-WRC-WB-WT-WT+dmb.lds			Allow
-WRC-WB-WT-NC+dmb.lds			Allow
+WRC-WB-WT-WT+dmb.lds			Forbid
+WRC-WB-WT-NC+dmb.lds			Forbid
 WRC-WB-NC-WB+dmb.lds			Forbid
 WRC-WB-NC-WT+dmb.lds			Forbid
 WRC-WB-NC-NC+dmb.lds			Forbid
@@ -1174,21 +1174,21 @@ WRC-WT-NC-WT+dmb.lds			Forbid
 WRC-WT-NC-NC+dmb.lds			Forbid
 
 WRC-NC-WB-WB+dmb.lds			Allow
-WRC-NC-WB-WT+dmb.lds			Allow
+WRC-NC-WB-WT+dmb.lds			Forbid
 WRC-NC-WB-NC+dmb.lds			Forbid
 WRC-NC-WT-WB+dmb.lds			Allow
-WRC-NC-WT-WT+dmb.lds			Allow
+WRC-NC-WT-WT+dmb.lds			Forbid
 WRC-NC-WT-NC+dmb.lds			Forbid
 WRC-NC-NC-WB+dmb.lds			Allow
-WRC-NC-NC-WT+dmb.lds			Allow
+WRC-NC-NC-WT+dmb.lds			Forbid
 WRC-NC-NC-NC+dmb.lds			Forbid
 
 WWC-WB-WB-WB+dmb.lds			Forbid
 WWC-WB-WB-WT+dmb.lds			Allow
 WWC-WB-WB-NC+dmb.lds			Allow
 WWC-WB-WT-WB+dmb.lds			Forbid
-WWC-WB-WT-WT+dmb.lds			Allow
-WWC-WB-WT-NC+dmb.lds			Allow
+WWC-WB-WT-WT+dmb.lds			Forbid
+WWC-WB-WT-NC+dmb.lds			Forbid
 WWC-WB-NC-WB+dmb.lds			Forbid
 WWC-WB-NC-WT+dmb.lds			Forbid
 WWC-WB-NC-NC+dmb.lds			Forbid #?
@@ -1220,7 +1220,7 @@ WWW+RR-WB-WT-WB+dmb.ishs			Allow
 WWW+RR-WB-WT-WT+dmb.ishs			Forbid
 WWW+RR-WB-WT-NC+dmb.ishs			Forbid
 WWW+RR-WB-NC-WB+dmb.ishs			Allow
-WWW+RR-WB-NC-WT+dmb.ishs			Allow
+WWW+RR-WB-NC-WT+dmb.ishs			Forbid
 WWW+RR-WB-NC-NC+dmb.ishs			Forbid
 
 WWW+RR-WT-WB-WB+dmb.ishs			Forbid
@@ -1230,7 +1230,7 @@ WWW+RR-WT-WT-WB+dmb.ishs			Allow
 WWW+RR-WT-WT-WT+dmb.ishs			Forbid
 WWW+RR-WT-WT-NC+dmb.ishs			Forbid
 WWW+RR-WT-NC-WB+dmb.ishs			Allow
-WWW+RR-WT-NC-WT+dmb.ishs			Allow
+WWW+RR-WT-NC-WT+dmb.ishs			Forbid
 WWW+RR-WT-NC-NC+dmb.ishs			Forbid
 
 WWW+RR-NC-WB-WB+dmb.ishs		        Forbid
@@ -1241,6 +1241,7 @@ WWW+RR-NC-WT-WT+dmb.ishs			Forbid
 WWW+RR-NC-WT-NC+dmb.ishs			Forbid
 WWW+RR-NC-NC-WB+dmb.ishs			Allow
 WWW+RR-NC-WT-WB+dmb.ishs			Allow
+WWW+RR-NC-NC-WT+dmb.ishs			Forbid
 WWW+RR-NC-NC-NC+dmb.ishs			Forbid
 
 WWW+RW-WB-WB-WB+dmb.ishs			Forbid

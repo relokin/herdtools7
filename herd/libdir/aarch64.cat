@@ -99,9 +99,9 @@ let hw-reqs = local-hw-reqs | haz-ob
 (** Explicitly-observed-by **)
 let Exp-obs =
   [Exp & W]; rf & ext; [Exp & R]
-  | [Exp & M]; ca & ext & same-ch; [Exp & W]
-  | [Exp & R & UC]; ca & ext; [Exp & W & WT]
-  | [Exp & W]; ca & ext; [Exp & W & (WT | UC)]
+  | [Exp & M & WB]; ca & ext; [Exp & W & WB]
+  | [Exp & R & UC]; ca & ext; [Exp & W & UC]
+  | [Exp & W]; ca & ext; [Exp & W & UC]
   | [Exp & M]; ca & ext; [Exp & M & WB]; rf & ext; [Exp & R & UC]
 
 (** Tag-observed-by **)
