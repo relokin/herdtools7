@@ -64,7 +64,7 @@ let DCIVAC-ob = [M]; DC-after; [DC.IVAC]; DC-after; [M]
 
 (** Explicitly-hazard-ordered-before **)
 let Exp-haz-ob =
-  [Exp & R]; (po & same-loc \ DCIVAC-ob); [Exp & R]; (ca & ext); [Exp & W]
+  [Exp & R]; (po & same-loc); [Exp & R]; (ca & ext \ DCIVAC-ob^-1); [Exp & W]
 
 (** TLBI-ordered-before **)
 
@@ -175,7 +175,7 @@ irreflexive ob as external
 irreflexive [Exp & R]; ((po & same-loc) | rmw | (lob & loc)); [Exp & W]; rfi; [Exp & R] as coRW1-Exp
 irreflexive [Imp & Tag & R]; (po & same-loc); [Exp & Tag & W]; rfi; [Imp & Tag & R] as coRW1-MTE
 irreflexive [Exp & W]; (po & same-loc); [Exp & W]; (ca & int); [Exp & W] as coWW-Exp
-irreflexive [Exp & W]; (po & same-loc \ DCIVAC-ob); [Exp & R]; (ca & int); [Exp & W] as coWR-Exp
+irreflexive [Exp & W]; (po & same-loc); [Exp & R]; (ca & int \ DCIVAC-ob^-1); [Exp & W] as coWR-Exp
 irreflexive [Exp & Tag & W]; (po & same-loc); [Imp & Tag & R]; (ca & int) as coWR-MTE
 
 (*** Atomic: LDXR/STXR, AMO and HU constraint to forbid intervening writes. ***)

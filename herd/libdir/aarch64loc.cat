@@ -30,7 +30,7 @@ let po-va-loc = po & va-loc
 
 let iWB = range([iWB]; tr-ib; [M & Exp | DC | IC])
 let oWB = range([oWB]; tr-ib; [M & Exp | DC | IC])
-let WB = iWB & oWB
+let WB = if "vmsa" then iWB & oWB else M
 let iWT = range([iWT]; tr-ib; [M & Exp | DC | IC])
 let oWT = range([oWT]; tr-ib; [M & Exp | DC | IC])
 let WT = iWT & oWT
