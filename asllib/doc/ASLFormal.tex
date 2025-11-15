@@ -101,7 +101,7 @@ The function $\sign : \overname{\Q}{q} \rightarrow \Sign$ returns the sign of $\
 \end{definition}
 
 \begin{definition}[Empty Set]
-  The \emph{empty set} --- the set that does not contain any element --- is denoted as \RenderType{empty_set}.
+  The \emph{empty set} --- the set that does not contain any element --- is denoted as \RenderConstant{empty_set}.
 \end{definition}
 
 \hypertarget{def-cardinality}{}
@@ -227,7 +227,7 @@ is defined as follows:
 \subsection{Lists}
 In the remainder of this document, we use the term \emph{list} and \emph{sequence} interchangeably.
 
-A list of elements \hypertarget{def-emptylist}{is either empty, denoted by $\emptylist$}, or non-empty.
+A list of elements \hypertarget{constant-emptylist}{is either empty, denoted by $\emptylist$}, or non-empty.
 A non-empty list is either denoted by listing the elements in sequence, $v_1 \ldots\ v_k$,
 or in bracketed form, $[v_1,\ldots,v_k]$, which is used to aesthetically separate it from surrounding mathematical expressions.
 The commas carry no special meaning.
@@ -402,24 +402,23 @@ The notation $L(v_{1..k})$ is a compound term where $L$ is a label and $v_{1..k}
 We also write $L(T_{1..k})$, where $T_{1..k}$ denotes mathematical types of values, to stand for the type
 $\{ L(v_{1..k}) \;|\; v_1\in T_1,\ldots,v_k\in T_k \}$.
 
-\hypertarget{def-optional}{}
+\hypertarget{def-Option}{}
 \begin{definition}[Optional Data Type]
-\hypertarget{def-none}{}
 \hypertarget{def-some}{}
 The notation $\some{x} \triangleq \{x\}$ stands for a singleton
 set containing $x$.
 %
-The notation $\None \triangleq \emptyset$ is an alias for the empty
-set used in places where either the empty set or a singleton set is expected.
+The constant \RenderConstant{None} is an alias for the empty
+set. It is used in places where either the empty set or a singleton set is expected.
 %
-The type $\Option(T) \triangleq \{ \None \} \cup \{ \some{x} \;|\; x\in T\}$ denotes
+The type $\Option{T} \triangleq \{ \None \} \cup \{ \some{x} \;|\; x\in T\}$ denotes
 all singleton sets of elements from $T$ as well as the empty set.
 %
-We refer to $\Option(T)$ as the \emph{optional data type for the parameter
+We refer to $\Option{T}$ as the \emph{optional data type for the parameter
 type $T$}, or shortly as an \emph{\optionalterm}.
 
-To avoid having too many parentheses, instead of writing $\Option((a, b, c))$
-for a singleton set for the tuple $(a, b, c)$, we will write $\Option(a, b, c)$.
+To avoid having too many parentheses, instead of writing $\Option{(a, b, c)}$
+for a singleton set for the tuple $(a, b, c)$, we will write $\Option{a, b, c}$.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -780,12 +779,12 @@ These short-circuit output configurations are typically, but not always, due to 
 \hypertarget{def-terminateas}{}
 In the following, $\XP$ and $\XQ$ stand for, possibly empty, sequences of premises.
 %
-A rule macro includes the special premise form $C \rulearrow C' \terminateas E$,
-which introduces alternative output configurations $C'$ and short-circuit $E$:
+A rule macro includes the special premise form $C \rulearrow C'\; \terminateas\; E$,
+which introduces the output configuration $C'$ and the short-circuiting alternative $E$:
 \begin{mathpar}
   \inferrule{
     \XP\\\\
-    C \rulearrow C' \terminateas E\\\\
+    C \rulearrow C'\; \terminateas\; E\\\\
     \XQ\\
   }
   {
@@ -811,7 +810,7 @@ Such a rule macro expands to the following pair of rules:
     V \rulearrow E
   }
 \end{mathpar}
-Intuitively, if $C$ transitions to $C'$ then $\sslash E$ can be ignored
+Intuitively, if $C$ transitions to $C'$ then $\terminateas\; E$ can be ignored
 and the rule is interpreted as usual (Option 1).
 However, if $C$ transitions into $E$ (Option 2) then the premises $\XQ$ are ignored,
 thereby short-circuiting the rule, and the input configuration
@@ -823,7 +822,7 @@ That is, a rule macro of the form
 \begin{mathpar}
   \inferrule{
     \XP\\\\
-    C \rulearrow C' \terminateas E_{1...m}\\\\
+    C \rulearrow C'\; \terminateas\; E_{1...m}\\\\
     \XQ\\
   }
   {
@@ -834,7 +833,7 @@ Stands for the set of rule macros
 \begin{mathpar}
   \inferrule{
     \XP\\\\
-    C \rulearrow C' \terminateas E_1\\\\
+    C \rulearrow C'\; \terminateas\; E_1\\\\
     \XQ\\
   }
   {
@@ -845,7 +844,7 @@ Stands for the set of rule macros
 \and
 \inferrule{
   \XP\\\\
-  C \rulearrow C' \terminateas E_m\\\\
+  C \rulearrow C'\; \terminateas\; E_m\\\\
   \XQ\\
 }
 {
@@ -871,7 +870,7 @@ This time, not simplified:
   \evalexpr( \envone, \vetwo ) \evalarrow \ResultExpr(\vmtwo, \newenv) \OrAbnormal \\\\
   \vmone \eqname (\vvone, \vgone) \\
   \vmtwo \eqname (\vvtwo, \vgtwo) \\
-  \evalbinop(\op, \vvone, \vvtwo) \evalarrow \vv \terminateas \DynErrorConfig\\\\
+  \evalbinop(\op, \vvone, \vvtwo) \evalarrow \vv\; \terminateas\; \DynErrorConfig\\\\
   \vg \eqdef \vgone \parallelcomp \vgtwo
 }{
   \evalexpr( \env, \EBinop(\op, \veone, \vetwo) ) \evalarrow
@@ -977,13 +976,44 @@ Expanding the last transition judgment, gives us the case:
 All these cases are succinctly encoded in a single rule with the alternative output configurations.
 
 \section{Conventionally-used Judgments and Notations\label{sec:ConventionallyUsedJudgments}}
-We now present judgments used conventionally in this reference.
+We now present functions used conventionally in this reference.
 
 \subsection{Checked Transitions\label{sec:Checked Transitions}}
-\hypertarget{def-checktrans}{}
+\hypertarget{relation-becheck}{}
+\hypertarget{type-builderror}{}
 The function
 \[
-\checktransname(\overname{\Bool}{\vb}, \overname{\Strings}{\vcode}) \aslto \{\True\}
+\becheck(\overname{\Bool}{\vb}, \overname{\Strings}{\vcode}) \aslto \{\True\}
+\cup\ \overname{\TBuildError}{\BuildErrorConfig}
+\]
+takes a Boolean value $\vb$ and an error code $\vcode$
+and returns $\True$ when $\vb$ is $\True$ and a build error configuration for $\vcode$, otherwise.
+\begin{mathpar}
+\inferrule[be\_check\_true]{}{ \becheck(\True, \vcode) \astarrow \True }
+\and
+\inferrule[be\_check\_false]{}{ \becheck(\False, \vcode) \astarrow \BuildError(\vcode) }
+\end{mathpar}
+
+We define a similar function for type errors.
+\RenderRelation{te_check}
+\begin{mathpar}
+\inferrule[te\_check\_true]{}{ \techeck(\True, \vcode) \typearrow \True }
+\and
+\inferrule[te\_check\_false]{}{ \techeck(\False, \vcode) \typearrow \TypeErrorVal{\vcode} }
+\end{mathpar}
+
+We define a similar function for dynamic errors.
+\RenderRelation{de_check}
+\begin{mathpar}
+\inferrule[de\_check\_true]{}{ \decheck(\True, \vcode) \evalarrow \True }
+\and
+\inferrule[de\_check\_false]{}{ \decheck(\False, \vcode) \evalarrow \DynamicError(\vcode) }
+\end{mathpar}
+
+\BackupOriginalRelation{
+The function
+\[
+\techeckname(\overname{\Bool}{\vb}, \overname{\Strings}{\vcode}) \aslto \{\True\}
 \cup\ \overname{\typeerror}{\TypeErrorConfig}\ \cup\ \overname{\TDynError}{\DynErrorConfig}
 \]
 takes a Boolean value $\vb$ and an error code $\vcode$
@@ -994,28 +1024,30 @@ based on the error code (see \chapref{Errors}).
 This is used to assert that a condition that holds.
 
 \begin{mathpar}
-\inferrule[check\_trans\_true]{}{ \checktrans{\True}{\vcode} \checktransarrow \True }
+\inferrule[check\_trans\_true]{}{ \techeck{\True}{\vcode} \astarrow \True }
 \end{mathpar}
 
 \begin{mathpar}
 \inferrule[check\_trans\_false\_type]{
   \vcode\text{ is a \typingerrorterm{} code}
-}{ \checktrans{\False}{\vcode} \checktransarrow \TypeErrorVal{\vcode} }
+}{ \techeck{\False}{\vcode} \astarrow \TypeErrorVal{\vcode} }
 \end{mathpar}
 
 \begin{mathpar}
 \inferrule[check\_trans\_false\_dynamic]{
   \vcode\text{ is a \dynamicerrorterm{} code}
-}{ \checktrans{\False}{\vcode} \checktransarrow \DynamicErrorVal{\vcode} }
+}{ \techeck{\False}{\vcode} \checktransarrow \DynamicErrorVal{\vcode} }
 \end{mathpar}
+}
 
 \subsection{Boolean Transition Judgments}
-\hypertarget{def-booltrans}{}
-We define the following rules to allow us to treat Boolean values as transition judgments:
+\RenderRelation{bool_transition}
+We define the following rules to allow us to treat Boolean values as transition judgments,
+which in turn allow us to employ \shortcircuitrulemacros{}:
 \begin{mathpar}
-\inferrule[bool\_trans\_true]{}{ \booltrans(\True) \booltransarrow\True }
+\inferrule[bool\_trans\_true]{}{ \booltrans(\overname{\True}{\cond}) \booltransarrow \overname{\True}{\vresult} }
 \and
-\inferrule[bool\_trans\_false]{}{ \booltrans(\False) \booltransarrow\False }
+\inferrule[bool\_trans\_false]{}{ \booltrans(\overname{\False}{\cond}) \booltransarrow \overname{\False}{\vresult} }
 \end{mathpar}
 
 \subsection{Judgments Over Optional Data Types}
@@ -1026,7 +1058,7 @@ we introduce the following parametric relation,
 which accepts a one-argument relation (or function) $f : A \aslrel B$
 and applies it to an optional value:
 \[
-\mapopt{\cdot} : \overname{\Option(A)}{\vvopt} \aslrel \overname{\Option(B)}{\vvoptnew}
+\mapopt{\cdot} : \overname{\Option{A}}{\vvopt} \aslrel \overname{\Option{B}}{\vvoptnew}
 \]
 
 \ProseParagraph

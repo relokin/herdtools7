@@ -1949,10 +1949,10 @@ Arguments:
                            assert (not post) ;
                            fun m1 m2 -> M.seq_mem m2 m1
                         | _ -> (>>|) in
-                      ((read_reg_ord_sz sz rs1 ii >>> fun v ->
+                      ((read_reg_data_sz sz rs1 ii >>> fun v ->
                         do_write_mem sz an aexp ac a v ii) >>|
                          (add_size a sz >>= fun a ->
-                          read_reg_ord_sz sz rs2 ii >>> fun v ->
+                          read_reg_data_sz sz rs2 ii >>> fun v ->
                           do_write_mem sz an aexp ac a v ii)))
                   sz Annot.N
                   ma (M.unitT V.zero)
@@ -1979,10 +1979,10 @@ Arguments:
             let (>>>) = M.data_input_next in
             do_str rd
               (fun ac a _ ii ->
-                (read_reg_ord_sz sz rs1 ii >>> fun v ->
+                (read_reg_data_sz sz rs1 ii >>> fun v ->
                   do_write_mem sz an aexp ac a v ii) >>|
                   (add_size a sz >>= fun a ->
-                    read_reg_ord_sz sz rs2 ii >>> fun v ->
+                    read_reg_data_sz sz rs2 ii >>> fun v ->
                       do_write_mem sz an aexp ac a v ii))
               sz Annot.N
               (get_ea_idx rd k ii)
@@ -3415,6 +3415,7 @@ Arguments:
 
       let stzg = do_stzg Once
       and stz2g = do_stzg Twice
+      and st2g = stg Twice
 
 (*********************)
 (* Instruction fetch *)
@@ -3702,6 +3703,10 @@ Arguments:
         | I_STG(rt,rn,(k,Idx)) ->
             check_memtag "STG" ;
             stg Once rt rn k ii
+        | I_ST2G(rt,rn,(k,Idx)) ->
+          check_memtag "ST2G" ;
+          check_mixed "ST2G" ;
+          st2g rt rn k ii
         | I_LDG (rt,rn,k) ->
             check_memtag "LDG" ;
             ldg rt rn k ii
@@ -4612,7 +4617,7 @@ Arguments:
             do_xpac r ii
 (*  Cannot handle *)
         (* | I_BL _|I_BLR _|I_BR _|I_RET _ *)
-        | (I_STG _|I_STZG _|I_STZ2G _
+        | (I_STG _|I_ST2G _|I_STZG _|I_STZ2G _
         | I_OP3_SIMD _ | I_OP3_SV _
         | I_LDR_SIMD _| I_STR_SIMD _
         | I_LD1SP _| I_LD2SP _| I_LD3SP _| I_LD4SP _

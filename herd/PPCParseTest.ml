@@ -19,7 +19,7 @@ module Make(Conf:RunTest.Config)(ModelConfig:MemWithCav12.Config) = struct
     let debug = Conf.debug.Debug_herd.lexer
   end
   module ArchConfig = SemExtra.ConfigToArchConfig(Conf)
-  module PPCValue = Int64Value.Make(PPCBase.Instr)
+  module PPCValue = Int64Value.Make(PPCInstr)
   module PPC = PPCArch_herd.Make(ArchConfig)(PPCValue)
   module PPCLexParse = struct
     type instruction = PPC.parsedPseudo

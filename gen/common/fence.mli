@@ -13,21 +13,52 @@
 (* license as circulated by CEA, CNRS and INRIA at the following URL        *)
 (* "http://www.cecill.info". We also give a copy in LICENSE.txt.            *)
 (****************************************************************************)
+module type S = sig
+(* Atoms *)
+  include Atom.S
 
+(* Fences *)
+  type fence
 
-type spec = string * Arg.spec * string
+  val is_isync : fence -> bool
 
-val parse_tag :
-    string ->
-      (string -> bool) -> string list -> string ->
-          string * Arg.spec * string
+  val compare_fence : fence -> fence -> int
 
-val parse_tags :
-    string ->
-      (string -> bool) -> string list -> string ->
-          string * Arg.spec * string
+  val default : fence
+  val strong : fence
 
-val arch_opt : Archs.t ref -> spec
+  val pp_fence : fence -> string
 
+  val fold_cumul_fences : (fence -> 'a -> 'a) -> 'a -> 'a
+  val fold_all_fences : (fence -> 'a -> 'a) -> 'a -> 'a
+  val fold_some_fences : (fence -> 'a -> 'a) -> 'a -> 'a
 
-val parse_cmdline : spec list -> (string -> unit) -> unit
+  open Code
+
+  val orders : fence -> dir -> dir -> bool
+  val var_fence : (fence -> 'a -> 'a) -> 'a -> 'a
+
+(* Dependencies *)
+  type dp
+  val pp_dp : dp -> string
+  val fold_dpr : (dp -> 'a -> 'a) -> 'a -> 'a
+  val fold_dpw : (dp -> 'a -> 'a) -> 'a -> 'a
+
+(* Defaults for backward compatibility *)
+  val ddr_default : dp option
+  val ddw_default : dp option
+  val ctrlr_default : dp option
+  val ctrlw_default : dp option
+
+(* Predicate for control on reads *)
+  val is_ctrlr : dp -> bool
+  val is_addr : dp -> bool
+
+(* Sequence dependencies *)
+  val fst_dp : dp -> dp list
+  val sequence_dp : dp -> dp -> dp list
+
+(* Read-Modify-Write *)
+  include Rmw.S with type rmw_atom = atom
+
+end

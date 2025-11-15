@@ -93,7 +93,7 @@ Node types are defined recursively as follows:
 \item[Unlabelled Tuple.] A tuple of node types, denoted as~$(n_1,\ldots,n_k)$;
 \item[Labelled Tuple.] A tuple labelled~$L$, denoted as~$L(n_1,\ldots,n_k)$;
 \item[List.] A list node type, denoted as $\KleeneStar{n}$;
-\item[Optional.] An optional node type, denoted as $\Option(n)$;
+\item[Optional.] An optional node type, denoted as $\Option{n}$;
 \item[Record.] A record, denoted as $\{\text{name}_1 : n_1,\ldots,\text{name}_k : n_k\}$ where $\text{name}_i$, which associates names with corresponding node types.
 \end{description}
 
@@ -431,7 +431,7 @@ the local declaration item is
 \end{flalign*}
 }
 
-\RenderType{qualifier}
+\RenderType{func_qualifier}
 
 \BackupOriginalAST{
 \begin{flalign*}
@@ -463,7 +463,7 @@ the local declaration item is
  \funcsubprogramtype &:& \subprogramtype\\
  \funcrecurselimit    &:& \expr?\\
  \funcbuiltin &:& \Bool\\
- \funcqualifier &:& \some{\qualifier}\\
+ \funcqualifierfield &:& \some{\funcqualifier}\\
  \funcoverride &:& \some{\overrideinfo}\\
 \end{array}
 \right\}
@@ -825,7 +825,7 @@ to each of them --- $\vsymasts$.
 \inferrule[empty]{
   b(\vv) \astarrow \astversion{\vv}
 }{
-  \buildtclist[b](\overname{\vv \parsesep \option(\Tcomma)}{\vsyms}) \astarrow \overname{[\astversion{\vv}]}{\vsymasts}
+  \buildtclist[b](\overname{\vv \parsesep \Option{\Tcomma}}{\vsyms}) \astarrow \overname{[\astversion{\vv}]}{\vsymasts}
 }
 \end{mathpar}
 
@@ -842,7 +842,7 @@ to each of them --- $\vsymasts$.
 \hypertarget{build-option}{}
 The meta relation
 \[
-\buildoption[b](\overname{N}{\vsym}) \;\aslrel\; \overname{\Option( A )}{\vsymast}
+\buildoption[b](\overname{N}{\vsym}) \;\aslrel\; \overname{\Option{A}}{\vsymast}
 \]
 which is parameterized by an AST building relation $b : N \aslrel A$,
 takes a parse node that represents an optional $N$ value $\vsym$, and returns the result of applying $b$
@@ -858,7 +858,7 @@ to the value if it exists --- $\vsymasts$.
 \inferrule[some]{
   b(\vv) \astarrow \astversion{\vv}
 }{
-  \buildoption[b](\overname{\namednode{\vv}{N}}{\vsym}) \astarrow \overname{\Option(\astversion{\vv})}{\vsymast}
+  \buildoption[b](\overname{\namednode{\vv}{N}}{\vsym}) \astarrow \overname{\Option{\astversion{\vv}}}{\vsymast}
 }
 \end{mathpar}
 
@@ -888,14 +888,13 @@ to terminals.
 \end{mathpar}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Transforming Assignable Expressions to Expressions\label{sec:LeftToRight}}
-\hypertarget{def-rexpr}{}
-The recursive function $\torexpr : \lexpr \rightarrow \expr$ transforms
-\assignableexpressions{} to corresponding \rhsexpressions{},
-which is utilized both for the type system and semantics:
+\section{Transforming Assignable Expressions \\ to Right-hand side Expressions\label{sec:LeftToRight}}
+\RenderRelation{rexpr}
+This function is utilized by both the type system and the dynamic semantics.
+It is defined recursively by the following table:
 \[
 \begin{array}{lcl}
-  \textbf{Left hand side expression} & & \textbf{Right hand side expression}\\
+  \textbf{Assignable expression} & & \textbf{Right-hand side expression}\\
   \hline
   \torexpr(\LEVar(\vx)) &=& \EVar(\vx)\\
   \torexpr(\LESlice(\vle, \vargs)) &=& \ESlice(\torexpr(\vle), \vargs)\\

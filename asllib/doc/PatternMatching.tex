@@ -38,7 +38,8 @@ matches a value specified by the \emph{pattern} $p$.
 transforms a pattern parse node $\vparsednode$ into a pattern AST node $\vastnode$.
 
 \paragraph{Typing:} Patterns are annotated by $\annotatepattern$.
-\hypertarget{def-annotatepattern}{}
+\RenderRelation{annotate_pattern}
+\BackupOriginalRelation{
 The function
 \[
   \annotatepattern(
@@ -51,10 +52,11 @@ annotates a pattern $\vp$ in a \staticenvironmentterm{} $\tenv$ given a type $\v
 resulting in $\newp$, which is the typed AST node for $\vp$
 and the inferred \sideeffectsetterm\ $\vses$.
 \ProseOtherwiseTypeError.
-
+} % END_OF_BACKUP_RELATION
 \paragraph{Semantics:} Patterns are evaluated by $\evalpattern$.
+\RenderRelation{eval_pattern}
+\BackupOriginalRelation{
 The relation
-\hypertarget{def-evalpattern}{}
 \[
   \evalpattern(\overname{\envs}{\env} \aslsep \overname{\nativevalue}{\vv} \aslsep \overname{\pattern}{\vp}) \;\aslrel\;
   \left(
@@ -67,6 +69,8 @@ The relation
 \]
 determines whether a value $\vv$ matches the pattern $\vp$ in an environment $\env$
 resulting in either $\ResultPattern(\vb, \newg)$ or an abnormal configuration.
+} % END_OF_BACKUP_RELATION
+
 
 \section{Matching All Values\label{sec:MatchingAllValues}}
 \ASLListing{Matching any value}{semantics-pall}{\semanticstests/SemanticsRule.PAll.asl}
@@ -214,7 +218,7 @@ since \texttt{-} matches any value and \texttt{42} in particular.
   \makeanonymous(\tenv, \vte) \typearrow \testruct \OrTypeError\\\\
   \commonprefixline\\\\
   \astlabel(\vtstruct) \in \{\TBool, \TReal, \TInt, \TString\}\\
-  \checktrans{\astlabel(\vtstruct) = \astlabel(\testruct)}{\BadOperands} \checktransarrow \True \OrTypeError
+  \techeck(\astlabel(\vtstruct) = \astlabel(\testruct), \BadOperands) \typearrow \True \OrTypeError
 }{
   \annotatepattern(\tenv, \vt, \overname{\PatternSingle(\ve)}{\vp}) \typearrow (\overname{\PatternSingle(\vep)}{\newp}, \vses)
 }
@@ -228,9 +232,9 @@ since \texttt{-} matches any value and \texttt{42} in particular.
   \makeanonymous(\tenv, \vte) \typearrow \vtestruct \OrTypeError\\\\
   \commonprefixline\\\\
   \astlabel(\vtstruct) = \TBits\\
-  \checktrans{\astlabel(\vtstruct) = \astlabel(\testruct)}{\BadOperands} \checktransarrow \True \OrTypeError\\
+  \techeck(\astlabel(\vtstruct) = \astlabel(\testruct), \BadOperands) \typearrow \True \OrTypeError\\
   \bitwidthequal(\tenv, \vtstruct, \testruct) \typearrow \vb\\
-  \checktrans{\vb}{BitvectorsDifferentWidths} \checktransarrow \True \OrTypeError
+  \techeck(\vb, \BadOperands) \typearrow \True \OrTypeError
 }{
   \annotatepattern(\tenv, \vt, \overname{\PatternSingle(\ve)}{\vp}) \typearrow (\overname{\PatternSingle(\vep)}{\newp}, \vses)
 }
@@ -244,10 +248,10 @@ since \texttt{-} matches any value and \texttt{42} in particular.
   \makeanonymous(\tenv, \vte) \typearrow \vtestruct \OrTypeError\\\\
   \commonprefixline\\\\
   \astlabel(\vtstruct) = \TEnum\\
-  \checktrans{\astlabel(\vtstruct) = \astlabel(\testruct)}{\BadOperands} \checktransarrow \True \OrTypeError\\
+  \techeck(\astlabel(\vtstruct) = \astlabel(\testruct), \BadOperands) \typearrow \True \OrTypeError\\
   \vtstruct \eqname \TEnum(\vlione)\\
   \vtestruct \eqname \TEnum(\vlitwo)\\
-  \checktrans{\vlione = \vlitwo}{EnumDifferentLabels} \checktransarrow \True \OrTypeError\\
+  \techeck(\vlione = \vlitwo, \BadOperands) \typearrow \True \OrTypeError\\
 }{
   \annotatepattern(\tenv, \vt, \overname{\PatternSingle(\ve)}{\vp}) \typearrow (\overname{\PatternSingle(\vep)}{\newp}, \vses)
 }
@@ -260,7 +264,7 @@ since \texttt{-} matches any value and \texttt{42} in particular.
   \makeanonymous(\tenv, \vt) \typearrow \vtstruct \OrTypeError\\\\
   \makeanonymous(\tenv, \vte) \typearrow \testruct \OrTypeError\\\\
   \commonprefixline\\\\
-  \checktrans{\astlabel(\vtstruct) = \astlabel(\testruct)}{\BadOperands} \checktransarrow \True \OrTypeError\\
+  \techeck(\astlabel(\vtstruct) = \astlabel(\testruct), \BadOperands) \typearrow \True \OrTypeError\\
   \astlabel(\vtstruct) \not\in \{\TBool, \TReal, \TInt, \TBits, \TEnum\}
 }{
   \annotatepattern(\tenv, \vt, \overname{\PatternSingle(\ve)}{\vp}) \typearrow \TypeErrorVal{\UnexpectedType}
@@ -365,7 +369,7 @@ whereas \\
                 & \astlabel(\vtstruct) \in \{\TInt, \TReal\}
     \end{array}
   }\\
-  \checktrans{\vb}{InvalidTypesForBinop} \checktransarrow \True \OrTypeError
+  \techeck(\vb, \BadOperands) \typearrow \True \OrTypeError
 }{
   \annotatepattern(\tenv, \vt, \overname{\PatternRange(\veone, \vetwo)}{\vp}) \typearrow (\overname{\PatternRange(\veonep, \vetwop)}{\newp}, \vses)
 }
@@ -473,7 +477,7 @@ that is, $\PatternLeq(\ve)$;
                 & \astlabel(\vtstruct) \in \{\TInt, \TReal\}
     \end{array}
   }\\
-  \checktrans{\vb}{\BadOperands} \checktransarrow \True \OrTypeError
+  \techeck(\vb, \BadOperands) \typearrow \True \OrTypeError
 }{
   \annotatepattern(\tenv, \vt, \overname{\PatternLeq(\ve)}{\vp}) \typearrow (\overname{\PatternLeq(\vep)}{\newp}, \vses)
 }
@@ -569,7 +573,7 @@ whereas \texttt{match\_false} evaluates to \False, since \texttt{42} is not less
                 & \astlabel(\vtstruct) \in \{\TInt, \TReal\}
     \end{array}
   }\\
-  \checktrans{\vb}{InvalidTypesForBinop} \checktransarrow \True \OrTypeError
+  \techeck(\vb, \BadOperands) \typearrow \True \OrTypeError
 }{
   \annotatepattern(\tenv, \vt, \overname{\PatternGeq(\ve)}{\vp}) \typearrow (\overname{\PatternGeq(\vep)}{\newp}, \vses)
 }
@@ -693,9 +697,12 @@ whereas \texttt{match\_false} evaluates to \False, since
 \end{itemize}
 
 \FormallyParagraph
-\hypertarget{def-maskmatch}{}
+\RenderRelation{mask_match}
+\BackupOriginalRelation{
 The function $\maskmatch : \{0, 1, \vx\} \times \{0,1\} \rightarrow \Bool$,
-checks whether a bit value (second operand) matches a mask value (first operand),
+checks whether a bit value (second operand) matches a mask value (first operand).
+} % END_OF_BACKUP_RELATION
+
 is defined by the following table:
 \[
 \begin{array}{|c|c|c|c|}
@@ -777,9 +784,9 @@ The tuple patterns in \listingref{typing-ptuple-bad} are ill-typed.
 \begin{mathpar}
 \inferrule{
   \tstruct(\tenv, \vt) \typearrow \vtstruct \OrTypeError\\\\
-  \checktrans{\astlabel(\vtstruct) = \TTuple}{\UnexpectedType} \checktransarrow \True \OrTypeError\\\\
+  \techeck(\astlabel(\vtstruct) = \TTuple, \UnexpectedType) \typearrow \True \OrTypeError\\\\
   \vtstruct \eqname \TTuple(\vts)\\
-  \checktrans{\equallength(\vli, \vts)}{\UnexpectedType} \checktransarrow \True \OrTypeError\\\\
+  \techeck(\equallength(\vli, \vts), \UnexpectedType) \typearrow \True \OrTypeError\\\\
   i\in\listrange(\vli): \annotatepattern(\tenv, \vts[i], \vli[i]) \typearrow (\vlip[i], \vxs_i) \OrTypeError\\\\
   \newli \eqdef i\in\listrange(\vli): \vlip[i]\\
   \vses \eqdef \bigcup_{i\in\listrange(\vli)} \vxs_i
@@ -845,12 +852,15 @@ the tuple of expression \texttt{(3, '1101010')} does not match the tuple of patt
 }
 
 \ASTRuleDef{PatternSet}
+\MarkedIgnoredRelationDefinition{
 \hypertarget{build-patternset}{}
 The function
 \[
   \buildpatternset(\overname{\parsenode{\Npatternset}}{\vparsednode}) \;\aslto\; \overname{\pattern}{\vastnode}
 \]
 transforms a parse node $\vparsednode$ into an AST node $\vastnode$.
+} % END_OF_IGNORED_RELATION
+
 
 \begin{mathpar}
 \inferrule[not]{}{
@@ -871,12 +881,15 @@ transforms a parse node $\vparsednode$ into an AST node $\vastnode$.
 \end{mathpar}
 
 \ASTRuleDef{PatternList}
+\MarkedIgnoredRelationDefinition{
 \hypertarget{build-patternlist}{}
 The function
 \[
   \buildpatternlist(\overname{\parsenode{\Npatternlist}}{\vparsednode}) \;\aslto\; \overname{\pattern}{\vastnode}
 \]
 transforms a parse node $\vparsednode$ into an AST node $\vastnode$.
+} % END_OF_IGNORED_RELATION
+
 
 \begin{mathpar}
 \inferrule{
@@ -1042,12 +1055,15 @@ $\checksymbolicallyevaluable$, and thus in the dynamic semantics
 they are evaluated via $\evalexprsef$.
 
 \subsection{ASTRule.ExprPattern\label{sec:ASTRule.ExprPattern}}
+\MarkedIgnoredRelationDefinition{
 \hypertarget{build-exprpattern}{}
 The function
 \[
   \buildexprpattern(\overname{\parsenode{\Nexprpattern}}{\vparsednode}) \;\aslto\; \overname{\expr}{\vastnode}
 \]
 transforms a pattern expression parse node $\vparsednode$ into a pattern AST node $\vastnode$.
+} % END_OF_IGNORED_RELATION
+
 
 \begin{mathpar}
 \inferrule[literal]{}{

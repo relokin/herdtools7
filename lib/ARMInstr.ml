@@ -4,7 +4,7 @@
 (* Jade Alglave, University College London, UK.                             *)
 (* Luc Maranget, INRIA Paris-Rocquencourt, France.                          *)
 (*                                                                          *)
-(* Copyright 2021-present Institut National de Recherche en Informatique et *)
+(* Copyright 2025-present Institut National de Recherche en Informatique et *)
 (* en Automatique and the authors. All rights reserved.                     *)
 (*                                                                          *)
 (* This software is governed by the CeCILL-B license under French law and   *)
@@ -14,24 +14,45 @@
 (* "http://www.cecill.info". We also give a copy in LICENSE.txt.            *)
 (****************************************************************************)
 
-module type S = sig
-  type pte_atom
-  type t
-  val pp : t -> string
-  val default : string -> t
-  val compare : t -> t -> int
-  val set_pteval : pte_atom -> t -> (unit -> string) -> t
-  val can_fault : t -> bool
-end
+open ARMBase
 
-module No(A:sig type arch_atom end) = struct
-  type pte_atom = A.arch_atom
-  type t = string
-  let pp a = a
-  let default s = s
-  let compare _ _ = 0
-  let set_pteval _ p _ = p
-  let can_fault _t = false
-end
+type exec = instruction
+type t = instruction
 
+let from_exec = Misc.identity
+let to_exec = Misc.identity
 
+let compare = Misc.polymorphic_compare
+let eq = (=)
+
+let pp = function
+  | I_NOP -> "NOP"
+  | i -> Printf.sprintf "instr:%S" (dump_instruction i)
+
+module Lexer =
+  ARMLexer.Make
+    (struct
+      let debug = false
+    end)
+
+let parse_instr s =
+  let lexbuf = Lexing.from_string s in
+  let pi =
+    GenParserUtils.call_parser
+      "ARMInstr" lexbuf Lexer.token ARMParser.one_instr in
+  parsed_tr pi
+
+let tr =
+  let open InstrLit in
+  function
+  | LIT_NOP -> I_NOP
+  | LIT_INSTR s -> parse_instr s
+
+let can_overwrite _ = false
+
+module Set =
+  MySet.Make
+    (struct
+      type t = instruction
+      let compare = compare
+    end)

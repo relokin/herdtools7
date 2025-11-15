@@ -27,7 +27,7 @@ HERD_DIYCROSS_REGRESSION_TEST = _build/default/internal/herd_diycross_regression
 HERD_CATALOGUE_REGRESSION_TEST = _build/default/internal/herd_catalogue_regression_test.exe
 BENTO                         = _build/default/tools/bento.exe
 ASLREF                        = _build/default/asllib/aslref.exe
-
+CHECK_OBS                     = _build/default/internal/check_obs.exe
 all: build
 
 .PHONY: Version.ml
@@ -107,6 +107,7 @@ test.aarch64.asl: asl-pseudocode
 		-libdir-path ./herd/libdir \
 		-litmus-dir ./herd/tests/instructions/AArch64 \
 		-conf ./herd/tests/instructions/AArch64/asl.cfg \
+		-checkstates \
 		$(REGRESSION_TEST_MODE)
 	@ echo "herd7 AArch64 instructions tests (ASL): OK"
 
@@ -420,24 +421,9 @@ diymicro-test-aarch64-asl: asl-pseudocode
 		$(REGRESSION_TEST_MODE)
 	@ echo "herd7 AArch64 diymicro7 (ASL) tests: OK"
 
-.PHONY: opam-install
-opam-install:
+test-bnfc:
 	@ echo
-	@ echo "Installing herdtools as an opam package"
-	opam install .
-	@ echo "Installed."
-
-ASLLIB_PARSER_CMLY := _build/default/asllib/Parser.cmly
-
-.PHONY: test-bnfc
-test-bnfc: opam-install
-	@ echo
-	dune build --profile $(DUNE_PROFILE) $(ASLLIB_PARSER_CMLY)
-	$(MAKE) \
-		-C asllib/menhir2bnfc \
-		HERDTOOLS_SOURCE=$(CURDIR) \
-		ASLLIB_PARSER_CMLY=$(abspath $(ASLLIB_PARSER_CMLY)) \
-		test
+	dune runtest asllib/menhir2bnfc
 	@ echo "BNFC tests: OK"
 
 test:: test.pac
@@ -528,8 +514,8 @@ aarch64-test-mixed:
 		-herd-timeout $(TIMEOUT) \
 		-herd-path $(HERD) \
 		-libdir-path ./herd/libdir \
-		-kinds-path catalogue/aarch64/tests/kinds.txt \
-		-shelf-path catalogue/aarch64/shelf.py \
+		-kinds-path catalogue/aarch64-mixed/tests/kinds.txt \
+		-shelf-path catalogue/aarch64-mixed/shelf.py \
 		-variant mixed \
 		$(REGRESSION_TEST_MODE)
 	@ echo "herd7 catalogue aarch64 tests (mixed mode): OK"
@@ -907,7 +893,7 @@ diy-test-C:
 asl-pseudocode: herd/libdir/asl-pseudocode/shared_pseudocode.asl
 
 herd/libdir/asl-pseudocode/shared_pseudocode.asl:
-	@ $(MAKE) -C $(@D) a64 clean-tmp
+	@ $(MAKE) -C $(@D) build
 
 .PHONY: clean-asl-pseudocode
 clean-asl-pseudocode:

@@ -2,9 +2,9 @@
 (*                           the diy toolsuite                              *)
 (*                                                                          *)
 (* Jade Alglave, University College London, UK.                             *)
-(* Luc Maranget, INRIA Paris-Rocquencourt, France.                          *)
+(* Luc Maranget, INRIA Paris, France.                                       *)
 (*                                                                          *)
-(* Copyright 2021-present Institut National de Recherche en Informatique et *)
+(* Copyright 2025-present Institut National de Recherche en Informatique et *)
 (* en Automatique and the authors. All rights reserved.                     *)
 (*                                                                          *)
 (* This software is governed by the CeCILL-B license under French law and   *)
@@ -14,18 +14,28 @@
 (* "http://www.cecill.info". We also give a copy in LICENSE.txt.            *)
 (****************************************************************************)
 
-(** Signature of Rmw helper modules *)
+(** Utilities for instructions *)
 
-module type S = sig
-  type rmw
-  type rmw_atom
+module type S =
+  sig
+    type instr_exec
+    val norm_ins : instr_exec -> instr_exec
+    val is_valid : instr_exec -> bool
+    val get_exported_label : instr_exec -> BranchTarget.t option
+  end
 
-  val pp_rmw : bool (* backward compatibility *) -> rmw -> string
-  val is_one_instruction : rmw -> bool
-  val fold_rmw : (rmw -> 'a -> 'a) -> 'a -> 'a
-  (* Second round of fold, for rmw with back compatible name *)
-  val fold_rmw_compat : (rmw -> 'a -> 'a) -> 'a -> 'a
-  val applies_atom_rmw : rmw -> rmw_atom option -> rmw_atom option -> bool
-  val show_rmw_reg : rmw -> bool
-  val compute_rmw : rmw  -> Code.v -> Code.v -> Code.v
-end
+module No :
+  functor (I : sig type instr end)
+  -> S with type instr_exec = I.instr
+
+module type Tr =
+  sig
+    type exec
+    type data
+    val from_exec : exec -> data
+    val to_exec : data -> exec
+  end
+
+module IdTr :
+  functor (I : sig type instr end)
+  ->  Tr with type exec = I.instr and type data = I.instr
