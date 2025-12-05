@@ -116,21 +116,31 @@ let aob =
  [Exp & M]; rmw; [Exp & M]
  | [Exp & M]; rmw; lrs; [A | Q]
  | [Imp & TTD & R]; rmw; [HU]
+ | [GCS & R]; rmw; [GCS & W]
 
 (* Barrier-ordered-before *)
 let bob =
- [Exp & M | Imp & Tag & R]; po; [dmb.full]; po; [Exp & M | Imp & Tag & R | MMU & FAULT]
+ [Exp & M | Imp & Tag & R | GCS & W & X]; po; [dmb.full]; po; [Exp & M | Imp & Tag & R | GCS & R & X | MMU & FAULT]
  | [Exp & M]; po; [dmb.full]; po; [DC.CVAU]
  | [DC.CVAU]; po; [dmb.full]; po; [Exp & M]
  | [DC.CVAU]; po; [dmb.full]; po; [DC.CVAU]
- | [Exp & (R \ NoRet) | Imp & Tag & R]; po; [dmb.ld]; po; [Exp & M | Imp & Tag & R | MMU & FAULT]
- | [Exp & W]; po; [dmb.st]; po; [Exp & W | MMU & FAULT]
- | [range([A];amo;[L])]; po; [Exp & M | Imp & Tag & R | MMU & FAULT]
+ | [Exp & (R \ NoRet) | Imp & Tag & R]; po; [dmb.ld]; po; [Exp & M | Imp & Tag & R | GCS & R & X | MMU & FAULT]
+ | [Exp & W]; po; [dmb.st]; po; [Exp & W | GCS & W & X | MMU & FAULT]
+ | [range([A];amo;[L])]; po; [Exp & M | Imp & Tag & R | GCS & R & X | MMU & FAULT]
  | [L]; po; [A]
- | [A | Q]; po; [Exp & M | Imp & Tag & R | MMU & FAULT]
+ | [A | Q]; po; [Exp & M | Imp & Tag & R | GCS & R & X | MMU & FAULT]
  | [A | Q]; iico_order; [Exp & M | Imp & Tag & R | MMU & FAULT]
- | [Exp & M | Imp & Tag & R]; po; [L]
+ | [Exp & M | Imp & Tag & R | GCS & W & X]; po; [L]
  | [Exp & M | Imp & Tag & R]; iico_order; [L]
+
+let GCSB-ob =
+ [GCS & M]; po; [GCSB.DSYNC]; po; [dmb.full]; po; [Exp & M]
+ | [Exp & M]; po; [dmb.full]; po; [GCSB.DSYNC]; po; [GCS & M]
+ | [range([A];amo;[L])]; po; [GCSB.DSYNC]; po; [GCS & M]
+ | [Exp & R]; po; [dmb.ld]; po; [GCSB.DSYNC]; po; [GCS & M]
+ | [Exp & R & (A | Q)]; po; [GCSB.DSYNC]; po; [GCS & M]
+ | [GCS & M]; po; [GCSB.DSYNC]; po; [Exp & W & L]
+ | [Exp & W]; po; [dmb.st]; po; [GCSB.DSYNC]; po; [GCS & W]
 
 let po-scl-ob =
  [Exp & M]; (po & scl); [DC.CVAU]
@@ -167,6 +177,7 @@ let rec lob =
  | pob
  | aob
  | bob
+ | GCSB-ob
  | lob; lob
 
 let pick-lob =

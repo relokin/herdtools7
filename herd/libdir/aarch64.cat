@@ -143,12 +143,19 @@ let Instr-obs =
     | [DC.CVAU]; DC-after; [W] | [W]; DC-after; [DC.CVAU]
     | IC-ca
 
+let GCS-obs =
+   rf & ext; [GCS & R]
+   | [GCS & W]; rf & ext
+   | ca & ext; [GCS & W]
+   | [GCS & M]; ca & ext
+
 (** Observed-by **)
 let obs =
     Exp-obs; sca-class?
     | Tag-obs; sca-class?
     | TTD-obs
     | Instr-obs
+    | GCS-obs
 
 (*** Ordered-before ***)
 let rec ob =
