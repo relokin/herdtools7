@@ -1,6 +1,6 @@
 (* Translation-intrinsically-before *)
 let tr-ib =
-  [Imp & TTD & R]; iico_data; [B]; iico_ctrl; [Exp & M | MMU & FAULT]
+  [Imp & TTD & R]; iico_data; [B]; iico_ctrl; [Exp & M | GCS & M | MMU & FAULT]
 
 (* Notions of Same Location - PA, VA, and including Fault Effects *)
 let TTD-same-oa =  same-oa(TTD*TTD) 

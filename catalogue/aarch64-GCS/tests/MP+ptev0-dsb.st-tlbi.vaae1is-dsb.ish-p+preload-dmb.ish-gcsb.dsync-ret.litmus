@@ -1,0 +1,26 @@
+AArch64 MP+ptev0-dsb.st-tlbi.vaae1is-dsb.ish-p+preload-dmb.ish-gcsb.dsync-ret
+Variant=shadowstack,vmsa
+{
+ (* Shadow Stack of one elements *)
+ SS(x,1);
+
+ [PTE(x)]=(oa:PA(x));
+ 0:X0=(valid:0); 0:X1=PTE(x);
+ 0:X2=x; 1:X2=x;
+ 0:X4=y; 1:X4=y;
+
+ (* Set GCSPR to the top of the stack *)
+ 1:GCSPR_EL1=&x[1];
+}
+ P0              | P1            ;
+ STR X0,[X1]     | L0:           ;
+ DSB ST          |  BL L1        ; (* BL-GCS-store *)
+ LSR X9,X2,#12   |  B OUT        ;
+ TLBI VAAE1IS,X9 | L1:           ;
+ DSB ISH         |  LDR W3,[X4]  ;
+ MOV W3,#1       |  DMB SY       ;
+ STR W3,[X4]     |  GCSB DSYNC   ;
+                 | L2:           ;
+                 |  RET          ;
+                 | OUT:          ;                
+exists (~fault(P1:L0,x) /\ 1:X3=1 /\ ~fault(P1:L2,x,MMU:Translation))

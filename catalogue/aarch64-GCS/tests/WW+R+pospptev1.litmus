@@ -1,0 +1,17 @@
+AArch64 WW+R+pospptev1l+gcspopm
+variant=vmsa,shadowstack
+{
+ SS(x,1);
+ [PTE(x)]=(valid:0);
+ [PTE(z)]=(oa:PA(x));
+ 0:X2=z;
+ 0:X3=(oa:PA(x),valid:1); 0:X4=PTE(x);
+ 1:GCSPR_EL1=x;
+}
+
+P0            | P1           ;
+MOV X1,#4     | L0:          ;
+STR X1,[X2]   |  GCSPOPM X3  ;
+STLR X3,[X4]  |              ;
+exists ~fault(P1:L0,x) /\ 1:X3=0
+
