@@ -1,5 +1,5 @@
 AArch64 RZRZQM-002c
-variant=shadowstack
+variant=shadowstack,vmsa
 (*
 
 A GCS effect E1 is Barrier-ordered-before an Explicit Memory effect
