@@ -72,9 +72,8 @@ let ctrl = [Exp & R]; dtrm & po; [Rreg]; iico_data; [BCC]; po
 
 (** Pick dependencies *)
 let rec pick-dtrm =
-  dtrm
-  | iico_ctrl
-  | pick-dtrm; pick-dtrm
+   dtrm?; (iico_data; [B]; iico_ctrl) \ iico_data; dtrm?
+   | pick-dtrm; pick-dtrm
 
 let pick-basic-dep =
    [Exp & R]; pick-dtrm
@@ -82,7 +81,8 @@ let pick-basic-dep =
 let pick-addr-dep =
    [Exp & R]; pick-dtrm & po; [Rreg]; iico_data & ii_addr; [Exp & M | Imp & Tag & R | Imp & TTD & R | HU | TLBI | DC.CVAU | IC.IVAU]
 let pick-data-dep =
-   [Exp & R]; pick-dtrm & po; [Rreg]; (iico_data | (iico_data; iico_ctrl)) & ii_data; [Exp & W]
+   [Exp & R]; pick-dtrm & po; [Rreg]; iico_data & ii_data; [Exp & W]
+   | [Exp & R]; dtrm & po; [Rreg]; pick-dtrm & ii_data; [Exp & W]
 let pick-ctrl-dep =
    [Exp & R]; pick-dtrm & po; [Rreg]; iico_data; [BCC]; po
 
