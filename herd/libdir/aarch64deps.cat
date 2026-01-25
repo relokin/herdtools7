@@ -60,7 +60,6 @@ let lmrs = [W]; ((po & same-loc) & ~(intervening(W,(po & same-loc)))); [R]
 (* Dependency through registers and memory *)
 let rec dtrm =
   [~range(lxsx)]; lrrs
-  | lmrs
   | iico_data
   | dtrm; dtrm
 
@@ -75,9 +74,6 @@ let rec pick-dtrm =
    dtrm?; (iico_data; [B]; iico_ctrl) \ iico_data; dtrm?
    | pick-dtrm; pick-dtrm
 
-let pick-basic-dep =
-   [Exp & R]; pick-dtrm
-
 let pick-addr-dep =
    [Exp & R]; pick-dtrm & po; [Rreg]; iico_data & ii_addr; [Exp & M | Imp & Tag & R | Imp & TTD & R | HU | TLBI | DC.CVAU | IC.IVAU]
 let pick-data-dep =
@@ -85,13 +81,6 @@ let pick-data-dep =
    | [Exp & R]; dtrm & po; [Rreg]; pick-dtrm & ii_data; [Exp & W]
 let pick-ctrl-dep =
    [Exp & R]; pick-dtrm & po; [Rreg]; iico_data; [BCC]; po
-
-let pick-dep =
-   ( pick-basic-dep
-   | pick-addr-dep
-   | pick-data-dep
-   | pick-ctrl-dep
-   ) & ~same-instance
 
 include "aarch64show.cat"
 
