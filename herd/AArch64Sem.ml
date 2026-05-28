@@ -2387,7 +2387,7 @@ Arguments:
             ii.A.proc (A.pp_reg rs1) ii.A.proc (A.pp_reg rs2) in
           commit_pred_txt (Some cond) ii in
         let neqp (v1,v2) (x1,x2) =
-            is_eq v1 x1 >>| is_eq v2 x2
+            M.op Op.Eq v1 x1 >>| M.op Op.Eq v2 x2
             >>= fun (b1,b2) -> M.op Op.And b1 b2
             >>= M.eqT V.zero
         and eqp (v1,v2) (x1,x2) =

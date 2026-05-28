@@ -1,0 +1,11 @@
+Test A33 Allowed
+States 2
+0:X0=y; x={0,0}; pacda(y,0x0)=y;
+0:X0=y; x={y,0};
+Ok
+Witnesses
+Positive: 2 Negative: 2
+Condition exists (x={0,0} /\ 0:X0=y)
+Observation A33 Sometimes 2 2
+Hash=82a047eb21ab4c651a34c78717655d97
+

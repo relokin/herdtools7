@@ -1,0 +1,11 @@
+AArch64 A32
+Variant=pauth2
+{
+  void *x=y;
+  0:X0=y;
+  0:X1=x;
+}
+P0               ;
+PACDZA X0        ;
+CAS X0,XZR,[X1]  ;
+exists ([x]=0 /\ 0:X0=y)
