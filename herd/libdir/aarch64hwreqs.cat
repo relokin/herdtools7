@@ -83,6 +83,7 @@ let IFB-ob =
  | [Exp & R]; addr; [Exp & M]; po; [IFB]; po
  | [Exp & R]; pick-addr-dep; [Exp & M]; po; [IFB]; po
  | [Exp & R]; pick-addr-dep; (tc-ib | tr-ib); [IFB]; po
+ | [Exp & R]; pick-data-dep; [Exp & W]; po; [IFB]; po
  | DSB-ob; [IFB]; po
  | [Imp & TTD & R]; tr-ib; [IFB]; po
  | [Imp & Tag & R]; tc-ib; [IFB]; po
@@ -170,14 +171,8 @@ let rec lob =
  | lob; lob
 
 let pick-lob =
- pick-addr-dep; [Exp & R]; lob; [Exp & W]
- | pick-ctrl-dep; [Exp & R]; lob; [Exp & W]
- | pick-addr-dep; [Exp & W]; lmrs; [Exp & R]; lob; [Exp & W]
- | pick-data-dep; [Exp & W]; lmrs; [Exp & R]; lob; [Exp & W]
- | pick-ctrl-dep; [Exp & W]; lmrs; [Exp & R]; lob; [Exp & W]
- | pick-addr-dep; [Exp & W]; lmrs; [Exp & R]; lob?; IFB-ob
+ pick-data-dep; [Exp & W]; lmrs; [Exp & R]; lob; [Exp & W]
  | pick-data-dep; [Exp & W]; lmrs; [Exp & R]; lob?; IFB-ob
- | pick-ctrl-dep; [Exp & W]; lmrs; [Exp & R]; lob?; IFB-ob
 
 let rec local-hw-reqs =
  lob
