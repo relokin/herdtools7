@@ -123,6 +123,7 @@ let is_mixed v = v Mixed || v FullMixed
 let is_kvm v = v KVM
 
 let validate v =
-  if (v Sync || v Async || v StoreOnly) && not (v MemTag) then
+  if (v Sync || v Async || v StoreOnly)
+    && ( not (v MemTag) || v KVM ) then
     Warn.user_error
-      "variants `Sync`, `Async` and `StoreOnly` must be used with `MemTag`"
+      "variants `Sync`, `Async` and `StoreOnly` require `MemTag` and cannot be combined with `KVM`"

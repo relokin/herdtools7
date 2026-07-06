@@ -1726,13 +1726,13 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
         do_rec cs
       | None -> cs
 
-    let is_ldxr_instruction = function
+    let is_ldxr = function
       | Instruction (I_LDAR (_, (XX|AX), _, _))
       | Instruction (I_LDARBH (_, (XX|AX), _, _))
       | Instruction (I_LDXP _) -> true
       | _ -> false
 
-    let is_stxr_instruction = function
+    let is_stxr = function
       | Instruction (I_STXR _)
       | Instruction (I_STXRBH _)
       | Instruction (I_STXP _) -> true
@@ -1749,8 +1749,8 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
         | [] -> assert false (* the `cs` should not be empty *)
         | (Label(_) as label)::rem -> label :: do_rec rem
         | instr::rem ->
-            if (not do_store_only && is_ldxr_instruction instr)
-               || (do_store_only && is_stxr_instruction instr) then
+            if (not do_store_only && is_ldxr instr)
+               || (do_store_only && is_stxr instr) then
               (add_label er instr) :: rem
             else instr :: do_rec rem
       in
