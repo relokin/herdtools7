@@ -1778,7 +1778,9 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
               (pp_dir d) (C.debug_evt e)
         end
     | Some d,Data loc ->
-        let loc = add_tag loc e.C.tag in
+        let loc = match e.C.atom with
+        | Some (Pte _,_) -> loc
+        | _ -> add_tag loc e.C.tag in
         let atom = match e.C.atom with
         | None -> None
         | Some (a,m) -> begin match a with
@@ -2284,7 +2286,9 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
       match e.C.dir,e.C.loc with
       | None,_ -> Warn.fatal "TODO"
       | Some d,Data loc ->
-          let loc = add_tag loc e.C.tag in
+          let loc = match e.C.atom with
+          | Some (Pte _,_) -> loc
+          | _ -> add_tag loc e.C.tag in
           let atom = match e.C.atom with
           | None -> None
           | Some (a,m) -> begin match a with
@@ -2628,7 +2632,9 @@ module Make(Cfg:Config) : XXXCompile_gen.S =
           let r2,cs2,init,st = match atom with
             | Some(Neon _, None) -> r2,cs2,init,st
             | _ -> r2,cs2@pseudo addi,init,st in
-          let loc = add_tag loc e.C.tag in
+          let loc = match atom with
+          | Some (Pte _,_) -> loc
+          | _ -> add_tag loc e.C.tag in
           begin match atom with
           | None ->
               let init,cs,st =
