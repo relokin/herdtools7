@@ -579,6 +579,8 @@ module CoSt = struct
     let pte_val = get_pte_value st in
     match () with
     | _ when (st.check_fault = NoDir || do_no_fault) -> None,unset_check_fault st
+    | _ when do_store_only && dir = R
+        && not (do_kvm && Value.can_fault dir pte_val) -> None,st
       (* Need to check fault *)
     | _ when do_kvm ->
       let fault,check_fault = match dir,st.check_fault with
@@ -1170,8 +1172,6 @@ let set_read_pair_v n cell check_value =
    convert the node list, i.e., the first unnamed parameter,
    to the final value `cell` and PTE value `pte_cell` *)
 let do_set_read_v init =
-  let skip_store_only st dir =
-    if do_store_only then None,st else CoSt.fault_update st dir in
   let do_rec st ns =
     (* `st` keeps track of tags and current state of memory,
        - plain value => CoSt.get_cell, CoSt.set_cell,
@@ -1196,13 +1196,13 @@ let do_set_read_v init =
                we should assign label to this read event.
                Here we assume write is stronger than read. *)
             else if n.evt.rmw then CoSt.fault_update st W
-            else skip_store_only st R in
+            else CoSt.fault_update st R in
           n.evt <- { n.evt with check_fault };
           st
         | Pair ->
           let st = CoSt.implicit_pte_update st R in
           set_read_pair_v n cell check_value;
-          let check_fault, st = skip_store_only st R in
+          let check_fault, st = CoSt.fault_update st R in
           n.evt <- { n.evt with check_fault };
           st
         | VecReg a ->
@@ -1211,7 +1211,7 @@ let do_set_read_v init =
           let v = E.SIMD.read a cell
                    |> E.SIMD.reduce
                    |> Value.from_int in
-          let check_fault, st = skip_store_only st R in
+          let check_fault, st = CoSt.fault_update st R in
           n.evt <- { n.evt with v=v ; vecreg=[]; bank=Ord; check_value; check_fault ; };
           st
         | Tag ->
