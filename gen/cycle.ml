@@ -576,24 +576,17 @@ module CoSt = struct
      if a fault check is needed. Otherwise return `None`. *)
   let fault_update st dir =
     let unset_check_fault st = {st with check_fault = NoDir } in
-    let pte_val = get_pte_value st in
-    match () with
-    | _ when (st.check_fault = NoDir || do_no_fault) -> None,unset_check_fault st
-    | _ when do_store_only && dir = R
-        && not (do_kvm && Value.can_fault dir pte_val) -> None,st
-      (* Need to check fault *)
-    | _ when do_kvm ->
-      let fault,check_fault = match dir,st.check_fault with
-      | _,NoDir -> None,NoDir
-      | (R|W),Irr | W,Dir W | R,Dir R -> label_pte_fault dir pte_val,NoDir
-      | W,Dir R -> None,Dir R
-      | R,Dir W -> None,Dir W in
-      fault,{st with check_fault}
-      (* In variants `memtag` and `morello`, the cycles are constructed such that
-         no fault occurs *)
-    | _ when do_memtag || do_morello ->
-      Some ((Label.next_label "L"), false),unset_check_fault st
-    |_ -> None,unset_check_fault st
+    let st = if do_no_fault then unset_check_fault st else st in
+    match st.check_fault, dir with
+    | NoDir, _ -> None, st
+    | Irr, (R|W) | Dir W,W | Dir R,R when do_kvm ->
+        let pte_val = get_pte_value st in
+        label_pte_fault dir pte_val, unset_check_fault st
+    | _, R when do_store_only ->
+      None,st
+    | _, _ when do_memtag || do_morello ->
+      Some ((Label.next_label "L"), false), unset_check_fault st
+    | _, _ -> None, st
 
   let implicit_pte_update st dir =
     match Value.implicitly_set_pteval dir st.machine_feature st.pte_value with
