@@ -50,6 +50,7 @@ let lwfs =
  [Exp & M | Imp & Tag & R]; (po & same-loc); [Exp & W]
  | [Exp & M]; (po & same-loc); [MMU & FAULT]
  | [Imp & TTD & R]; (po & same-loc); [Exp & W | HU]
+ | [GCS & M | Exp & M]; (po; [GCSB.DSYNC]; po) & same-loc; [GCS & W | Exp & W]
 
 (* Local read successor *)
 let lrs = [W]; ((po & same-loc) & ~(intervening(W,(po & same-loc)))); [R]

@@ -169,8 +169,18 @@ irreflexive ob as external
 (*** Internal visibility requirements ***)
 irreflexive [Exp & R]; ((po & same-loc) | rmw); [Exp & W]; rfi; [Exp & R] as coRW1-Exp
 irreflexive [Imp & Tag & R]; (po & same-loc); [Exp & Tag & W]; rfi; [Imp & Tag & R] as coRW1-MTE
+irreflexive [GCS & R]; po & same-loc; [GCS & W]; rfi as coRW1-GCS1
+irreflexive [GCS & R]; (po; [GCSB.DSYNC]; po) & same-loc; [Exp & W]; rfi as coRW1-GCS2
+irreflexive [Exp & R]; (po; [GCSB.DSYNC]; po) & same-loc; [GCS & W]; rfi as coRW1-GCS3
 irreflexive [Exp & W]; (po & same-loc); [Exp & W]; (ca & int); [Exp & W] as coWW-Exp
+irreflexive [GCS & W]; po & same-loc; [GCS & W]; ca & int as coWW-GCS1
+irreflexive [GCS & W]; (po; [GCSB.DSYNC]; po) & same-loc; [Exp & W]; ca & int as coWW-GCS2
+irreflexive [Exp & W]; (po; [GCSB.DSYNC]; po) & same-loc; [GCS & W]; ca & int as coWW-GCS3
 irreflexive [Exp & W]; (po & same-loc); [Exp & R]; (ca & int); [Exp & W] as coWR-Exp
+irreflexive [GCS & W]; po & same-loc; [GCS & R]; ca & int as coWR-GCS1
+irreflexive [Exp & W]; po & same-loc; [GCS & R & X]; ca & int as coWR-GCSS1
+irreflexive [GCS & W]; (po; [GCSB.DSYNC]; po) & same-loc; [Exp & R]; ca & int as coWR-GCS2
+irreflexive [Exp & W]; (po; [GCSB.DSYNC]; po) & same-loc; [GCS & R]; ca & int as coWR-GCS3
 irreflexive [Exp & Tag & W]; (po & same-loc); [Imp & Tag & R]; (ca & int) as coWR-MTE
 
 (*** Atomic: LDXR/STXR, AMO and HU constraint to forbid intervening writes. ***)
