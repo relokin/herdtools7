@@ -65,7 +65,7 @@ type op1 = extra_op1 constr_op1
 type scalar = ASLScalar.t
 
 type pteval = AArch64PteVal.t
-type addrreg = AArch64AddrReg.t
+type addrreg = AArch64SysReg.t
 type instr = AArch64Base.instruction
 type cst = (scalar, pteval, addrreg, instr) Constant.t
 
@@ -378,5 +378,5 @@ let mask c sz =
 let fromExtraPteVal pteval = pteval
 and toExtraPteVal pteval = pteval
 
-let fromExtraAddrReg addrreg = addrreg
-and toExtraAddrReg addrreg = addrreg
+let fromExtraSysReg sysreg = sysreg
+and toExtraSysReg sysreg = sysreg

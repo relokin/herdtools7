@@ -512,7 +512,7 @@ module RegMap = A.RegMap)
         let rec find_rec k = function
           | [] -> assert false
           | q::rem ->
-              if A.V.AddrReg.eq p q then k
+              if A.V.SysReg.eq p q then k
               else find_rec (k+1) rem in
         find_rec 0
 
@@ -562,7 +562,7 @@ module RegMap = A.RegMap)
         | PteVal p ->
             let idx = find_pteval_index p ptevalEnv in
             add_pteval idx
-        | AddrReg a ->
+        | SysReg a ->
           let idx = find_parel1_index a parel1Env in
             add_parel1val idx
         | Tag _|Frozen _ | ConcreteRecord _-> assert false
@@ -581,7 +581,7 @@ module RegMap = A.RegMap)
       let extract_parel1s t =
         List.fold_left
           (fun k (_,v) -> match v with
-          | Constant.AddrReg p -> p::k
+          | Constant.SysReg p -> p::k
           | _ -> k)
           [] t.Tmpl.init
 
@@ -759,7 +759,7 @@ module RegMap = A.RegMap)
                   PU.dump_pteval_flags (OutUtils.fmt_phy_kvm s) p)
             ptevals in
         let parel1s = extract_parel1s t in
-        let parel1s = List.map (fun a -> A.V.AddrReg.dump_pack SkelUtil.data_symb_id a) parel1s in
+        let parel1s = List.map (fun a -> A.V.SysReg.dump_pack SkelUtil.data_symb_id a) parel1s in
         let addrs_cpy =
           if O.memory = Memory.Indirect && O.cautious then
             List.map (compile_cpy_addr_call proc) addrs_proc

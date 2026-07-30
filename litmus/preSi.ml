@@ -1010,8 +1010,8 @@ module Make
                 sprintf "pretty_addr_physical[unpack_oa(%s)]" v::
                 List.map
                   (fun f -> sprintf "unpack_%s(%s)" f v)
-                  A.V.AddrReg.fields in
-              let ds = A.V.AddrReg.default_fields in
+                  A.V.SysReg.fields in
+              let ds = A.V.SysReg.default_fields in
               Some v,(fs, ds)
             | Base "tag_t" ->
                 None,
@@ -1130,8 +1130,8 @@ module Make
               | Constant.Symbolic _ -> SkelUtil.data_symb_id (T.C.V.pp O.hexa v)
               | Constant.PteVal p ->
                  A.V.PteVal.dump_pack SkelUtil.data_symb_id p
-              | Constant.AddrReg a ->
-                A.V.AddrReg.dump_pack SkelUtil.data_symb_id a
+              | Constant.SysReg a ->
+                A.V.SysReg.dump_pack SkelUtil.data_symb_id a
               | Constant.Tag t -> Misc.int_of_tag t |> string_of_int
               | _ ->
                   begin match loc with
@@ -1724,7 +1724,7 @@ module Make
           | Tag _|Symbolic _ ->
             Warn.user_error "Litmus cannot handle this initial value %s"
               (A.V.pp_v v)
-          | PteVal _| AddrReg _| Frozen _ -> assert false
+          | PteVal _| SysReg _| Frozen _ -> assert false
           | Instruction _ -> Warn.fatal "FIXME: dump_run_thread functionality for -variant self"
         in
         match at with

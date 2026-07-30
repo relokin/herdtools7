@@ -24,7 +24,7 @@ module Make : functor
      ArchOp.S
    with type scalar = Cst.Scalar.t
     and type pteval = Cst.PteVal.t
-    and type addrreg = Cst.AddrReg.t
+    and type addrreg = Cst.SysReg.t
     and type instr = Cst.Instr.t)
   ->
   Value.S

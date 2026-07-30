@@ -624,7 +624,7 @@ end = struct
           | Some
               (A.V.Val
                  (ConcreteVector _|Concrete _|Symbolic _|ConcreteRecord _
-                  |Tag _|Instruction _|AddrReg _
+                  |Tag _|Instruction _|SysReg _
                   |Frozen _))
           | None
             -> None

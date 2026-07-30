@@ -92,18 +92,19 @@ val virt_match_phy : symbol (* virt *) -> symbol (* phy *)-> bool
 module SymbolSet : MySet.S with type elt = symbol
 module SymbolMap : MyMap.S with type key = symbol
 
-(** [(s, p, i) t] is the type of constants with [s] the type of scalars, [p]
-    the type of page table entries, and [i] the type of instructions. *)
-type ('scalar, 'pte, 'addrreg, 'instr) t =
+(** [(s, p, r, i) t] is the type of constants with [s] the type of scalars,
+    [p] the type of page table entries, [r] the type of system registers,
+    and [i] the type of instructions. *)
+type ('scalar, 'pte, 'sysreg, 'instr) t =
   | Concrete of 'scalar  (** A scalar, e.g. 3. *)
-  | ConcreteVector of ('scalar, 'pte, 'addrreg, 'instr) t list
+  | ConcreteVector of ('scalar, 'pte, 'sysreg, 'instr) t list
       (** A vector of constants, e.g. [[3, x, NOP]]. *)
-  | ConcreteRecord of ('scalar, 'pte, 'addrreg, 'instr) t StringMap.t
+  | ConcreteRecord of ('scalar, 'pte, 'sysreg, 'instr) t StringMap.t
       (** A record of constants, e.g. [{ addr: x; instr: NOP; index: 3 }] *)
   | Symbolic of symbol  (** A symbolic constant, e.g. [x] *)
   | Tag of string
   | PteVal of 'pte  (** A page table entry. *)
-  | AddrReg of 'addrreg (** A register with fields *)
+  | SysReg of 'sysreg (** A system register value with fields. *)
   | Instruction of 'instr  (** An instruction. *)
   | Frozen of int (** Frozen symbolic value. *)
 
@@ -199,10 +200,10 @@ module type S =  sig
 
   module Scalar : Scalar.S
   module PteVal : PteVal.S
-  module AddrReg: AddrReg.S
+  module SysReg: SysReg.S
   module Instr : Instr.S
 
-  type v = (Scalar.t,PteVal.t,AddrReg.t,Instr.t) t
+  type v = (Scalar.t,PteVal.t,SysReg.t,Instr.t) t
 
   val tr : (string,ParsedPteVal.t,ParsedAddrReg.t,InstrLit.t) t -> v
   val intToV  : int -> v

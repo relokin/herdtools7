@@ -95,7 +95,7 @@ module Make(V:Constant.S) = struct
     | Concrete _|ConcreteVector _ -> Tmpl.dump_v v
     | Tag _ -> Warn.user_error "No tag in LISA"
     | PteVal _ -> Warn.user_error "No pteval in LISA"
-    | AddrReg _ -> Warn.user_error "No parel1 in LISA"
+    | SysReg _ -> Warn.user_error "No parel1 in LISA"
     | Instruction _ -> Warn.user_error "No instruction value in LISA"
     | ConcreteRecord _ -> Warn.user_error "No record values in LISA"
     | Frozen _ -> assert false

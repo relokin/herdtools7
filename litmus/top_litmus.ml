@@ -542,7 +542,7 @@ end = struct
              | UseArch.Trad ->
                 let module V =
                   SymbConstant.Make
-                    (Int64Scalar)(AArch64PteVal)(AArch64AddrReg)
+                    (Int64Scalar)(AArch64PteVal)(AArch64SysReg)
                     (AArch64Instr.Std) in
                 let module Arch' = AArch64Arch_litmus.Make(OC)(V) in
                 let module LexParse = struct

@@ -90,7 +90,7 @@ module type S = sig
 
 (* "Exposed" TTDs of code pages, i.e. TTDs whose addresses are in registers *)
   (* In initial state *)
-  val get_exposed_codepages : test -> (A.V.Cst.Scalar.t, A.V.Cst.PteVal.t, A.V.Cst.AddrReg.t, A.instruction) Constant.t list
+  val get_exposed_codepages : test -> (A.V.Cst.Scalar.t, A.V.Cst.PteVal.t, A.V.Cst.SysReg.t, A.instruction) Constant.t list
 
   type event = E.event
   type event_structure = E.event_structure

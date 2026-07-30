@@ -93,7 +93,7 @@ module Make(A:Arch_herd.S) =
           (match p.p_oa with
           | None -> acc
           | Some oa -> add_output_address acc oa)
-      | AddrReg a ->
+      | SysReg a ->
           let open ParsedAddrReg in
           (match a.p_oa with
           | None -> acc

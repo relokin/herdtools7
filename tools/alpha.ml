@@ -203,7 +203,7 @@ struct
       StringMap.fold_values (collect_value f) vs k
     | Tag _ -> notag_value ()
     | PteVal _ -> nopte_value ()
-    | AddrReg _ -> noaddrreg_value ()
+    | SysReg _ -> noaddrreg_value ()
     | Instruction _ -> noinstr_value ()
     | Symbolic (Physical _|TagAddr _|System (TLB,_))
     | Frozen _
@@ -222,7 +222,7 @@ struct
        ConcreteRecord (StringMap.map (map_value f) vs)
     | Tag _ -> notag_value ()
     | PteVal _ -> nopte_value ()
-    | AddrReg _ -> noaddrreg_value ()
+    | SysReg _ -> noaddrreg_value ()
     | Instruction _ -> noinstr_value ()
     | Frozen _|Symbolic (Physical _|TagAddr _|System (TLB,_))
       -> assert false

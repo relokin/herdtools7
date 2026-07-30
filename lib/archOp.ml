@@ -60,8 +60,8 @@ module type WithTr = sig
   val fromExtraPteVal : pteval -> AArch64PteVal.t
   val toExtraPteVal : AArch64PteVal.t -> pteval
 
-  val fromExtraAddrReg : addrreg -> AArch64AddrReg.t
-  val toExtraAddrReg : AArch64AddrReg.t -> addrreg
+  val fromExtraSysReg : addrreg -> AArch64SysReg.t
+  val toExtraSysReg : AArch64SysReg.t -> addrreg
 
 end
 
@@ -75,7 +75,7 @@ module No (Cst : Constant.S) :
   WithTr
     with type scalar = Cst.Scalar.t
      and type pteval = Cst.PteVal.t
-     and type addrreg = Cst.AddrReg.t
+     and type addrreg = Cst.SysReg.t
      and type instr = Cst.Instr.t
      and type extra_op = no_extra_op
      and type 'a constr_op = 'a no_constr_op
@@ -94,7 +94,7 @@ module No (Cst : Constant.S) :
 
   type scalar = Cst.Scalar.t
   type pteval = Cst.PteVal.t
-  type addrreg = Cst.AddrReg.t
+  type addrreg = Cst.SysReg.t
   type instr = Cst.Instr.t
   type cst = (scalar, pteval, addrreg, instr) Constant.t
 
@@ -107,8 +107,8 @@ module No (Cst : Constant.S) :
   let mask _ _ = None
   let fromExtraPteVal _ = raise Exit
   and toExtraPteVal _ = raise Exit
-  let fromExtraAddrReg _ = raise Exit
-  and toExtraAddrReg _ = raise Exit
+  let fromExtraSysReg _ = raise Exit
+  and toExtraSysReg _ = raise Exit
 end
 
 module type S1 = sig

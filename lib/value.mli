@@ -135,7 +135,7 @@ module type S =
 module type AArch64 =
   S
   with type Cst.PteVal.t = AArch64PteVal.t
-  and type Cst.AddrReg.t = AArch64AddrReg.t
+  and type Cst.SysReg.t = AArch64SysReg.t
   and type Cst.Instr.exec = AArch64Base.instruction
   and type Cst.Instr.t = AArch64Base.instruction
   and type 'a arch_constr_op1 = 'a AArch64Op.unop

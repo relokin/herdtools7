@@ -106,7 +106,7 @@ module RLocSet = A.RLocSet and module FaultType = A.FaultType =
             let rec f v k = match v with
             | Symbolic (Virtual {name=s;_}) when Symbol.is_label s -> k
             | Symbolic (Virtual {name=s;offset=0;tag=None;_}) -> Strings.add (Symbol.pp s) k
-            | Concrete _|PteVal _|AddrReg _|Instruction _ -> k
+            | Concrete _|PteVal _|SysReg _|Instruction _ -> k
             | ConcreteVector vs ->
                 List.fold_right f vs k
             | ConcreteRecord vs ->

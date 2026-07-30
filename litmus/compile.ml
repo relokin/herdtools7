@@ -71,7 +71,7 @@ module Generic
         | Symbolic _ -> pointer
         | Tag _ -> tag
         | PteVal _ -> pteval_t
-        | AddrReg _ -> parel1_t
+        | SysReg _ -> parel1_t
         | Instruction _ -> ins_t
         | Frozen _ | ConcreteRecord _ -> assert false
 
@@ -391,7 +391,7 @@ module A.FaultType = A.FaultType)
           | Symbolic (Virtual {Constant.name=Symbol.Label (_,lbl); _}) ->
               Label.Set.add lbl k
           |Concrete _|ConcreteVector _|ConcreteRecord _
-          |Symbolic _|Tag _|PteVal _|AddrReg _
+          |Symbolic _|Tag _|PteVal _|SysReg _
           |Instruction _|Frozen _
            -> k)
         Label.Set.empty init

@@ -6,9 +6,9 @@ D=dune
 
 #Limit parallelism of some expensive operations
 ifeq ($(OS),Darwin)
-	J=$(shell sysctl -n hw.logicalcpu)
+	J?=$(shell sysctl -n hw.logicalcpu 2>/dev/null || echo 1)
 else
-	J=$(shell nproc)
+	J?=$(shell nproc 2>/dev/null || echo 1)
 endif
 
 REGRESSION_TEST_MODE = test

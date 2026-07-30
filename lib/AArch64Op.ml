@@ -48,7 +48,7 @@ module
     and type 'a constr_op = 'a binop
     and type scalar = S.t
     and type pteval = AArch64PteVal.t
-    and type addrreg = AArch64AddrReg.t
+    and type addrreg = AArch64SysReg.t
     and type instr = AArch64Base.instruction
   = struct
 
@@ -87,7 +87,7 @@ module
 
     type scalar = S.t
     type pteval = AArch64PteVal.t
-    type addrreg = AArch64AddrReg.t
+    type addrreg = AArch64SysReg.t
     type instr = AArch64Base.instruction
     type cst = (scalar,pteval,addrreg,instr) Constant.t
 
@@ -95,7 +95,7 @@ module
       let module InstrPP = AArch64Base.MakePP(struct
         let is_morello = true
       end) in
-      Constant.pp (S.pp hexa) (AArch64PteVal.pp hexa) (AArch64AddrReg.pp hexa)
+      Constant.pp (S.pp hexa) (AArch64PteVal.pp hexa) (AArch64SysReg.pp hexa)
       (InstrPP.dump_instruction) v
 
     open AArch64PteVal
@@ -158,22 +158,32 @@ module
     let setoa v =
       let open Constant in
       match v with
-      | Symbolic (Physical (s,0)) -> Some (AddrReg { AArch64AddrReg.oa = OutputAddress.PHY s; AArch64AddrReg.f = 0 })
+      | Symbolic (Physical (s,0)) ->
+          Some
+            (SysReg
+               (AArch64SysReg.AddrReg
+                  { AArch64AddrReg.oa = OutputAddress.PHY s;
+                    f = 0 }))
       | _ -> None
 
     let setf v =
       let open Constant in
       match v with
-      | Symbolic (Physical _) -> Some (AddrReg { AArch64AddrReg.oa = OutputAddress.PHY ""; AArch64AddrReg.f = 1 })
+      | Symbolic (Physical _) ->
+          Some
+            (SysReg
+               (AArch64SysReg.AddrReg
+                  { AArch64AddrReg.oa = OutputAddress.PHY "";
+                    f = 1 }))
       | _ -> None
 
     let trToExtra cst =
       Constant.map
-        Misc.identity Extra.toExtraPteVal Extra.toExtraAddrReg
+        Misc.identity Extra.toExtraPteVal Extra.toExtraSysReg
         Misc.identity cst
     and trFromExtra cst =
       Constant.map
-        Misc.identity Extra.fromExtraPteVal Extra.fromExtraAddrReg
+        Misc.identity Extra.fromExtraPteVal Extra.fromExtraSysReg
         Misc.identity cst
 
     (* Add a PAC field to a virtual address, this function can only add a PAC

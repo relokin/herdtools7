@@ -515,7 +515,7 @@ atom_prop:
 | loc=loc_brk equal v=pteval
   { Atom (LV (Loc loc, MiscParser.add_oa_if_none loc v)) }
 | loc=location equal v=addrregval
-  { Atom (LV (Loc loc, AddrReg v)) }
+  { Atom (LV (Loc loc, SysReg v)) }
 /* Array, array cell, equality of content no [x] = .. notation */
 | location equal LCURLY maybev_list RCURLY
     { let sz = List.length $4 in

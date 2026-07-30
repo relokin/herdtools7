@@ -2,9 +2,9 @@
 (*                           the diy toolsuite                              *)
 (*                                                                          *)
 (* Jade Alglave, University College London, UK.                             *)
-(* Luc Maranget, INRIA Paris-Rocquencourt, France.                          *)
+(* Luc Maranget, INRIA Paris, France.                                       *)
 (*                                                                          *)
-(* Copyright 2017-present Institut National de Recherche en Informatique et *)
+(* Copyright 2026-present Institut National de Recherche en Informatique et *)
 (* en Automatique and the authors. All rights reserved.                     *)
 (*                                                                          *)
 (* This software is governed by the CeCILL-B license under French law and   *)
@@ -14,6 +14,25 @@
 (* "http://www.cecill.info". We also give a copy in LICENSE.txt.            *)
 (****************************************************************************)
 
-module Make(Instr:Instr.S) = struct
-  include SymbConstant.Make(Int64Scalar)(PteVal.No)(SysReg.No)(Instr)
+(** Abstract system register values *)
+module type S = sig
+  type t
+
+  val default : t
+
+  val pp : bool -> t -> string
+  val pp_v : t -> string
+  val tr : ParsedAddrReg.t -> t
+  val pp_norm : ParsedAddrReg.t -> string
+
+  val eq : t -> t -> bool
+  val compare : t -> t -> int
+
+  val dump_pack : (string -> string) -> t -> string
+  val fields : string list
+  val default_fields : string list
+  val tcr_attrs : t -> string list
 end
+
+module No : S
+module ASL : S
