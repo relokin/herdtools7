@@ -810,6 +810,9 @@ module Make
       let extract_oa v = arch_op1 AArch64Op.OA v
       let extract_tagged v = arch_op1 AArch64Op.Tagged v
 
+      let read_tcr ii =
+        read_reg Port.No (AArch64.SysReg AArch64.TCR_EL1) ii
+
       let mextract_whole_pte_val an nexp a_pte iiid domain =
         (M.do_read_loc Port.No
            (fun loc v ->
@@ -1146,6 +1149,7 @@ module Make
           M.delay_kont "3"
             begin
               let kont _ = M.op1 Op.PTELoc a_virt >>= fun a_pte ->
+                  read_tcr ii >>= fun _ ->
                   let an,nexp =
                     if hd then (* Atomic accesses, tagged with updated bits *)
                       an_xpte an,AArch64Explicit.NExp AArch64Explicit.AFDB

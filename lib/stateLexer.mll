@@ -84,6 +84,10 @@ rule token = parse
 | "PA"  { TOK_PA }
 (* PAR_EL1 *)
 | "parel1_t"|"PAREL1_T" { TOK_PAR }
+(* TCR_EL1 *)
+| "SH" { TOK_SH }
+| "IRGN" { TOK_IRGN }
+| "ORGN" { TOK_ORGN }
 (* Shadow Stack keywords *)
 | "SS" { TOK_SS }
 | "SSCap"  { TOK_SSCAP }

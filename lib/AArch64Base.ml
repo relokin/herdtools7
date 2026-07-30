@@ -123,6 +123,7 @@ type sysreg =
   ELR_EL1 | ESR_EL1 | SYS_NZCV |
   TFSR_ELx | VNCR_EL2
   | PAR_EL1
+  | TCR_EL1
   | GCSPR_EL1
 
 let sysregs = [
@@ -138,6 +139,7 @@ let sysregs = [
     TFSR_ELx, "TFSR_ELx";
     VNCR_EL2, "VNCR_EL2";
     PAR_EL1, "PAR_EL1";
+    TCR_EL1, "TCR_EL1";
     GCSPR_EL1, "GCSPR_EL1";
   ]
 

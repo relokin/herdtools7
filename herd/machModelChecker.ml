@@ -521,18 +521,58 @@ module Make
                   | S.A.V.Val (Constant.PteVal v) ->
                       Some (S.A.V.Cst.PteVal.get_attrs v)
                   | _ -> None) in
+            let get_tcr_attrs e =
+              let attrs_of_value = function
+                | Some (S.A.V.Val (Constant.SysReg v)) ->
+                    S.A.V.Cst.SysReg.tcr_attrs v
+                | _ -> [] in
+              match E.location_of e with
+              | Some (S.A.Location_reg (_,r))
+                  when String.equal (S.A.pp_reg r) "TCR_EL1" ->
+                  begin match attrs_of_value (E.read_of e) with
+                  | _::_ as attrs -> attrs
+                  | [] ->
+                      E.EventSet.fold
+                        (fun w attrs -> attrs_of_value (E.written_of w) @ attrs)
+                        (E.EventRel.preds (Lazy.force rf_reg) e) []
+                  end
+              | _ -> [] in
+            let init_tcr_attrs proc =
+              S.A.state_fold
+                (fun loc v attrs ->
+                  match loc,v with
+                  | S.A.Location_reg (p,r),
+                    S.A.V.Val (Constant.SysReg v)
+                      when Proc.equal p proc
+                           && String.equal (S.A.pp_reg r) "TCR_EL1" ->
+                      S.A.V.Cst.SysReg.tcr_attrs v
+                  | _,_ -> attrs)
+                test.Test_herd.init_state [] in
+            let tcr_attrs_of_evt e =
+              if E.is_not_explicit e then
+                let attrs =
+                  E.EventSet.fold
+                    (fun e_tcr attrs ->
+                      if E.same_instruction e e_tcr then
+                        get_tcr_attrs e_tcr @ attrs
+                      else attrs)
+                    evts [] in
+                match attrs, E.proc_of e with
+                | _::_, _ -> attrs
+                | [], Some proc -> init_tcr_attrs proc
+                | [], None -> []
+              else [] in
             let attrs_of_evt e =
-              match get_pte_val_attrs e with
-              | Some attr -> attr
-              | None ->
-                  Warn.fatal
-                    "attrs_of_evt, pte expected, on event %s"
-                    (E.debug_event_str e) in
-              let pte_accesses =
-                E.EventSet.filter
-                  (fun e ->
+              let attrs =
+                match get_pte_val_attrs e with
+                | Some attr -> attr
+                | None -> [] in
+              List.sort_uniq String.compare (tcr_attrs_of_evt e @ attrs) in
+            let pte_accesses =
+              E.EventSet.filter
+                (fun e ->
                      E.Act.is_pte_access e.E.action
-                     && Misc.is_some (get_pte_val_attrs e))
+                     && attrs_of_evt e <> [])
                   (Lazy.force mem_evts) in
             let attr_evts =
               E.EventSet.filter

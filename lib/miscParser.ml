@@ -278,9 +278,31 @@ let set_hash p h = { p with info = set_hash_rec  h p.info; }
 
 let get_info p key = get_info_on_info key p.info
 
+exception ExitTCR of ParsedAddrReg.t
+
 let add_oa_if_none loc p =
   let open Constant in
   try
+    begin match loc with
+    | Location_reg (_,r) when String.equal r "TCR_EL1" ->
+        if Misc.is_some p.ParsedPteVal.p_oa
+           || not (StringSet.is_empty p.ParsedPteVal.p_attrs) then
+          Warn.user_error "TCR_EL1 initializer should only contain TCR fields";
+        let is_tcr_field k =
+          String.equal k "SH"
+          || String.equal k "IRGN"
+          || String.equal k "ORGN" in
+        let all_tcr_fields =
+          StringMap.fold
+            (fun k _ ok -> ok && is_tcr_field k)
+            p.ParsedPteVal.p_kv true in
+        if not all_tcr_fields then
+          Warn.user_error "TCR_EL1 initializer contains an invalid field";
+        let p =
+          { ParsedAddrReg.p_oa=None; p_kv=p.ParsedPteVal.p_kv; } in
+        raise (ExitTCR p)
+    | _ -> ()
+    end;
     let oa =
       match loc with
       | Location_global (Symbolic (System (Constant.PTE,s))) ->
@@ -290,7 +312,9 @@ let add_oa_if_none loc p =
       | _ -> raise Exit in
     let p = ParsedPteVal.add_oa_if_none oa p in
     Constant.PteVal p
-  with Exit -> PteVal p
+  with
+  | Exit -> PteVal p
+  | ExitTCR p -> SysReg p
 
 let mk_instr_val v =
   let open InstrLit in

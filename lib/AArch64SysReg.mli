@@ -16,6 +16,13 @@
 
 type t =
   | AddrReg of AArch64AddrReg.t
+  | TCR_EL1 of tcr
+
+and tcr = {
+  sh : string option;
+  irgn : string option;
+  orgn : string option;
+}
 
 val eq : t -> t -> bool
 val compare : t -> t -> int
@@ -25,7 +32,7 @@ val default : t
 val tr : ParsedAddrReg.t -> t
 val pp_norm : ParsedAddrReg.t -> string
 
-val pp : bool -> t -> string
+val pp : 'a -> t -> string
 val pp_v : t -> string
 
 val dump_pack : (string -> string) -> t -> string

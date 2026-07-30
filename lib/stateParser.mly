@@ -79,6 +79,7 @@ let mk_tag_mask t =
 %token PTX_REG_DEC
 %token <string> PTX_REG_TYPE
 %token TOK_PAR
+%token TOK_SH TOK_IRGN TOK_ORGN
 
 %left OR
 %left AND
@@ -188,6 +189,12 @@ prop_head:
     { ParsedPteVal.add_oa oa tail }
 | key=NAME COLON v=name_or_num tail=prop_tail
     { ParsedPteVal.add_kv key v tail }
+| TOK_SH tcr_field_sep v=NAME tail=prop_tail
+    { ParsedPteVal.add_kv "SH" v tail }
+| TOK_IRGN tcr_field_sep v=NAME tail=prop_tail
+    { ParsedPteVal.add_kv "IRGN" v tail }
+| TOK_ORGN tcr_field_sep v=NAME tail=prop_tail
+    { ParsedPteVal.add_kv "ORGN" v tail }
 | a=NAME tail=prop_tail
     { ParsedPteVal.add_attr a tail }
 | ATTRS COLON LPAR attrs=separated_nonempty_list(COMMA, NAME) RPAR
@@ -209,6 +216,10 @@ addrregval_prop_head:
 
 addrregval:
 | TOK_PAR COLON LPAR addrregval=addrregval_prop_head RPAR { addrregval }
+
+tcr_field_sep:
+| COLON { () }
+| EQUAL { () }
 
 maybev_tag:
 | COLON NAME  { Tag $2 }
