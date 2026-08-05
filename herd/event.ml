@@ -219,6 +219,7 @@ val same_instance : event -> event -> bool
       po : EventSet.t * EventRel.t; (* speculated po represented as a forest: roots first + partial order *)
       partial_po : EventTransRel.t;
       intra_causality_data : EventRel.t ;       (* really a partial order relation *)
+      intra_causality_data_addr : EventRel.t ;  (* address-result data edges to memory events *)
       intra_causality_control : EventRel.t ;    (* really a partial order relation *)
       intra_causality_order : EventRel.t ; (* Just order *)
       (* If style control inside structure *)
@@ -252,8 +253,11 @@ val same_instance : event -> event -> bool
   val do_speculate :
       event_structure -> event_structure
 
-(* Union of all internal causality relations *)
+  (* Union of all internal causality relations *)
   val iico        :  event_structure -> EventRel.t
+  val iico_data   :  event_structure -> EventRel.t
+  val add_intra_causality_data :
+      event_structure -> EventRel.t -> event_structure
 
   (*****************************************************************)
   (* Those projection return lists of event sets/relations by proc *)
@@ -846,6 +850,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
         po : EventSet.t * EventRel.t;
         partial_po: EventTransRel.t;
         intra_causality_data : EventRel.t ;   (* really a (partial order) relation *)
+        intra_causality_data_addr : EventRel.t ;
         intra_causality_control : EventRel.t ;(* really a (partial order) relation *)
       intra_causality_order : EventRel.t ; (* Just order *)
         control : EventRel.t ;
@@ -878,6 +883,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
         po = begin let r,e = es.po in (map_set r, map_rel e) end;
         partial_po = EventTransRel.map_nodes f es.partial_po ;
         intra_causality_data = map_rel  es.intra_causality_data ;
+        intra_causality_data_addr = map_rel es.intra_causality_data_addr ;
         intra_causality_control = map_rel es.intra_causality_control ;
         intra_causality_order = map_rel es.intra_causality_order ;
         control = map_rel es.control ;
@@ -896,9 +902,12 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       let s = es.events in
       {es with speculated = s}
 
+    let iico_data es =
+      EventRel.union es.intra_causality_data es.intra_causality_data_addr
+
     let iico es =
       EventRel.union3
-        es.intra_causality_data
+        (iico_data es)
         es.intra_causality_control
         es.intra_causality_order
 
@@ -908,6 +917,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
         po = (EventSet.empty,EventRel.empty);
         partial_po = EventTransRel.empty;
         intra_causality_data = EventRel.empty ;
+        intra_causality_data_addr = EventRel.empty ;
         intra_causality_control = EventRel.empty ;
         intra_causality_order = EventRel.empty ;
         control = EventRel.empty ;
@@ -924,6 +934,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       Misc.nilp es.procs &&
       EventSet.is_empty es.events &&
       EventRel.is_empty es.intra_causality_data &&
+      EventRel.is_empty es.intra_causality_data_addr &&
       EventRel.is_empty es.intra_causality_control &&
       EventRel.is_empty es.intra_causality_order &&
       EventRel.is_empty es.control &&
@@ -932,6 +943,37 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       Misc.is_none es.input &&
       Misc.is_none es.output &&
       Misc.is_none es.ctrl_output
+
+    let has_addr_port es e =
+      match EventMap.find_opt e es.ports with
+      | Some Port.Addr -> true
+      | Some (Port.Data|Port.No) | None -> false
+
+    let intra_causality_data_addr_edges es r =
+      EventRel.restrict_rel
+        (fun e1 e2 -> is_reg_any e1 && has_addr_port es e1 && is_mem e2)
+        r
+
+    let add_intra_causality_data es r =
+      let data_addr = intra_causality_data_addr_edges es r in
+      { es with
+        intra_causality_data =
+          EventRel.union es.intra_causality_data (EventRel.diff r data_addr);
+        intra_causality_data_addr =
+          EventRel.union es.intra_causality_data_addr data_addr;
+      }
+
+    let split_intra_causality_data_addr es =
+      let data_addr =
+        intra_causality_data_addr_edges es es.intra_causality_data in
+      if EventRel.is_empty data_addr then es
+      else
+        { es with
+          intra_causality_data =
+            EventRel.diff es.intra_causality_data data_addr;
+          intra_causality_data_addr =
+            EventRel.union es.intra_causality_data_addr data_addr;
+        }
 
 (****************************)
 (* Projection of event set  *)
@@ -1070,7 +1112,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
 
     let minimals_data es =
       match es.data_input with
-      | None -> min_evts es.events es.intra_causality_data
+      | None -> min_evts es.events (iico_data es)
       | Some evts -> evts
 
     let minimals_data_no_spurious es =
@@ -1087,7 +1129,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
 
     let maximals es = max_evts es.events (iico es)
 
-    let maximals_data es = max_evts es.events es.intra_causality_data
+    let maximals_data es = max_evts es.events (iico_data es)
 
     let get_output es = match es.output with
     | None -> maximals_data es
@@ -1111,7 +1153,9 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       fprintf chan "\tevents: %a\n" debug_events es.events ;
       fprintf chan "\tinput: %a\n" debug_opt (es.input,get_dinput,es) ;
       fprintf chan "\toutput: %a\n" debug_opt (es.output,get_output,es) ;
-      fprintf chan "\tiico_data: %a\n" debug_rel es.intra_causality_data ;
+      fprintf chan "\tiico_data: %a\n" debug_rel (iico_data es) ;
+      fprintf chan "\tiico_data_addr: %a\n"
+        debug_rel es.intra_causality_data_addr ;
       fprintf chan "\tiico_ctrl: %a\n" debug_rel es.intra_causality_control ;
       let _,rel = es.po in
       if not (EventRel.is_empty rel) then
@@ -1230,6 +1274,8 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
         partial_po = seq_partial_po es1 es2;
         intra_causality_data = EventRel.union
           es1.intra_causality_data es2.intra_causality_data ;
+        intra_causality_data_addr = EventRel.union
+          es1.intra_causality_data_addr es2.intra_causality_data_addr ;
         intra_causality_control = EventRel.union
           es1.intra_causality_control  es2.intra_causality_control ;
         intra_causality_order = EventRel.union
@@ -1283,6 +1329,11 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
               es1.intra_causality_data
               es2.intra_causality_data
               es3.intra_causality_data;
+            intra_causality_data_addr =
+            EventRel.union3
+              es1.intra_causality_data_addr
+              es2.intra_causality_data_addr
+              es3.intra_causality_data_addr;
             intra_causality_control =
             EventRel.union3
               es1.intra_causality_control
@@ -1339,6 +1390,10 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
           EventRel.union
             es1.intra_causality_data
             es2.intra_causality_data ;
+        intra_causality_data_addr =
+          EventRel.union
+            es1.intra_causality_data_addr
+            es2.intra_causality_data_addr ;
         intra_causality_control =
           EventRel.union
             es1.intra_causality_control
@@ -1474,18 +1529,16 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
 
     let data_comp mini_loc mkOut es1 es2 =
       let r = union es1 es2 in
-      { r with
-        intra_causality_data =
+      let data =
         EventRel.restrict_rel
           (* Found that reviewing code, check by assert... *)
           (fun e1 e2 ->
-            let b = e1 != e2 in
-            if not b then
-              eprintf "Warning: get rid of event %a\n%!" debug_event e1 ;
-            b)
-          (EventRel.union
-             r.intra_causality_data
-             (EventRel.cartesian (get_output es1) (mini_loc es2))) ;
+             let b = e1 != e2 in
+             if not b then
+               eprintf "Warning: get rid of event %a\n%!" debug_event e1 ;
+             b)
+          (EventRel.cartesian (get_output es1) (mini_loc es2)) in
+      { (add_intra_causality_data r data) with
         input = seq_input es1 es2 ;
         data_input = seq_data_input es1 es2 ;
         output = mkOut es1 es2 ;
@@ -1704,6 +1757,11 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
            es1.intra_causality_data
            es2.intra_causality_data
            es3.intra_causality_data;
+       intra_causality_data_addr =
+         EventRel.union3
+           es1.intra_causality_data_addr
+           es2.intra_causality_data_addr
+           es3.intra_causality_data_addr;
        intra_causality_control =
          EventRel.union3
            es1.intra_causality_control
@@ -1739,11 +1797,10 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
     let bind_ctrldata_data es1 es2 es3 =
       let input_es3 = minimals es3 in
       let r = union3 es1 es2 es3 in
-      { r with
-        intra_causality_data =
-          EventRel.union r.intra_causality_data
-            (EventRel.cartesian
-               (EventSet.union (get_output es1) (get_output es2)) input_es3);
+      { (add_intra_causality_data r
+           (EventRel.cartesian
+              (EventSet.union (get_output es1) (get_output es2)) input_es3))
+        with
         intra_causality_control =
           EventRel.union
             r.intra_causality_control
@@ -1759,11 +1816,9 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       and ctrl_out1 = get_ctrl_output_commits es1 in
       let r = union es1 es2 in
       let r =
-        { r with
-          intra_causality_data =
-            EventRel.union
-              r.intra_causality_data
-              (EventRel.cartesian data_out1 (minimals_data_no_spurious es2)) ;
+        { (add_intra_causality_data r
+             (EventRel.cartesian data_out1 (minimals_data_no_spurious es2)))
+          with
           intra_causality_control =
             EventRel.union
               r.intra_causality_control
@@ -1807,7 +1862,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
 (* rsX/wsX are from/to the same location *)
 
     let exch_comp rs1 rs2 ws1 ws2 =
-      { procs = [] ;
+      split_intra_causality_data_addr { procs = [] ;
         events = EventSet.union4 rs1.events rs2.events ws1.events ws2.events;
         speculated =
         if do_deps then
@@ -1825,6 +1880,10 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
              ws1.intra_causality_data ws2.intra_causality_data)
            (EventRel.cartesian (maximals rs1) (minimals ws2))
            (EventRel.cartesian (maximals rs2) (minimals ws1));
+        intra_causality_data_addr =
+          EventRel.union4
+            rs1.intra_causality_data_addr rs2.intra_causality_data_addr
+            ws1.intra_causality_data_addr ws2.intra_causality_data_addr;
         intra_causality_control =
         EventRel.union3
           (EventRel.union4
@@ -1871,7 +1930,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       and inrmem = minimals rmem in
       let inmem = EventSet.union inrmem inwmem in
       let mem2mem = EventRel.cartesian outrmem inwmem in
-      { procs = [] ;
+      split_intra_causality_data_addr { procs = [] ;
         events = EventSet.union5
           rloc.events rmem.events rreg.events wmem.events wreg.events;
         speculated =
@@ -1893,6 +1952,11 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
            if is_amo then mem2mem else EventRel.empty;
            EventRel.cartesian outrreg inwmem;
            EventRel.cartesian (get_output rloc) inmem];
+        intra_causality_data_addr =
+        EventRel.union5
+          rloc.intra_causality_data_addr
+          rmem.intra_causality_data_addr rreg.intra_causality_data_addr
+          wmem.intra_causality_data_addr wreg.intra_causality_data_addr;
         intra_causality_control =
         EventRel.unions
           [EventRel.unions
@@ -1952,7 +2016,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
     let linux_exch re rloc rmem wmem =
       let input_wmem = minimals wmem in
       let output_rloc = maximals rloc in
-      { procs = [];
+      split_intra_causality_data_addr { procs = [];
         events =
         EventSet.union4 re.events rloc.events rmem.events wmem.events;
         speculated =
@@ -1971,6 +2035,10 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
            EventRel.cartesian (maximals re) input_wmem;
            EventRel.cartesian output_rloc input_wmem;
            EventRel.cartesian output_rloc (minimals rmem);];
+        intra_causality_data_addr =
+        EventRel.union4
+          re.intra_causality_data_addr rloc.intra_causality_data_addr
+          rmem.intra_causality_data_addr wmem.intra_causality_data_addr;
         intra_causality_control =
         EventRel.union
           (EventRel.union4
@@ -2000,7 +2068,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
     let amo re rloc rmem wmem =
       let input_wmem = minimals wmem in
       let output_rloc = maximals rloc in
-      { procs = [];
+      split_intra_causality_data_addr { procs = [];
         events =
         EventSet.union4 re.events rloc.events rmem.events wmem.events;
         speculated =
@@ -2020,6 +2088,10 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
            EventRel.cartesian (maximals re) input_wmem;
            EventRel.cartesian output_rloc input_wmem;
            EventRel.cartesian output_rloc (minimals rmem);];
+        intra_causality_data_addr =
+        EventRel.union4
+          re.intra_causality_data_addr rloc.intra_causality_data_addr
+          rmem.intra_causality_data_addr wmem.intra_causality_data_addr;
         intra_causality_control =
           EventRel.union4
             re.intra_causality_control rloc.intra_causality_control
@@ -2054,7 +2126,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       let input_wmem = minimals wmem in
       let input_rmem = minimals rmem in
       let output_rloc = maximals rloc in
-      { procs = [];
+      split_intra_causality_data_addr { procs = [];
         events =
         EventSet.union5 rloc.events rold.events rnew.events
           rmem.events wmem.events;
@@ -2076,6 +2148,11 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
            EventRel.cartesian (maximals rnew) input_wmem;
            EventRel.cartesian output_rloc input_wmem;
            EventRel.cartesian output_rloc input_rmem;];
+        intra_causality_data_addr =
+        EventRel.union5
+          rloc.intra_causality_data_addr rold.intra_causality_data_addr
+          rnew.intra_causality_data_addr
+          rmem.intra_causality_data_addr wmem.intra_causality_data_addr;
         intra_causality_control =
         EventRel.unions
           [EventRel.union5
@@ -2117,7 +2194,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
     let linux_cmpexch_no rloc rold rmem =
       let input_rmem = minimals rmem in
       let output_rloc = maximals rloc in
-      { procs = [];
+      split_intra_causality_data_addr { procs = [];
         events =
         EventSet.union3 rloc.events rold.events rmem.events;
         speculated =
@@ -2133,6 +2210,10 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
              rloc.intra_causality_data rold.intra_causality_data
              rmem.intra_causality_data;
            EventRel.cartesian output_rloc input_rmem;];
+        intra_causality_data_addr =
+        EventRel.union3
+          rloc.intra_causality_data_addr rold.intra_causality_data_addr
+          rmem.intra_causality_data_addr;
         intra_causality_control =
           EventRel.union3
             rloc.intra_causality_control rold.intra_causality_control
@@ -2164,7 +2245,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       let out_loc = maximals loc
       and in_rmem = minimals rmem
       and in_wmem = minimals wmem in
-      { procs = [];
+      split_intra_causality_data_addr { procs = [];
         events = EventSet.union5 loc.events a.events u.events rmem.events wmem.events;
         speculated =
         if do_deps then
@@ -2185,6 +2266,11 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
            EventRel.cartesian out_loc in_rmem;
            EventRel.cartesian (maximals a) in_wmem;
            EventRel.cartesian (maximals rmem) in_wmem;];
+        intra_causality_data_addr =
+        EventRel.union5
+          loc.intra_causality_data_addr a.intra_causality_data_addr
+          u.intra_causality_data_addr
+          rmem.intra_causality_data_addr wmem.intra_causality_data_addr;
         intra_causality_control =
         EventRel.unions
           [EventRel.union5
@@ -2227,7 +2313,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
     let linux_add_unless_no loc u rmem retbool =
       let out_loc = maximals loc
       and in_rmem = minimals rmem in
-      { procs = [];
+      split_intra_causality_data_addr { procs = [];
         events =
         EventSet.union3 loc.events u.events rmem.events;
         speculated =
@@ -2242,6 +2328,10 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
           [loc.intra_causality_data; u.intra_causality_data;
            rmem.intra_causality_data;
            EventRel.cartesian out_loc in_rmem;];
+        intra_causality_data_addr =
+        EventRel.union3
+          loc.intra_causality_data_addr u.intra_causality_data_addr
+          rmem.intra_causality_data_addr;
         intra_causality_control =
         EventRel.union3
           loc.intra_causality_control u.intra_causality_control
@@ -2304,7 +2394,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       and in_wresult = minimals wresult
       and out_data = maximals data
       and out_resa = maximals resa in
-      { procs = [];
+      split_intra_causality_data_addr { procs = [];
         events =
         EventSet.union
           (EventSet.union3 resa.events data.events addr.events)
@@ -2332,6 +2422,12 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
            EventRel.cartesian out_data
              (if C.variant Variant.Success || not (C.variant Variant.FullScDepend) then in_wmem else
              EventSet.union in_wresult in_wmem); ];
+        intra_causality_data_addr =
+          EventRel.union
+            (EventRel.union3 resa.intra_causality_data_addr
+               data.intra_causality_data_addr addr.intra_causality_data_addr)
+            (EventRel.union3 wres.intra_causality_data_addr
+               wresult.intra_causality_data_addr wmem.intra_causality_data_addr);
         intra_causality_control =
           EventRel.union5
             (EventRel.cartesian out_resa in_wres)
@@ -2388,7 +2484,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
       and input_rm = minimals rm
       and input_wm = minimals wm
       and input_br = minimals br in
-      { procs = [] ;
+      split_intra_causality_data_addr { procs = [] ;
         events =
         EventSet.unions
           [rn.events; rs.events; rt.events;
@@ -2441,6 +2537,15 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
               (EventRel.cartesian (get_output rm) input_br);] in
            EventRel.unions rels
           );
+        intra_causality_data_addr =
+        EventRel.unions
+          [rn.intra_causality_data_addr;
+           rs.intra_causality_data_addr;
+           rt.intra_causality_data_addr;
+           wrs.intra_causality_data_addr;
+           rm.intra_causality_data_addr;
+           br.intra_causality_data_addr;
+           wm.intra_causality_data_addr];
         intra_causality_control =
         EventRel.union
           (EventRel.unions
@@ -2501,7 +2606,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
     let aarch64_cas_ok_morello rn rt rm wm =
       let input_rm = minimals rm
       and input_wm = minimals wm in
-      { procs = [] ;
+      split_intra_causality_data_addr { procs = [] ;
         events =
         EventSet.union4
           rn.events rt.events rm.events wm.events ;
@@ -2525,6 +2630,12 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
              (EventRel.cartesian output_rn input_rm)
              (EventRel.cartesian output_rn input_wm)
              (EventRel.cartesian (get_output rt) input_wm));
+        intra_causality_data_addr =
+          EventRel.union4
+            rn.intra_causality_data_addr
+            rt.intra_causality_data_addr
+            rm.intra_causality_data_addr
+            wm.intra_causality_data_addr;
         intra_causality_control =
         EventRel.union
           (EventRel.union4
@@ -2566,7 +2677,7 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
          EventRel.is_empty rEA.intra_causality_control &&
          EventRel.is_empty wEA.intra_causality_control &&
          EventRel.is_empty wM.intra_causality_control) ;
-      { procs = [] ;
+      split_intra_causality_data_addr { procs = [] ;
         events = EventSet.union4 rD.events rEA.events wEA.events wM.events;
         speculated =
         if do_deps then
@@ -2587,6 +2698,12 @@ module Make  (C:Config) (AI:Arch_herd.S) (Act:Action.S with module A = AI) :
              EventRel.cartesian
                (EventSet.union (get_output rEA) (get_output rD)) (minimals wM);]
         end ;
+        intra_causality_data_addr =
+          EventRel.union4
+            rD.intra_causality_data_addr
+            rEA.intra_causality_data_addr
+            wEA.intra_causality_data_addr
+            wM.intra_causality_data_addr;
         intra_causality_control = EventRel.empty;
         intra_causality_order = EventRel.empty;
         control =

@@ -335,11 +335,9 @@ Monad type:
         Evt.map
           (fun (v,cls,es) ->
              let data =
-               let data =
-                 E.EventRel.restrict_domains p1 p2
-                   (E.EventRel.cartesian es.E.events es.E.events) in
-               E.EventRel.union es.E.intra_causality_data data in
-            v,cls,{ es with E.intra_causality_data=data; })
+               E.EventRel.restrict_domains p1 p2
+                 (E.EventRel.cartesian es.E.events es.E.events) in
+            v,cls,E.add_intra_causality_data es data)
       acts in
        eiid,(acts,specs)
 

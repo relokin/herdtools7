@@ -797,7 +797,7 @@ module Make(C:Config) (S:Sem.Semantics) : S with module S = S	=
                   let atms =
                     E.EventSet.filter E.is_atomic evts in
                   E.EventRel.restrict_domains_to_sets
-                    atms atms es.E.intra_causality_data
+                    atms atms (E.iico_data es)
                   |> E.EventRel.inverse
               end in
             let locs =
@@ -1943,7 +1943,7 @@ let add_eq v1 v2 eqs =
         let rs = E.EventSet.of_list rs
         and ws = E.EventSet.of_list ws in
         E.EventRel.restrict_domains_to_sets
-             rs ws es.E.intra_causality_data
+             rs ws (E.iico_data es)
 
       (*
        * Compute `[Exp & R & X]; (same-instance \ id) & loc; [Exp & W & X]`,

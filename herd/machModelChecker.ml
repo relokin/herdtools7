@@ -437,7 +437,8 @@ module Make
               "control",lazy conc.S.str.E.control ;
               "sm",si; "si",si;
               "aligned",aligned;
-              "iico_data", lazy conc.S.str.E.intra_causality_data;
+              "iico_data", lazy (E.iico_data conc.S.str);
+              "iico_data_addr", lazy conc.S.str.E.intra_causality_data_addr;
               "iico_ctrl", lazy conc.S.str.E.intra_causality_control;
               "iico_order", lazy conc.S.str.E.intra_causality_order;
               "rf-reg", rf_reg ;

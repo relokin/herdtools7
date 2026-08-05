@@ -299,6 +299,9 @@ module Make (S:SemExtra.S) : S with module S = S  = struct
     add_ea "iico_data"
       { def_ea with color="black" ; }
       { def_ea with color="black" ; } ;
+    add_ea "iico_data_addr"
+      { def_ea with color="black" ; }
+      { def_ea with color="black" ; } ;
     add_ea "iico_ctrl"
       { def_ea with color="grey" ; }
       { def_ea with color="grey" ; } ;
@@ -1318,7 +1321,15 @@ module Make (S:SemExtra.S) : S with module S = S  = struct
         (fun chan (e,e') ->
           pp_edge chan (pp_node_eiid e) (pp_node_eiid e') "iico_data"
             false false)
-        es.E.intra_causality_data ;
+        (E.iico_data es) ;
+
+      pl "" ;
+      pl "/* the intra_causality_data_addr edges */\n" ;
+      E.EventRel.pp chan ""
+        (fun chan (e,e') ->
+          pp_edge chan (pp_node_eiid e) (pp_node_eiid e') "iico_data_addr"
+            false false)
+        es.E.intra_causality_data_addr ;
 
       pl "" ;
       pl "/* the intra_causality_control edges */" ;
@@ -1524,6 +1535,8 @@ module Make (S:SemExtra.S) : S with module S = S  = struct
            end;
       intra_causality_data = select_rel
         es.E.intra_causality_data;
+      intra_causality_data_addr = select_rel
+        es.E.intra_causality_data_addr;
       intra_causality_control = select_rel
         es.E.intra_causality_control;
       intra_causality_order = select_rel

@@ -50,7 +50,7 @@ module Make(O:Model.Config) (S:SemExtra.S) = struct
   let make_procrels_deps conc =
     let iico =
       E.EventRel.union
-        conc.S.str.E.intra_causality_data
+        (E.iico_data conc.S.str)
         (if iico_ctrl_as_dep then
           conc.S.str.E.intra_causality_control
         else
@@ -91,8 +91,7 @@ module Make(O:Model.Config) (S:SemExtra.S) = struct
     let is_addr_port = is_addr_port conc.S.str
     and is_data_port = is_data_port conc.S.str in
     let iico_rmw =
-      E.EventRel.inter conc.S.atomic_load_store
-        conc.S.str.E.intra_causality_data in
+      E.EventRel.inter conc.S.atomic_load_store (E.iico_data conc.S.str) in
     let iico_from_mem_load = (* First step of dependencies *)
       E.EventRel.restrict_domain is_mem_load_total iico in
     let dd_pre =

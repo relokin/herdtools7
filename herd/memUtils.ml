@@ -39,7 +39,7 @@ module Make(S : SemExtra.S) = struct
 
   let po_iico_data es =
     E.EventRel.union
-      es.E.intra_causality_data
+      (E.iico_data es)
       (po_strict es)
 
   let po_iico es =  E.EventRel.union (iico es) (po_strict es)
