@@ -1,0 +1,13 @@
+AArch64 BR-offset-ignored
+(* C6.2.46: an indirect branch uses the full target value, here label+4. *)
+{
+  0:X0=P0:L1;
+}
+P0            ;
+ADD X0,X0,#4  ;
+BR X0         ;
+MOV X1,#1     ;
+L1:           ;
+MOV X2,#1     ;
+MOV X3,#1     ;
+exists (0:X2=0 /\ 0:X3=1)
