@@ -499,10 +499,30 @@ def make_shared_pseudocode(args: argparse.Namespace):
 
         for ps in root.findall("./ps_section/ps"):
             _logger.info("Writing section %s", ps.get("name"))
-            f.writelines(ps.find("pstext").itertext())
+            f.write(patch_shared_pseudocode("".join(ps.find("pstext").itertext())))
             f.write("\n\n")
 
     _logger.debug("Processed %s", i_file)
+
+
+def patch_shared_pseudocode(text: str) -> str:
+    """Apply local fixes to extracted Arm shared pseudocode."""
+
+    return text.replace(
+        """                for i = 0 to (half DIV 8)-1 do
+                    let byteaddress : bits(64) = AddressIncrement(address,
+                                                                  (half DIV 8) + i, accdesc);
+                    // Individual byte access can be observed in any order,
+                    // but implies observability of highhalf
+                    AArch64_MemSingle{8}(byteaddress, accdesc, aligned) = lowhalf[i*:8];
+                end;""",
+        """                for i = 0 to (half DIV 8)-1 do
+                    let byteaddress : bits(64) = AddressIncrement(address, i, accdesc);
+                    // Individual byte access can be observed in any order,
+                    // but implies observability of highhalf
+                    AArch64_MemSingle{8}(byteaddress, accdesc, aligned) = lowhalf[i*:8];
+                end;""",
+    )
 
 
 def make_opns(args: argparse.Namespace):
