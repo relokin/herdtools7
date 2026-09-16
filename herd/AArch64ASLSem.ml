@@ -1759,6 +1759,8 @@ module Make (TopConf : AArch64Sig.Config) (V : Value.AArch64ASL) :
          32 is for instructions *)
       | I_OP3 ((V64|V32),SUBS,ZR,_,
                OpExt.(Imm (0,0)|Reg(_,LSL 0)))
+      | I_LDR (_,ZR,_,_)
+      | I_LDAR (_,_,ZR,_)
       (* Those do little more then issuing an effect *)
       | I_DC _|I_IC _ | I_TLBI _ ->
           AArch64Mixed.build_semantics test ii

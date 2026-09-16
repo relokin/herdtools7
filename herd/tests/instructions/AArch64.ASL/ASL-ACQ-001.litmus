@@ -1,0 +1,14 @@
+AArch64 ASL-LDAR-XZR-acquire
+
+(* C6.2.192 sets acquire=TRUE independently of Rt. *)
+
+{
+  uint64_t x=42;
+  0:X0=x;
+}
+
+P0             ;
+  LDAR XZR,[X0];
+  MOV X1,#1    ;
+
+exists (0:X1=1)

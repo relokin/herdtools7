@@ -1,0 +1,10 @@
+Test ASL-LDAR-XZR-acquire Allowed
+States 1
+0:X1=1;
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition exists (0:X1=1)
+Observation ASL-LDAR-XZR-acquire Always 1 0
+Hash=04d5a0535eccb73c065560d3eb9b9dd3
+
