@@ -186,6 +186,6 @@ let CMODX-ordering =
   | [W]; ob; [Imp & Instr & R]
 
 let CMODX-unordered-conflicts =
-  CMODX-conflicts \ (CMODX-ordering | CMODX-ordering^-1)
+  different-values(CMODX-conflicts) \ (CMODX-ordering | CMODX-ordering^-1)
 
 flag ~empty CMODX-unordered-conflicts as violates-CMODX-requirements
