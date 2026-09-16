@@ -1,0 +1,10 @@
+Test ASL-CMP-copied-bit63 Required
+States 1
+0:X3=1;
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition forall (0:X3=1)
+Observation ASL-CMP-copied-bit63 Always 1 0
+Hash=be7d30fe05cff4679217ea94eb43dfb8
+

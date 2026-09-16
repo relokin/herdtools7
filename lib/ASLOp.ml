@@ -251,7 +251,7 @@ let do_op1 op cst =
   | ToAArch64 -> (
       match cst with
       | Constant.Concrete s ->
-          ASLScalar.convert_to_sint64 s |> return_concrete
+          ASLScalar.convert_to_int_unsigned s |> return_concrete
       | Constant.(Symbolic _|PteVal _|Instruction _) -> Some cst
       | _ -> None)
   | FromAArch64 -> (

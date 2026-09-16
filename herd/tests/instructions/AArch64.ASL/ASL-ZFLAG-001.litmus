@@ -1,0 +1,9 @@
+AArch64 ASL-CMP-copied-bit63
+{
+  0:X2=0x8000000000000000;
+}
+P0;
+  MOV X0,X2;
+  CMP X0,X2;
+  CSET W3,EQ;
+forall (0:X3=1)
