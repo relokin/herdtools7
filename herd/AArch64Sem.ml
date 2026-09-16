@@ -1955,7 +1955,15 @@ Arguments:
            let checked = memtag && rs <> AArch64Base.SP in
            do_ldr ~checked rs sz Annot.N mop (get_ea_idx rs k ii) ii
         | Imm (k,PreIdx) ->
-            do_ldr rs sz Annot.N mop (get_ea_preindexed rs k ii) ii
+           M.delay_kont "ldr_preindex"
+             (read_reg_addr rs ii)
+             (fun a_virt _ma ->
+               let ma = M.add a_virt (V.intToV k) in
+               do_ldr rs sz Annot.N
+                 (fun ac a ->
+                   mop ac a >>|
+                   (M.add a_virt (V.intToV k) >>= fun b -> write_reg rs b ii))
+                 ma ii)
         | Reg (v,ri,sext,s) ->
            let checked = memtag && rs <> AArch64Base.SP in
            do_ldr ~checked rs sz Annot.N mop (get_ea_reg rs v ri sext s ii) ii
@@ -2135,7 +2143,22 @@ Arguments:
            if kvm then M.upOneRW (is_this_reg rd) m
            else m
         | Imm (k,PreIdx) ->
-           str_simple sz rs rd (get_ea_preindexed rd k ii) ii
+           let m =
+             M.delay_kont "str_preindex"
+               (read_reg_addr rd ii)
+               (fun a_virt _ma ->
+                 let ma = M.add a_virt (V.intToV k) in
+                 do_str rd
+                   (fun ac a v ii ->
+                     M.data_input_next
+                       (M.unitT v)
+                       (fun v -> do_write_mem sz Annot.N aexp ac a v ii)
+                     >>|
+                     (M.add a_virt (V.intToV k) >>= fun b -> write_reg rd b ii))
+                   sz Annot.N
+                   ma (read_reg_data_sz sz rs ii) ii) in
+           if kvm then M.upOneRW (is_this_reg rd) m
+           else m
         | Reg (v,ri,sext,s) ->
             str_simple sz rs rd (get_ea_reg rd v ri sext s ii) ii
         | _ -> assert false

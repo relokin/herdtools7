@@ -1,0 +1,10 @@
+Test MTE-preindex-fault-writeback Allowed
+States 1
+0:X2=0; Fault(P0:L0,x:red+4,TagCheck);
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition exists (fault(P0:L0,TagCheck) /\ 0:X2=0)
+Observation MTE-preindex-fault-writeback Always 1 0
+Hash=f2fb90c208edaf7ee521e6c4ceeac5cf
+

@@ -1,0 +1,19 @@
+AArch64 MTE-preindex-fault-writeback
+Variant=memtag,sync
+
+(* A synchronous Tag Check fault occurs before architectural pre-index
+ * writeback.  The handler copies the base register for observation. *)
+
+{
+  int x[4]={1,2,3,4};
+  [tag(x)]=:green;
+  0:X1=x:red;
+  0:X4=x:red;
+}
+
+P0                 | P0.F       ;
+L0:                | CMP X1,X4  ;
+  LDR W0,[X1,#4]!   | CSET W2,NE ;
+  MOV X3,#1         |            ;
+
+exists (fault(P0:L0,TagCheck) /\ 0:X2=0)

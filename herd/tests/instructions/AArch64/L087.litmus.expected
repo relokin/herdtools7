@@ -1,10 +1,9 @@
 Test L087 Required
-States 1
-0:X0=t; 0:X2=3; 0:X3=4;
+States 0
 Ok
 Witnesses
-Positive: 1 Negative: 0
+Positive: 0 Negative: 0
 Condition forall (0:X2=3 /\ 0:X3=4 /\ 0:X0=t)
-Observation L087 Always 1 0
+Observation L087 Never 0 0
 Hash=f5225c8ddb9573d011287cb490e4d862
 
