@@ -2204,22 +2204,29 @@ Arguments:
           | (`PaN) -> NTA in
         match md with
         | AArch64.Idx ->
-            let (>>|) =
-              match tnt with
-              | AArch64.(`Pa|`PaN|`PaL) -> (>>|)
-              | AArch64.(`PaIL) -> M.seq_mem in
-            let (>>>) = M.data_input_next in
-            do_str rd
-              (fun ac a _ ii ->
-                (read_reg_data_sz sz rs1 ii >>> fun v ->
-                  do_write_mem sz an aexp ac a v ii) >>|
-                  (add_size a sz >>= fun a ->
-                    read_reg_data_sz sz rs2 ii >>> fun v ->
-                      do_write_mem sz an aexp ac a v ii))
-              sz Annot.N
-              (get_ea_idx rd k ii)
-              (M.unitT V.zero)
-              ii
+            if memtag then
+              let ma = get_ea_idx rd k ii in
+              let ma2 = ma >>= fun a -> add_size a sz in
+              str_simple sz rs1 rd ma ii >>= fun _ ->
+              str_simple sz rs2 rd ma2 ii
+              >>= fun _ -> B.next1T ()
+            else
+              let (>>|) =
+                match tnt with
+                | AArch64.(`Pa|`PaN|`PaL) -> (>>|)
+                | AArch64.(`PaIL) -> M.seq_mem in
+              let (>>>) = M.data_input_next in
+              do_str rd
+                (fun ac a _ ii ->
+                  (read_reg_data_sz sz rs1 ii >>> fun v ->
+                    do_write_mem sz an aexp ac a v ii) >>|
+                    (add_size a sz >>= fun a ->
+                      read_reg_data_sz sz rs2 ii >>> fun v ->
+                        do_write_mem sz an aexp ac a v ii))
+                sz Annot.N
+                (get_ea_idx rd k ii)
+                (M.unitT V.zero)
+                ii
         | AArch64.PostIdx ->
             stp_wback sz an rs1 rs2 rd k true ii
         | AArch64.PreIdx ->

@@ -1,0 +1,10 @@
+Test MTE-cross-tag-granule Forbidden
+States 1
+x={1,2,3,9,5,6,7,8}; Fault(P0,x:green+16,TagCheck);
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition ~exists (x={1,2,3,9,9,6,7,8} /\ not (fault(P0,x)))
+Observation MTE-cross-tag-granule Never 0 1
+Hash=a1bdf1bbaaca54dd241d2d534493a6e3
+

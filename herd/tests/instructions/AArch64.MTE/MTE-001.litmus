@@ -1,0 +1,23 @@
+AArch64 MTE-cross-tag-granule
+
+(*
+ * Minimal reproduction of herdtools7 issue #813.
+ * STP spans x[3] and x[4], crossing a 16-byte allocation-tag granule.  STG
+ * gives the second granule a mismatching tag.  A successful write to both
+ * words without a tag-check fault is the candidate bad outcome.
+ *)
+
+{
+  int x[8]={1,2,3,4,5,6,7,8};
+  0:X0=x:green;
+  0:X1=x:red;
+}
+
+P0;
+  STG X1,[X0,#16];
+  DMB SY;
+  MOV W2,#9;
+  MOV W3,#9;
+  STP W2,W3,[X0,#12];
+
+~exists (x={1,2,3,9,9,6,7,8} /\ ~fault(P0,x))
