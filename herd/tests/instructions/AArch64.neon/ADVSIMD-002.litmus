@@ -1,0 +1,14 @@
+AArch64 ADVSIMD-MOVI-MSL-ones
+
+(*
+ * C7.2.247's shifting-ones form fills the low bits with ones.  With imm8=0
+ * and MSL #8, every 32-bit destination element is therefore 0x000000ff.
+ *)
+
+{
+}
+
+P0                    ;
+  MOVI V0.2S,#0,MSL #8;
+
+forall (0:V0.2S={255,255})
