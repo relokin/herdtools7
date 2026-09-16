@@ -1,0 +1,10 @@
+Test MTE-SP-no-writeback-LDRH-tagcheck Allowed
+States 1
+0:X0=4660; 0:X1=1;  ~Fault(P0,x);
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition exists (0:X0=4660 /\ 0:X1=1 /\ not (fault(P0,x)))
+Observation MTE-SP-no-writeback-LDRH-tagcheck Always 1 0
+Hash=51321f0031687e4d0f1caaa2fe627f70
+

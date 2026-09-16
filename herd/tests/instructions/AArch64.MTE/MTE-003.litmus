@@ -1,0 +1,15 @@
+AArch64 MTE-SP-no-writeback-LDRH-tagcheck
+Variant=memtag,sync
+
+(* C6.2.222: no-writeback LDRH through SP sets tagchecked to FALSE.  The
+ * logical tag deliberately differs from the allocation tag. *)
+
+{
+  uint16_t x=0x1234;
+  [tag(x)]=:green;
+  0:SP=x:red;
+}
+P0;
+  LDRH W0,[SP];
+  MOV W1,#1;
+exists (0:X0=0x1234 /\ 0:X1=1 /\ ~fault(P0,x))
