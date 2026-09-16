@@ -21,7 +21,7 @@ ARCHITECTURE_RELEASE = 2026-06
 BASE_URL := https://developer.arm.com/-/cdn-downloads/permalink
 
 ISA_A64_DIR := Exploration-Tools-A64-ISA/ISA_A64
-ISA_A64_NAME := ISA_A64_xml_A_profile-$(ARCHITECTURE_RELEASE)
+ISA_A64_NAME := ISA_A64_xml_A_profile-$(ARCHITECTURE_RELEASE)_mc
 ISA_A64_OFILE := aarch64
 ISA_A64_TAR_GZ := $(ISA_A64_NAME).tar.gz
 
