@@ -1,0 +1,10 @@
+Test CMODX-Bcond-short-list Required
+States 1
+1:X2=1;
+Ok
+Witnesses
+Positive: 2 Negative: 0
+Condition forall (1:X2=1)
+Observation CMODX-Bcond-short-list Always 2 0
+Hash=b81b47a4adc05a81f3865d0909000f56
+

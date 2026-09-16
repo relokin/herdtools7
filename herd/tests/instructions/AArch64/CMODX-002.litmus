@@ -1,0 +1,20 @@
+AArch64 CMODX-Bcond-short-list
+
+(* B2.2.5 includes B.cond in the short CMODX list.  P0 changes the B.EQ at
+ * P1:start to B.NE.  Both the original and modified instructions are in the
+ * short list, so their classification is isolated from the same-value rule. *)
+
+variant=self
+
+{
+  0:X0=instr:"B.NE .+8";
+  0:X10=P1:start;
+}
+
+P0             | P1          ;
+               | start:      ;
+STR W0,[X10]   | B.EQ .+8    ;
+               | MOV X1,#1   ;
+               | MOV X2,#1   ;
+
+forall (1:X2=1)

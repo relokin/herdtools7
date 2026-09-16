@@ -85,9 +85,10 @@ module Make (C:Arch_herd.Config)(V:Value.AArch64) =
     *   Arm ARM B2.2.5 "Concurrent modification and execution of instructions"
     *)
     let is_cmodx_restricted_instruction = function
-    | I_B _| I_BL _| I_CBNZ _| I_CBZ _| I_FENCE ISB | I_NOP | I_TBNZ _| I_TBZ _ | I_SVC _
+    | I_B _| I_BL _| I_BC _| I_CBNZ _| I_CBZ _| I_FENCE ISB | I_NOP
+    | I_TBNZ _| I_TBZ _ | I_SVC _ | I_UDF _
       -> false
-    | I_ADD_SIMD _| I_ADD_SIMD_S _| I_ADR _| I_ALIGND _| I_ALIGNU _| I_BC _
+    | I_ADD_SIMD _| I_ADD_SIMD_S _| I_ADR _| I_ALIGND _| I_ALIGNU _
     | I_BLR _| I_BR _| I_BUILD _| I_CAS _| I_CASBH _| I_CASP _| I_CHKEQ _| I_CHKSLD _
     | I_CHKTGD _| I_CLRTAG _| I_CPYTYPE _| I_CPYVALUE _| I_CSEAL _| I_CSEL _| I_DC _
     | I_OP3_SIMD _| I_ERET| I_FENCE _| I_GC _| I_IC _| I_LD1 _| I_LD1M _| I_LD1R _ | I_LDAP1 _
@@ -105,7 +106,7 @@ module Make (C:Arch_herd.Config)(V:Value.AArch64) =
     | I_STR_SIMD _| I_STRBH _| I_STUR_SIMD _| I_STXP _| I_STXR _
     | I_STXRBH _| I_STZG _| I_STZ2G _ |I_ST2G _| I_IRG _
     | I_SWP _| I_SWPBH _| I_SXTW _| I_TLBI _ | I_AT _ | I_UBFM _
-    | I_UDF _| I_UNSEAL _ | I_ADDSUBEXT _ | I_ABS _ | I_REV _ | I_EXTR _
+    | I_UNSEAL _ | I_ADDSUBEXT _ | I_ABS _ | I_REV _ | I_EXTR _
     | I_MOPL _ | I_MOP _
     | I_WHILELT _ | I_WHILELE _ | I_WHILELO _ | I_WHILELS _
     | I_UADDV _
