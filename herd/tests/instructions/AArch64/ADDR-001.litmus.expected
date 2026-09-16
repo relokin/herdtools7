@@ -1,0 +1,10 @@
+Test ADDR-symbolic-subtraction Required
+States 1
+0:X0=8;
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition forall (0:X0=8)
+Observation ADDR-symbolic-subtraction Always 1 0
+Hash=f42e705ef4b64cc9a8dd7fd9d2380164
+
