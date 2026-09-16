@@ -277,6 +277,7 @@ module Make (Conf : Config) = struct
       let is_release = access_bool_field accdesc "relsc" map
       and is_acquiresc = access_bool_field accdesc "acqsc" map
       and is_acquirepc = access_bool_field accdesc "acqpc" map
+      and is_nontemporal = access_bool_field accdesc "nontemporal" map
       and is_atomic = access_bool_field accdesc "atomicop" map
       and is_exclusive = access_bool_field accdesc "exclusive" map in
       let is_read =
@@ -318,7 +319,8 @@ module Make (Conf : Config) = struct
           | _ -> false
       in
       let an =
-        if (not is_read) && is_release then is_eax EXL XL L
+        if is_nontemporal then NTA
+        else if (not is_read) && is_release then is_eax EXL XL L
         else if is_noret then NoRet
         else if is_read && is_acquiresc then is_eax EXA XA A
         else if is_read && is_acquirepc then is_ax XQ Q
@@ -402,18 +404,6 @@ module Make (Conf : Config) = struct
           return v
       | _ -> M.op (Op.ArchOp ASLOp.Concat) v1 v2
 
-    let is_valid_trailing_bits z =
-      let open Z in
-      fits_int z && match to_int z with 1 | 2 | 4 | 8 -> true | _ -> false
-
-    let binop_mod v1 v2 =
-      match (v1, v2) with
-      | ( (V.Val Constant.(Symbolic _) | V.Var _),
-          V.Val (Constant.Concrete (ASLScalar.S_Int z)) )
-        when is_valid_trailing_bits z ->
-          return V.zero
-      | _ -> M.op Op.Rem v1 v2
-
     let binop =
       let open AST in
       let v_true = V.Val (Constant.Concrete (ASLScalar.S_Bool true))
@@ -424,7 +414,17 @@ module Make (Conf : Config) = struct
       | `BEQ -> M.op Op.Eq
       | `BOR -> boolop Op.Or (fun b v -> if b then v_true else v)
       | `DIV -> M.op Op.Div
-      | `MOD -> binop_mod
+      | `MOD -> (
+          fun v1 v2 ->
+            match (v1, v2) with
+            | ( (V.Val Constant.(Symbolic _) | V.Var _),
+                V.Val (Constant.Concrete (ASLScalar.S_Int z)) )
+              when Z.fits_int z -> (
+                match Z.to_int z with
+                | 1 -> return V.zero
+                | 2 | 4 | 8 as i -> M.op Op.And v1 (V.intToV (i - 1))
+                | _ -> M.op Op.Rem v1 v2)
+            | _ -> M.op Op.Rem v1 v2)
       | `DIVRM -> M.op (Op.ArchOp ASLOp.Divrm)
       | `XOR -> M.op Op.Xor
       | `EQ -> M.op Op.Eq

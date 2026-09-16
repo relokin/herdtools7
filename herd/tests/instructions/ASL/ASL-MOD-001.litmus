@@ -1,0 +1,26 @@
+ASL ASL-MOD-alignment
+
+(*
+ * IsAlignedSize(3,4) is false.  Keeping the input register-derived makes the
+ * value symbolic while ASLSem evaluates MOD, exercising its shortcut.
+ *)
+
+{
+  x=0;
+  0:X1=x;
+  0:X2=3;
+}
+
+func main() => integer
+begin
+  let address = read_register(1);
+  let three = read_register(2);
+  write_memory{64}(address, three);
+  let raw = read_memory{64}(address);
+  let value = UInt(raw);
+  let aligned = IsAlignedSize(value, 4);
+  let result = if aligned then 1 else 0;
+  return 0;
+end;
+
+exists (0:main.0.result=0)

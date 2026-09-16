@@ -1,0 +1,11 @@
+Test ASL-MOD-alignment Allowed
+States 2
+0:main.0.result=0;
+0:main.0.result=1;
+Ok
+Witnesses
+Positive: 1 Negative: 1
+Condition exists (0:main.0.result=0)
+Observation ASL-MOD-alignment Sometimes 1 1
+Hash=56e15029516849bad2cfacbf889a0278
+
