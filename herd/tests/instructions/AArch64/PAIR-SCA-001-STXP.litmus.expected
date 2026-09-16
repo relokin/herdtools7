@@ -1,0 +1,15 @@
+Test PAIR-SCA-LDXP-STXP-validation Allowed
+States 6
+0:X0=0; 0:X1=0; 1:X0=0; 1:X1=0; 1:X7=0;
+0:X0=0; 0:X1=0; 1:X0=0; 1:X1=0; 1:X7=1;
+0:X0=0; 0:X1=0; 1:X0=0; 1:X1=1; 1:X7=1;
+0:X0=0; 0:X1=0; 1:X0=1; 1:X1=0; 1:X7=1;
+0:X0=0; 0:X1=0; 1:X0=1; 1:X1=1; 1:X7=0;
+0:X0=0; 0:X1=0; 1:X0=1; 1:X1=1; 1:X7=1;
+No
+Witnesses
+Positive: 0 Negative: 12
+Condition exists (0:X0=0 /\ 0:X1=0 /\ 1:X7=0 /\ 1:X0=1 /\ 1:X1=0)
+Observation PAIR-SCA-LDXP-STXP-validation Never 0 12
+Hash=a232ec4628a637a71201adc6c93988c1
+

@@ -1234,6 +1234,11 @@ module Make
       let read_mem_acquire sz = do_read_mem sz Annot.A
       let read_mem_acquire_pc sz = do_read_mem sz Annot.Q
 
+      let pair_reservation_size = function
+        | MachSize.Word -> MachSize.Quad
+        | MachSize.Quad -> MachSize.S128
+        | sz -> sz
+
       let read_mem_reserve sz an anexp ac rd a ii =
         let m a =
           (write_reg AArch64.ResAddr a ii
@@ -2092,7 +2097,7 @@ Arguments:
         let an = match t with XP -> EX | AXP -> EXA in
         do_ldr rs sz an
           (fun ac a ->
-            read_mem_reserve sz an aexp ac rd1 a ii >>||
+            read_mem_reserve sz an aexp ac rd1 a ii >>|
             begin
               add_size a sz >>= fun a ->
               do_read_mem sz an aexp ac rd2 a ii
@@ -2243,7 +2248,7 @@ Arguments:
         do_str rd (do_write_mem sz Annot.L aexp) sz Annot.L
           (read_reg_addr rd ii) (read_reg_data_sz sz rs ii) ii
 
-      and do_stxr ms mw sz t rr rd ii  =
+      and do_stxr ms mw rsz sz t rr rd ii  =
         let open AArch64Base in
         let an = match t with
           | YY -> Annot.EX
@@ -2257,7 +2262,7 @@ Arguments:
                 | None -> true (* No LoadExcl at all. always fail *)
                 | Some szr ->
                    (* Some, must fail when size differ *)
-                   not (MachSize.equal szr sz)
+                   not (MachSize.equal szr rsz)
               end in
             M.aarch64_store_conditional must_fail
               (read_reg_ord ResAddr ii)
@@ -2273,7 +2278,7 @@ Arguments:
         do_stxr
           (read_reg_ord_sz sz rs ii)
           (fun an ac ea resa v  -> write_mem_atomic sz an aexp ac ea v resa ii)
-          sz t rr rd ii
+          sz sz t rr rd ii
 
       let stxp sz t rr rs1 rs2 rd ii =
         let (>>>) = M.data_input_next in
@@ -2290,7 +2295,7 @@ Arguments:
                    (fun a ->
                      check_mixed_write_mem sz an aexp ac a v ii) a v ii)
             end >>!  ())
-        sz t rr rd ii
+        (pair_reservation_size sz) sz t rr rd ii
 
 (* AMO instructions *)
       let rmw_amo_read sz rmw =
@@ -2459,7 +2464,7 @@ Arguments:
         let mop_fail_no_wb ac ma _ =
           (* CASP fails, there are no Explicit Write Effects *)
           let read_mem a = do_read_mem_ret sz an aexp ac a ii
-                >>| (add_size a sz
+                >>|| (add_size a sz
                      >>= fun a -> do_read_mem_ret sz an aexp ac a ii) in
           let noact _ _ = M.mk_singleton_es Act.NoAction ii in
           M.aarch64_cas_no (Access.is_physical ac) ma read_rs
@@ -2469,11 +2474,11 @@ Arguments:
           (* CASP fails, there are Explicit Write Effects writing back *)
           (* the value that is already in memory                       *)
           let read_mem a = rmw_amo_read sz rmw ac a ii
-                >>| (add_size a sz
+                >>|| (add_size a sz
                 >>= fun a -> rmw_amo_read sz rmw ac a ii)
           and write_mem a (v1,v2) =
               rmw_amo_write sz rmw ac a v1 ii
-              >>| (add_size a sz >>= fun a2 ->
+              >>|| (add_size a sz >>= fun a2 ->
                   rmw_amo_write sz rmw ac a2 v2 ii)
               >>= fun _ -> M.unitT () in
           M.aarch64_cas_no (Access.is_physical ac) ma read_rs
@@ -2484,11 +2489,11 @@ Arguments:
           let read_rt = read_reg_data_sz sz rt1 ii
                 >>| read_reg_data_sz sz rt2 ii
           and read_mem a = rmw_amo_read sz rmw ac a ii
-                >>| (add_size a sz
+                >>|| (add_size a sz
                 >>= fun a -> rmw_amo_read sz rmw ac a ii)
           and write_mem a (v1,v2) =
               rmw_amo_write sz rmw ac a v1 ii
-              >>| (add_size a sz >>= fun a2 ->
+              >>|| (add_size a sz >>= fun a2 ->
                   rmw_amo_write sz rmw ac a2 v2 ii)
               >>= fun _ -> M.unitT () in
           M.aarch64_cas_ok (Access.is_physical ac) ma read_rs

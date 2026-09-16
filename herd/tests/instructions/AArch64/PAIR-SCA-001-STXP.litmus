@@ -1,0 +1,18 @@
+AArch64 PAIR-SCA-LDXP-STXP-validation
+(* P0 atomically changes x from (0,0) to (1,1) with CASP. P1 writes the
+   values returned by LDXP straight back with STXP. If that STXP succeeds,
+   the sequence validates the pair and P1 cannot have returned (1,0). *)
+{
+  uint64_t x[2]={0,0};
+  0:X4=x; 1:X4=x;
+  uint64_t 0:X0; uint64_t 0:X1;
+  uint64_t 1:X7; uint64_t 1:X0; uint64_t 1:X1;
+}
+P0                      | P1                       ;
+MOV X0,#0               | LDXP X0,X1,[X4]          ;
+MOV X1,#0               | STXP W7,X0,X1,[X4]       ;
+MOV X2,#1               |                           ;
+MOV X3,#1               |                           ;
+CASP X0,X1,X2,X3,[X4]   |                           ;
+
+exists (0:X0=0 /\ 0:X1=0 /\ 1:X7=0 /\ 1:X0=1 /\ 1:X1=0)

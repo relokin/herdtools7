@@ -465,8 +465,14 @@ module Make (C:Arch_herd.Config)(V:Value.AArch64) =
         ->
           [r]
 
+    let pair_reservation_size = function
+      | MachSize.Word -> MachSize.Quad
+      | MachSize.Quad -> MachSize.S128
+      | sz -> sz
+
     let get_lx_sz = function
-      | I_LDAR (var,(XX|AX),_,_)|I_LDXP (var,_,_,_,_) -> MachSize.Ld (tr_variant var)
+      | I_LDAR (var,(XX|AX),_,_) -> MachSize.Ld (tr_variant var)
+      | I_LDXP (var,_,_,_,_) -> MachSize.Ld (pair_reservation_size (tr_variant var))
       | I_LDARBH (bh,(XX|AX),_,_) -> MachSize.Ld (bh_to_sz bh)
       | I_STXR _|I_STXRBH _ | I_STXP _ -> MachSize.St
       | I_LDAR (_, (AA|AQ), _, _)|I_LDARBH (_, (AA|AQ), _, _)

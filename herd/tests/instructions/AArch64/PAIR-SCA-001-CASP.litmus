@@ -1,0 +1,18 @@
+AArch64 PAIR-SCA-CASP-torn-forbidden
+(* P0 changes x atomically from (0,0) to (1,1). P1's CASP comparison
+   fails and writes the value it read to X0:X1. Because the read generated
+   by CASP is single-copy atomic at 128 bits, it cannot return (1,0). *)
+{
+  uint64_t x[2]={0,0};
+  0:X4=x; 1:X4=x;
+  uint64_t 1:X0; uint64_t 1:X1;
+}
+P0                         | P1                       ;
+LDXP X0,X1,[X4]            | MOV X0,#2                ;
+MOV X2,#1                  | MOV X1,#2                ;
+MOV X3,#1                  | MOV X2,#3                ;
+STXP W5,X2,X3,[X4]         | MOV X3,#3                ;
+                            | CASP X0,X1,X2,X3,[X4]   ;
+
+filter (x[0]=1 /\ x[1]=1)
+exists (1:X0=1 /\ 1:X1=0)
