@@ -75,6 +75,8 @@ let PTE-DT-update =
   | [Device-nGnRE]; ca; [Device-GRE | Device-nGRE | Device-nGnRnE]
   | [Device-nGnRnE]; ca; [Device-GRE | Device-nGRE | Device-nGnRE]
 
+let oa-changes(s, r) = domain(([s]; r; [s]) \ same-oa(s * s))
+
 let PTE-OA-update = ([PTE]; ca; [PTE & oa-changes(PTE, ca^-1)])
 let PTE-OA-update-writable = PTE-OA-update &
         ([PTE]; ca; [PTE & at-least-one-writable(PTE, ca^-1)])

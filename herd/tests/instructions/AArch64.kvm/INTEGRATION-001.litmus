@@ -1,0 +1,14 @@
+AArch64 VMSA-PTE-model-load-failure
+Variant=vmsa
+
+(* B2.3.9/D8 integration trigger: one ordinary PTE write is sufficient to
+ * make the supplied M.c VMSA closure evaluate its PTE-OA-update definition. *)
+
+{
+  [PTE(x)]=(oa:PA(x), valid:0);
+  pteval_t 0:X0=(oa:PA(x), valid:1);
+  0:X1=PTE(x);
+}
+P0;
+  STR X0,[X1];
+exists (0:X0=0 \/ ~0:X0=0)

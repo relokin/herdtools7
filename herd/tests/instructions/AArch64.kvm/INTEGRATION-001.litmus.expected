@@ -1,0 +1,10 @@
+Test VMSA-PTE-model-load-failure Allowed
+States 1
+0:X0=(oa:PA(x));
+Ok
+Witnesses
+Positive: 1 Negative: 0
+Condition exists (0:X0=0 \/ not (0:X0=0))
+Observation VMSA-PTE-model-load-failure Always 1 0
+Hash=8b478c1f8a474552ae3b46709019b764
+
